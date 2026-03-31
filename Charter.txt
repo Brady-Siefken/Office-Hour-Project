@@ -1,7 +1,11 @@
-Meetings:  List time 
-Group Charter: Your Team Name  
+Meetings: 
+Tuesday after lab
+Friday 7 PM
+Sunday 2 PM
+Group Charter: KIAVGA (KIAVGA Is A Valid Group Name)
 Group Contacts: 
-Goals: 
+Goals:
+
 1. To adhere well as a group, respecting each member, and supporting each member by 
 working together to accomplish the goals listed below and adhering to this charter. 
 2. To gain a more intimate knowledge of the software life cycle by working as a group to 
@@ -21,16 +25,18 @@ communicates progress, produces quality work, and the work is done by the dates
 established by the group. If the member does not meet these standards, procedures to deal 
 with that member are further detailed in the ground rules. 
 Ground Rules: 
+
+
 Meetings: 
+
 1. Length of meetings: 
-Meetings may have to take as long as it takes, however meetings longer than 1 ½ hours 
+Meetings may have to take as long as it takes, however meetings longer than 0.5 hours 
 are discouraged. The purpose of meetings is to establish communication and give 
-direction to the project. Meetings once a week should be enough unless it is decided by 
-the group that additional meetings should be scheduled. This communication should take 
-place through the group email. It is understood that if a meeting takes too long, members 
-may have to leave for classes or work obligations. This type of situation will not 
-constitute and offense. 
-Group Charter: Your Team Name  
+direction to the project. Meetings occur 3 times per week, except when additional meetings are deemed necessary.
+This communication should take place through the group Discord chat. 
+It is understood that if a meeting takes too long, members may have to 
+leave for classes or other obligations. This type of situation will not constitute and offense. 
+
 2. Missing a meeting: 
 An occasional missing of a meeting can be accepted. If however an individual repeatedly 
 misses a meeting without good cause, some disciplinary action may have to be taken. 
@@ -38,40 +44,42 @@ Acceptable justification of a missed meeting includes, but is not limited to: in
 family emergency, work, conflicting class schedule, or death (yourself or other). If a 
 meeting is missed for any other reason, the affected group members will decide as to 
 whether the reason for missing the meeting is acceptable or in need of disciplinary action. 
-Two meetings missed without emailed valid excuse will result in a minor offence. Three 
+Two meetings missed without communicated valid excuse will result in a minor offence. Three 
 will result in a major offence. 
+
 3. Tardiness to meetings: 
-A person being obviously late for a meeting and not fitting the structure of „on time‟ shall 
+A person being obviously late for a meeting and not fitting the structure of "on time‟ shall 
 be given over to disciplinary action as described in minor offence. On time means the 
-time the meeting is scheduled to start (3:30pm on Mondays). If an individual arrives at a 
-meeting after the start time and the meeting has yet to get into purposeful conversation 
-then it may be overlooked. However if there is no good excuse for being late and the 
-meeting is clearly underway when the individual arrives then at the end of the meeting it 
-will be discussed as to whether disciplinary action will have to be taken. Being late to a 
-meeting more than once constitutes a minor offence. Records of being late will be 
-recorded by group note taker.  
-4. Phone use during meetings: 
+time the meeting is scheduled to start. If an individual arrives at a meeting after the start time
+and the meeting has yet to get into purposeful conversation then it may be overlooked. However if 
+there is no good excuse for being late and the meeting is clearly underway when the individual arrives 
+then at the end of the meeting it will be discussed as to whether disciplinary action will have to be 
+taken. Being late to a meeting more than once constitutes a minor offence. Records of being late will be 
+recorded by group note taker.
+
+4. Device use during meetings: 
 As we only have an hour each week to meet, it should not be too much to ask that outside 
-phone calls should be prohibited unless they are perceived to be an emergency. The 
-taking of phone calls will come into question if they are taken often during meetings and 
+communication should be prohibited unless they are perceived to be an emergency. The 
+participation of communication will come into question if it happens often often during meetings and 
 the offender will be politely asked to discontinue. If the behavior continues, it will be 
-discussed among the group as to whether it should be a minor offense. Checking a text 
-message will be allowed as well as sending an occasional text to let someone know you 
-are in a meeting and will get back to them. However social texting will not be allowed 
-and the offender will again be politely asked to stop. If the behavior continues it will be 
-discussed among the group as to whether it should be a minor offence.  
+discussed among the group as to whether it should be a minor offense. Checking a 
+message will be allowed as well as sending an occasional message to let someone know you 
+are in a meeting and will get back to them. However social messaging, browsing, and scrolling will
+not be allowed and the offender will again be politely asked to stop. If the behavior continues it will be 
+discussed among the group as to whether it should be a minor offence.
+
 5. Food and drink during meetings: 
 There is no limit to what food can be consumed during meetings as long as the facility we 
-are meeting in allows it and people clean up after themselves. If an individual‟s food 
+are meeting in allows it and people clean up after themselves. If an individual's food 
 consumption is disruptive during a meeting, they will be politely asked to be less 
 disruptive. If it continues, their food may be confiscated. They will have a new chance at 
 the next meeting. If disruptive eating continues week after week, food may be banned at 
-meetings via a majority decision by the group. If a member does not clean up after 
+meetings via a 4/6 majority decision by the group. If a member does not clean up after 
 themselves there will be a warning. After the first warning it will constitute a minor 
 offense.  
 Group communication and interaction:  
 1. Regular communication: 
-Group Charter: Your Team Name  
+Group Charter: KIAVGA  
 Regular communication should occur every two days via email. This communication 
 should include a simple update on ones progress of their portion of the project. When a 
 member finishes their portion of the project, they should attach their finished product in 
@@ -114,7 +122,7 @@ notes at all the meetings and to relay the important information and any decisio
 during the meeting to the other members via email by the end of the next day. They will 
 also be responsible for recording any disciplinary actions taken toward any member of 
 the group. 
-Group Charter: Your Team Name  
+Group Charter: KIAVGA
 Han Solo – This role belongs to the agenda maker. This member of the rebellion is 
 responsible for making an agenda of subjects which need to be covered in the upcoming 
 meeting. The agenda shall be emailed to the group before Saturday for a Monday meeting 
@@ -156,7 +164,7 @@ some point the group may seize to offer work to him as he is untrustworthy at th
 However, a group member may be able to redeem himself. If said member continues to 
 perform above expectations for at least two weeks he shall be returned to full member 
 status by way of this clause. 
-Group Charter: Your Team Name  
+Group Charter: KIAVGA  
 3. Group members unprepared: 
 It is understood that people are busy with other classes and school work.  If by group 
 consciousness it is obvious that a member is unprepared for a meeting, and their 
@@ -196,7 +204,7 @@ A group member committing enough minor and major offences will finally have gone
 the dark side and demoted to Darth Vader. They will be referred to punishment and 
 dismissal and will be given over to review by the TA and governing bodies (the Rock). 
 An email describing the offences leading up to punishment and dismissal will be 
-Group Charter: Your Team Name  
+Group Charter: KIAVGA  
 displayed along with testimonies from at least 2 other group members and a log of 
 offenses. If available, the offending members work will be confiscated and termed as 
 “belonging to the group”.  
