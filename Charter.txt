@@ -192,11 +192,11 @@ Group Charter: KIAVGA
 displayed along with testimonies from at least 2 other group members and a log of 
 offenses. If available, the offending members work will be confiscated and termed as 
 “belonging to the group”.  
-We, the team named ________ agree with the Group Charter and will try our best to uphold it. 
+We, the team named KIAVGA agree with the Group Charter and will try our best to uphold it. 
 Name _____________________________________ 
 Name Zeyad Gadelrab  
 Name Tony Kunz  
-Name  Benjamin Forget
+Name Benjamin Forget
 Name   
 Name _____________________________________  
 Date _______________ 
@@ -204,4 +204,4 @@ Date 3/31/2026
 Date _______________ 
 Date _______________ 
 Date 3/31/26 
-Date _______________ 
+Date 3/31/2026
