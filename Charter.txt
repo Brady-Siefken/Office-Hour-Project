@@ -71,7 +71,6 @@ themselves there will be a warning. After the first warning it will constitute a
 offense.  
 Group communication and interaction:  
 1. Regular communication: 
-Group Charter: Your Team Name  
 Regular communication should occur every two days via email. This communication 
 should include a simple update on ones progress of their portion of the project. When a 
 member finishes their portion of the project, they should attach their finished product in 
