@@ -1,23 +1,12 @@
 Meetings: 
-<<<<<<< Updated upstream
-Tuesday after lab
-Friday 7 PM
-Sunday 2 PM
-Group Charter: KIAVGA (KIAVGA Is A Valid Group Name)
-Group Contacts: 
-=======
-Tuesday 1:30 PM Study space EMS 1st Floor
+Tuesday 1:30 PM (Computer lab EMS 3rd floor)
 Friday 7 PM (Virtual)
 Sunday 2 PM (Virtual)
-Group Charter: KIAVGA (KIAVGA Is A Valid Group Acronym)
-Group Contacts:
+Group Charter: KIAVGA (KIAVGA Is A Valid Group Name)
+Group Contacts: ***
 Zeyad Gadelrab - 414-813-2212
 Ben Forget - 414-530-2760
 Leo Cutraro - 414-510-5602
-Nova Lawton - charlie.lawton.v@gmail.com or Discord mushroom8071
-
-
->>>>>>> Stashed changes
 Goals:
 
 1. To adhere well as a group, respecting each member, and supporting each member by 
@@ -73,7 +62,7 @@ and the meeting has yet to get into purposeful conversation then it may be overl
 there is no good excuse for being late and the meeting is clearly underway when the individual arrives 
 then at the end of the meeting it will be discussed as to whether disciplinary action will have to be 
 taken. Being late to a meeting more than once constitutes a minor offence. Records of being late will be 
-recorded by group note taker.
+recorded by group note taker into the disiplinary log.
 
 4. Device use during meetings: 
 As we only have an hour each week to meet, it should not be too much to ask that outside 
@@ -95,20 +84,17 @@ the next meeting. If disruptive eating continues week after week, food may be ba
 meetings via a 4/6 majority decision by the group. If a member does not clean up after 
 themselves there will be a warning. After the first warning it will constitute a minor 
 offense.  
-<<<<<<< Updated upstream
-=======
 
-
->>>>>>> Stashed changes
 Group communication and interaction:  
+
 1. Regular communication: 
-Regular communication should happen every two days via email. This communication 
+Regular communication should happen every two days via Discord. This communication 
 should include a simple update on ones progress of their portion of the project. When a 
 member finishes their portion of the project, they should attach their finished product in 
-an email to all group members. If it cannot be attached to the email, the member shall 
+the Discord chat to all group members. If it cannot be attached to in the Discord Chat, the member shall 
 explain a way to view the finished product. If a member forgets to post progress, any 
 member can send an inquiry email to the person who forgot. If the email is not responded 
-to in 24 hours, the group will begin to take on that member‟s responsibilities through the 
+to in 24 hours, the group will begin to take on that member's responsibilities through the 
 decision making process stated in part six of this section. If the member has a good 
 reason for not responding, it will be taken into consideration as to whether there will be 
 disciplinary action; otherwise it will be an immediate minor offense. If however, the 
@@ -151,15 +137,16 @@ the group.
 Group Charter: KIAVGA
 Han Solo – This role belongs to the agenda maker. This member of the rebellion is 
 responsible for making an agenda of subjects which need to be covered in the upcoming 
-meeting. The agenda shall be emailed to the group before Saturday for a Monday meeting 
-and three days before any other meeting.  
+meeting. The agenda shall be messaged in the Discord chat to the group before Sunday for 
+a Tuesday meeting and three days before any other meeting.  
 If any member in a role does not follow through with his responsibilities on multiple 
 occasions or if for some reason a member is not able to perform their duties, they shall be 
 replaced by group decision.  
 5. Decision making: 
 Any decisions which need to be made about the project, project direction or disciplinary 
 action will be made by a majority vote. Any decisions about delegation will be covered in 
-part six. 
+part six. Majority vote is define by having at least 4 members who agree. A 3-3 vote (Tie) 
+means Yoda (the group leader) will hold a tie-breaking vote.
 6. Group decisions on delegation: 
 =======
 - Flow Director - This role is responsible for making sure the flow of meetings is productive.
@@ -187,8 +174,20 @@ member does not volunteer for a task, they will be assigned one by Yoda. If a gr
 member feels the portion of responsibility is unfair, they may voice their concern and 
 state a reason why. If a majority of the group feels this member is correct, the 
 <<<<<<< Updated upstream
-responsibilities will be reformed and the delegation process will start again.  
+responsibilities will be reformed and the delegation process will start again. 
+
+Primamry communication method: Discord.
+Purpose: This communication 
+should include a simple update on ones progress of their portion of the project. When a 
+member finishes their portion of the project, they should attach their finished product in 
+the Discord chat to all group members. Defined response time is 24 hours.
+
+Secondary communication method: School Email.
+Prupose: This communication will be used as a way to reach out to team memebrs who
+haven't been responsive to primary communication in over 24 hours.
+
 Group participation and work quality 
+
 1. Group participation: 
 =======
 responsibilities will be reformed and the delegation process will start again. 
@@ -214,9 +213,6 @@ situation. If someone is asked to share what they think or is asked to give othe
 share, but they do not, and their under or over sharing is blocking the flow of the meeting, 
 <<<<<<< Updated upstream
 then by group decision it may be considered a minor offense.
-2. Work not up to standard: 
-=======
-then the other members shall pause the meeting timer while helping the member understand.
 
 2. Work standard:
 Work quality is defined by having proper documentation, compiling code, readable code,
@@ -224,7 +220,6 @@ code follows SOLID principles, tests are passed, tests align with designed docum
 work is done in a timely fashion, and a show of effort.
 
 3. Work not up to standard: 
->>>>>>> Stashed changes
 Group standards, regarding quality and timeliness of work, are important to uphold if we 
 aim to succeed as a group. With goal 2 in mind we should always be putting forth the 
 effort necessary to submit our best work. However, if there is a problem it should be 
@@ -235,13 +230,15 @@ redistributed, using the system established in group decisions and delegation, a
 group can continue functioning at its highest level. repeated instances of this behavior 
 may result in a minor or major offence depending on the severity. In any case a minor 
 offence must be given to the individual, for this action, before a major offence can be.
-3. Group members unprepared: 
+
+4. Group members unprepared: 
 It is understood that people are busy with other classes and school work.  If by group 
 consciousness it is obvious that a member is unprepared for a meeting, and their 
 unpreparedness creates a hindrance to the group and project, then disciplinary action will 
 have to take place. Unpreparedness of this form will immediately result in a warning then 
 a minor offence hereafter. 
-4. Workload too heavy: 
+
+5. Workload too heavy: 
 If with the time restraints and number of group members actively participating is not 
 sufficient enough to complete the task, a plea of mercy will be sent to the Rock via email 
 and in person which logs the details of the amount of work to be done, the status of how 
@@ -288,6 +285,7 @@ Other tags may be added or removed by group consensus.
 
 >>>>>>> Stashed changes
 Disciplinary Procedures: 
+
 1. Regarding disciplinary actions: 
 Any disciplinary action to be administered should be agreed upon by the group and can be overridden by group conscience, if 
 decided by a majority vote. We understand that people have things going on, but work should be completed in a timely manor.
@@ -297,31 +295,42 @@ When a member witnesses a violation, they will make note with details. The notes
 
 3. Minor Group Offence:
 A minor group offence can occur for breaking indicated statutes of the charter. Minor 
-offences require the offender to give rationale for their violation in the meeting. 
-Groups members will take a mental note of the amount of violations per member.
+offences require the offender to give rationale for their violation in the meeting.
+A team memeber is given a warning for the first minor offence and is logged by R2-D2.
+Team memeber's work is redistributed to another team member after the second minor offence and is assigned
+a smaller scoped task. A third minor offence will be escalated to TA or Professor Rock and is finallized
+as a major offence. Groups members will take a mental note of the amount of violations per member.
+
+Minor offences include: 
+- Approving a pull request that wasn't fully checked, 
+- missing a meeting without note,
+- code not following work quality, 
+- misbehavior among team members,
+- team memebr missing project assignment without excuse.
+
 4. Major Group Offence: 
 A major group offence can occur by breaking indicated statutes of the charter, or for 
 accumulation of 3 or more minor offences. Major offences require the group to gather evidence and notify
 the professor. Reach out to the offender to let them know of their wrong doing.
+
+Major offences include:
+- Accumalting 3 or more minor offences.
+- Breaking team momentum during a sprint
+- Repeatdly yelling, ignroing, unnecessarily arguing with team memebers
+
 5. Punishment and Dismissal: 
 They will be referred to punishment and 
 dismissal and will be given over to review by the TA and governing bodies (the Rock). 
 An email describing the offences leading up to punishment and dismissal will be 
-Group Charter: KIAVGA  
 displayed along with testimonies from at least 2 other group members and a log of 
 offenses. If available, the offending members work will be confiscated and termed as 
 “belonging to the group”.
 
 We, the team named KIAVGA agree with the Group Charter and will try our best to uphold it. 
-Name _____________________________________ 
+Name Brady Siefken 
+Name Leo Cutraro
 Name Zeyad Gadelrab  
 Name Tony Kunz  
 Name Benjamin Forget
-Name   
-Name _____________________________________  
-Date _______________ 
+Name Nova Lawton
 Date 3/31/2026 
-Date _______________ 
-Date _______________ 
-Date 3/31/26 
-Date 3/31/2026
