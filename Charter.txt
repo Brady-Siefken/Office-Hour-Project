@@ -1,30 +1,48 @@
 Meetings: 
+<<<<<<< Updated upstream
 Tuesday after lab
 Friday 7 PM
 Sunday 2 PM
 Group Charter: KIAVGA (KIAVGA Is A Valid Group Name)
 Group Contacts: 
+=======
+Tuesday 1:30 PM Study space EMS 1st Floor
+Friday 7 PM (Virtual)
+Sunday 2 PM (Virtual)
+Group Charter: KIAVGA (KIAVGA Is A Valid Group Acronym)
+Group Contacts:
+Zeyad Gadelrab - 414-813-2212
+Ben Forget - 414-530-2760
+Leo Cutraro - 414-510-5602
+Nova Lawton - charlie.lawton.v@gmail.com or Discord mushroom8071
+
+
+>>>>>>> Stashed changes
 Goals:
 
 1. To adhere well as a group, respecting each member, and supporting each member by 
-working together to accomplish the goals listed below and adhering to this charter. 
+working together to accomplish the goals listed below and adhering to this charter.
+
 2. To gain a more intimate knowledge of the software life cycle by working as a group to 
-develop a quality product worth an “A”.  
+develop a quality product worth an “A”.
+
 3. To attain practical knowledge and experience of what it means to be a software engineer 
 and to familiarize ourselves with the methods and practices that are required to pull 
-together a team project.  
+together a team project.
+
+
 Work Norms: 
 1. Time commitment required by each group member:  
 Time commitment is a difficult thing to determine seeing one member may be able to 
 complete the same job in a less amount of time. The goal is to complete the job. If one 
 member is taking a substantial amount of time more than the others, it will be examined 
-by the group as to whether his work load should be decreased. 
+by the group as to whether his work load should be decreased.
+
 2. Dealing with different work habits: 
 The work habits of any particular member will not be an issue as long as the member 
 communicates progress, produces quality work, and the work is done by the dates 
 established by the group. If the member does not meet these standards, procedures to deal 
-with that member are further detailed in the ground rules. 
-Ground Rules: 
+with that member are further detailed in the ground rules.
 
 
 Meetings: 
@@ -35,7 +53,7 @@ are discouraged. The purpose of meetings is to establish communication and give
 direction to the project. Meetings occur 3 times per week, except when additional meetings are deemed necessary.
 This communication should take place through the group Discord chat. 
 It is understood that if a meeting takes too long, members may have to 
-leave for classes or other obligations. This type of situation will not constitute and offense. 
+leave for classes or other obligations. This type of situation will not constitute an offense. 
 
 2. Missing a meeting: 
 An occasional missing of a meeting can be accepted. If however an individual repeatedly 
@@ -77,6 +95,11 @@ the next meeting. If disruptive eating continues week after week, food may be ba
 meetings via a 4/6 majority decision by the group. If a member does not clean up after 
 themselves there will be a warning. After the first warning it will constitute a minor 
 offense.  
+<<<<<<< Updated upstream
+=======
+
+
+>>>>>>> Stashed changes
 Group communication and interaction:  
 1. Regular communication: 
 Regular communication should happen every two days via email. This communication 
@@ -92,28 +115,32 @@ disciplinary action; otherwise it will be an immediate minor offense. If however
 member responds within the 24 hour time period stating they forgot, no disciplinary 
 action will be taken. If a member is having problems with their portion of the work, they 
 should let the rest of the group knew immediately so they can received any needed help 
-as soon as possible.  
+as soon as possible. 
+
 2. Group communication on tardiness/missed meetings and meeting information: 
 If a member has prior knowledge of a missed meeting or tardiness of a day or more, that 
-member shall send an email to all group members signifying such. If it is the day of the 
+member shall send a message to all group members signifying such. If it is the day of the 
 meeting and a group member is going to miss the meeting or knows they are going to be 
-tardy by more than five minutes, that member shall send a text message to all group 
+tardy by more than five minutes, that member shall send a message to all group 
 members informing them of the situation. Failure to do so more than once will result in a 
-minor offense.  
+minor offense.
+
 3. Communication ethics: 
 There shall be an understanding among group members that all opinions or input by any 
 individual member is valued and will be respected, even if disagreed with. People and/or 
 their opinions shall not in any way be degraded or dismissed but all opinions shall have 
-equal consideration. If a member feels his opinions are being rejected without good 
-reason, he has a right to bring it up to the group leader and/or the group. The group will 
+equal consideration. If a member feels their opinions are being rejected without good 
+reason, they have a right to bring it up to the group leader and/or the group. The group will 
 then discuss the situation and either reconsider their opinions, or make a case as to why 
 the members opinions are not being used. If there is such a disagreement, the note taker 
-or agenda maker will record the situation as well as the member who feels disregarded. If 
+will record the situation as well as the member who feels disregarded. If 
 this situation happens more than three times the member has a right to go to the TA and 
 state their case. If the problem is not solved by the TA, the opportunity is then open to 
-state their case to Rock. 
+state their case to Rock.
+
 4. Group structure: 
 The group shall have the following roles to help the group be more efficient: 
+<<<<<<< Updated upstream
 Yoda – This role belongs to the group leader. This jedi master is responsible for the flow 
 of the meeting and has a helpful role in the delegation of responsibilities. 
 R2-D2 – This role belongs to the meeting note taker. This droid is responsible to take 
@@ -134,21 +161,70 @@ Any decisions which need to be made about the project, project direction or disc
 action will be made by a majority vote. Any decisions about delegation will be covered in 
 part six. 
 6. Group decisions on delegation: 
+=======
+- Flow Director - This role is responsible for making sure the flow of meetings is productive.
+- Note Taker - This role is responsible for taking notes during meetings, as well as managing
+the GitHub project during meetings.
+- Product Backlog Manager - This role is responsible for ordering the Product Backlog, and
+receives and processes requests by other members for new PBIs.
+
+If any member in a role does not follow through with their responsibilities on multiple 
+occasions or if for some reason a member is not able to perform their duties, the role shall
+migrate to another member either by volunteer or by majority vote.
+
+5. Decision making:
+Any decisions which need to be made about the project, project direction or disciplinary 
+action will be made by a majority vote. Any decisions about delegation will be covered in 
+part six. Majority vote is defined by having at least 4 members who agree. A 3-3 vote (Tie) 
+implies further discussion or compromise.
+
+6. Group decisions on delegation:
+>>>>>>> Stashed changes
 The delegation of responsibilities to group members will be decided in the following 
 fashion. The responsibilities will be discussed and decided on as a group decision. Then 
 each group member has the opportunity to volunteer for the task he may want. If a group 
 member does not volunteer for a task, they will be assigned one by Yoda. If a group 
 member feels the portion of responsibility is unfair, they may voice their concern and 
 state a reason why. If a majority of the group feels this member is correct, the 
+<<<<<<< Updated upstream
 responsibilities will be reformed and the delegation process will start again.  
 Group participation and work quality 
 1. Group participation: 
+=======
+responsibilities will be reformed and the delegation process will start again. 
+
+Primamry communication method: Discord.
+Purpose: This communication 
+should include a simple update on ones progress of their portion of the project. When a 
+member finishes their portion of the project, they should attach their finished product in 
+the Discord chat to all group members. Defined response time is 24 hours.
+
+Secondary communication method: Provided Email.
+Purpose: This communication will be used as a way to reach out to team memebrs who
+haven't been responsive to primary communication in over 24 hours.
+
+
+Group participation and work quality 
+
+1. Group participation:
+>>>>>>> Stashed changes
 If a group member isn't participating or is over participating it will be the group's 
 responsibility to politely ask the member to share either more or less based on the 
 situation. If someone is asked to share what they think or is asked to give others a chance to 
 share, but they do not, and their under or over sharing is blocking the flow of the meeting, 
+<<<<<<< Updated upstream
 then by group decision it may be considered a minor offense.
 2. Work not up to standard: 
+=======
+then the other members shall pause the meeting timer while helping the member understand.
+
+2. Work standard:
+Work quality is defined by having proper documentation, compiling code, readable code,
+code follows SOLID principles, tests are passed, tests align with designed documents,
+work is done in a timely fashion, and a show of effort.
+
+3. Work not up to standard: 
+>>>>>>> Stashed changes
 Group standards, regarding quality and timeliness of work, are important to uphold if we 
 aim to succeed as a group. With goal 2 in mind we should always be putting forth the 
 effort necessary to submit our best work. However, if there is a problem it should be 
@@ -170,13 +246,56 @@ If with the time restraints and number of group members actively participating i
 sufficient enough to complete the task, a plea of mercy will be sent to the Rock via email 
 and in person which logs the details of the amount of work to be done, the status of how 
 far we are, and why we can‟t complete it in that time period.  
+<<<<<<< Updated upstream
+=======
+
+6. Branching strategies:
+No team member is allowed to commit changes to Main without approval from other team members.
+Team members are allowed to make changes to their own seperate branches and make pull requests
+which will be approved by at least 1 team memeber to merge pull requests to main branch. 
+When assigning reviewrs to your pull requests, make sure to assign the whole team to get the best 
+feedback possible and to ensure code follows SOLID principles and adheres to the work quality standards stated above.
+
+7. Commit message format:
+All team members should clearly state what they added, deleted, fixed in their commits along with a description of what
+the goal of the change was.
+
+8. PBI format:
+A PBI shall consist of a time estimate, using a letter, which is one of the below:
+- Q - Quick: simple bugfixes which likely take less than 15 minutes to fix
+- S - Small: items taking less than 1 hour to complete
+- M - Medium: items taking less than 4 hours to complete
+- L - Large: items which may be the focus of an entire day, 8 hours
+Anything larger than Large should be broken up
+Then, the positive (+) cases and negative (-) cases are listed in their own lines, with formatting (IF, WHEN, THEN, etc) underlined.
+
+9. Task format:
+A task shall consist of a time estimate, using a letter, which is one of the below:
+- Q - Quick: simple bugfixes which likely take less than 15 minutes to fix
+- S - Small: items taking less than 1 hour to complete
+- M - Medium: items taking less than 4 hours to complete
+- L - Large: items which may be the focus of an entire day, 8 hours
+Anything larger than Large should be broken up
+Then a description of the task and all necessary context is supplied in the task description.
+Tasks must be tagged with the kind of work primarily required, 1 of:
+- Database
+- Front End
+- Design
+- Bugfix
+- Misc
+Other tags may be added or removed by group consensus.
+
+
+>>>>>>> Stashed changes
 Disciplinary Procedures: 
 1. Regarding disciplinary actions: 
 Any disciplinary action to be administered should be agreed upon by the group and can be overridden by group conscience, if 
 decided by a majority vote. We understand that people have things going on, but work should be completed in a timely manor.
-2. Disciplinary Log: 
+
+2. Disciplinary Log:
 When a member witnesses a violation, they will make note with details. The notes will be reported in each meeting.
-3. Minor Group Offence: 
+
+3. Minor Group Offence:
 A minor group offence can occur for breaking indicated statutes of the charter. Minor 
 offences require the offender to give rationale for their violation in the meeting. 
 Groups members will take a mental note of the amount of violations per member.
@@ -191,7 +310,8 @@ An email describing the offences leading up to punishment and dismissal will be
 Group Charter: KIAVGA  
 displayed along with testimonies from at least 2 other group members and a log of 
 offenses. If available, the offending members work will be confiscated and termed as 
-“belonging to the group”.  
+“belonging to the group”.
+
 We, the team named KIAVGA agree with the Group Charter and will try our best to uphold it. 
 Name _____________________________________ 
 Name Zeyad Gadelrab  
