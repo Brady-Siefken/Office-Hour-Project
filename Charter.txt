@@ -200,7 +200,7 @@ far we are, and why we can‟t complete it in that time period.
 *** 6. Branching strategies:
 No team member is allowed to commit changes to Main without approval from other team members.
 Team members are allowed to make changes to their own seperate branches and make pull requests
-which will be approved by at least 1 team memeber within 24 hours to merge pull requests to main branch. 
+which will be approved by at least 1 team memeber to merge pull requests to main branch. 
 When assigning reviewrs to your pull requests, make sure to assign the whole team to get the best 
 feedback possible and to ensure code follows SOLID principles and adheres to the work quality standards stated above.
 
@@ -223,18 +223,28 @@ A team memeber is given a warning for the first minor offence and is logged by R
 Team memeber's work is redistributed to another team member after the second minor offence and is assigned
 a smaller scoped task. A third minor offence will be escalated to TA or Professor Rock and is finallized
 as a major offence. Groups members will take a mental note of the amount of violations per member.
-Minor offences include: Approving a pull request that wasn't fully checked, missing a meeting without note,
-code not following work quality, misbehavior among team members, team memebr missing project assignment
-without excuse.
+
+Minor offences include: 
+- Approving a pull request that wasn't fully checked, 
+- missing a meeting without note,
+- code not following work quality, 
+- misbehavior among team members,
+- team memebr missing project assignment without excuse.
+
 4. Major Group Offence: 
 A major group offence can occur by breaking indicated statutes of the charter, or for 
 accumulation of 3 or more minor offences. Major offences require the group to gather evidence and notify
 the professor. Reach out to the offender to let them know of their wrong doing.
+
+Major offences include:
+- Accumalting 3 or more minor offences.
+- Breaking team momentum during a sprint
+- Repeatdly yelling, ignroing, unnecessarily arguing with team memebers
+
 5. Punishment and Dismissal: 
 They will be referred to punishment and 
 dismissal and will be given over to review by the TA and governing bodies (the Rock). 
 An email describing the offences leading up to punishment and dismissal will be 
-Group Charter: KIAVGA  
 displayed along with testimonies from at least 2 other group members and a log of 
 offenses. If available, the offending members work will be confiscated and termed as 
 “belonging to the group”.  
