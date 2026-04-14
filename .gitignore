@@ -1,0 +1,8 @@
+.vscode
+.venv
+db.sqlite3
+db.sqlite3-journal
+.env
+ENV/
+env.bak/
+venv.bak/
