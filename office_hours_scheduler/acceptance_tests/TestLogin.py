@@ -1,5 +1,8 @@
 from django.test import TestCase, Client
-from .models import InstructorUser, AssistantUser, AdminUser, StudentUser as Instructor, Assistant, Admin, Student
+from office_hours_scheduler.scheduler_app.models import InstructorUser as Instructor
+from office_hours_scheduler.scheduler_app.models import AssistantUser as Assistant
+from office_hours_scheduler.scheduler_app.models import AdminUser as Admin
+from office_hours_scheduler.scheduler_app.models import StudentUser as Student
 # Create your tests here.
 
 # Name of user story here, also its description can go here while working on it
