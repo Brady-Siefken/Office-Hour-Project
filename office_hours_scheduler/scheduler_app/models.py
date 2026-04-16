@@ -1,6 +1,9 @@
 from django.db import models
 
 # Create your models here.
+class Lecture(models.Model):
+    CourseName = models.CharField(max_length=20)
+    password = models.CharField(max_length=20)
 
 class StudentUser(models.Model):
     name = models.CharField(max_length=30)
