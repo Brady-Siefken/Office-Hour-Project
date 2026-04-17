@@ -1,6 +1,64 @@
 from django.shortcuts import render, redirect
 from django.views import View
-from .models import Lecture, AdminUser, InstructorUser, AssistantUser
+from .models import Lecture, AdminUser, InstructorUser, AssistantUser, StudentUser
+from django.db.models import Q
+
+#Login view
+class Home(View):
+    def get(self,request):
+        return render(request,"scheduler_app/login.html",{})
+
+    def post(self, request):
+        identifier = request.POST.get('username')
+        password = request.POST.get('password')
+
+        bad_password = False
+        # Check Admin
+        try:
+            user = StudentUser.objects.get(Q(username=identifier) | Q(email=identifier))
+            bad_password = (user.password != password)
+            if bad_password: return render(request, 'scheduler_app/login.html', {"message":"incorrect password"})
+            request.session['user_id'] = user.username
+            request.session['user_type'] = 'admin'
+            return redirect('/admin/dashboard/')
+        except AdminUser.DoesNotExist:
+            pass
+
+        # Check Instructor
+        try:
+            user = InstructorUser.objects.get(Q(username=identifier) | Q(email=identifier))
+            bad_password = (user.password != password)
+            if bad_password: return render(request, 'scheduler_app/login.html', {"message": "incorrect password"})
+            request.session['user_id'] = user.username
+            request.session['user_type'] = 'instructor'
+            return redirect('/instructor/dashboard/')
+        except InstructorUser.DoesNotExist:
+            pass
+
+        # Check Student
+        try:
+            user = StudentUser.objects.get(Q(username=identifier) | Q(email=identifier))
+            bad_password = (user.password != password)
+            if bad_password: return render(request, 'scheduler_app/login.html', {"message": "incorrect password"})
+            request.session['user_id'] = user.username
+            request.session['user_type'] = 'student'
+            return redirect('/student/dashboard/')
+        except StudentUser.DoesNotExist:
+            pass
+
+        # Check TA
+        try:
+            user = AssistantUser.objects.get(Q(username=identifier) | Q(email=identifier))
+            bad_password = (user.password != password)
+            if bad_password: return render(request, 'scheduler_app/login.html', {"message": "incorrect password"})
+            request.session['user_id'] = user.username
+            request.session['user_type'] = 'ta'
+            return redirect('/ta/dashboard/')
+        except AssistantUser.DoesNotExist:
+            pass
+
+        # If no match
+        return render(request, 'scheduler_app/login.html', {"message":"no such user"})
 
 class AdminDashboardView(View):
     def get(self, request):
