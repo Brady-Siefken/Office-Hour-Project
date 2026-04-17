@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin Dashboard</title>
+</head>
+<body>
+
+    <h1>Admin Dashboard</h1>
+    <p>Welcome, {{ user.username }}</p>
+
+    <nav>
+        <a href="{% url 'manage_users' %}">Manage Users</a> |
+        <a href="{% url 'manage_lectures' %}">Manage Courses</a> |
+        <a href="{% url 'logout' %}">Logout</a>
+    </nav>
+
+    <hr>
+
+    <h2>Summary</h2>
+    <p>Total Instructors: {{ instructor_count }}</p>
+    <p>Total TAs: {{ ta_count }}</p>
+
+    <hr>
+
+    <h2>All Lectures</h2>
+    {% if lecture_list %}
+        <table border="1" cellpadding="6">
+            <thead>
+                <tr>
+                    <th>Lecture</th>
+                    <th>Instructor</th>
+                    <th>Time</th>
+                    <th>TAs Assigned</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for lecture in lecture_list %}
+                    <tr>
+                        <td>{{ lecture.course_name }}</td>
+                        <td>{{ lecture.instructor }}</td>
+                        <td>{{ lecture.time }}</td>
+                        <td>{{ lecture.ta_count }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>No lectures found.</p>
+    {% endif %}
+
+</body>
+</html>
