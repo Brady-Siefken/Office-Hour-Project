@@ -1,3 +1,44 @@
 from django.db import models
 
 # Create your models here.
+class StudentUser(models.Model):
+    name = models.CharField(max_length=30)
+    username = models.CharField(max_length=20)
+    password = models.CharField(max_length=30)
+    email = models.CharField(max_length=20)
+
+class AdminUser(models.Model):
+    name = models.CharField(max_length=30)
+    username = models.CharField(max_length=20)
+    password = models.CharField(max_length=30)
+    email = models.CharField(max_length=20)
+
+class InstructorUser(models.Model):
+    name = models.CharField(max_length=30)
+    username = models.CharField(max_length=20)
+    password = models.CharField(max_length=30)
+    email = models.CharField(max_length=20)
+
+class AssistantUser(models.Model):
+    name = models.CharField(max_length=30)
+    username = models.CharField(max_length=20)
+    password = models.CharField(max_length=30)
+    email = models.CharField(max_length=20)
+
+class Timeslot(models.Model):
+    start_time = models.TimeField()
+    end_time = models.TimeField()
+    monday = models.BooleanField(default=False)
+    tuesday = models.BooleanField(default=False)
+    wednesday = models.BooleanField(default=False)
+    thursday = models.BooleanField(default=False)
+    friday = models.BooleanField(default=False)
+
+class Lecture(models.Model):
+    CourseName = models.CharField(max_length=20)
+    Instructor = models.ForeignKey(InstructorUser, on_delete=models.SET_NULL, null=True)
+    MeetingTimes = models.ForeignKey(Timeslot, on_delete=models.SET_NULL, null=True)
+    InstructorOfficeHours = models.ForeignKey(Timeslot, on_delete=models.SET_NULL, null=True)
+    TA = models.ForeignKey(AssistantUser, on_delete=models.SET_NULL, null=True)
+    TAOfficeHours = models.ForeignKey(Timeslot, on_delete=models.SET_NULL, null=True)
+    TAOfficeHoursApproved = models.BooleanField(default=False)
