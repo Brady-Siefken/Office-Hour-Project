@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin Dashboard</title>
+</head>
+<body>
+
+    <h1>Admin Dashboard</h1>
+    <p>Welcome, {{ user.username }}</p>
+
+    <nav>
+        <a href="#">Manage Users</a> |
+        <a href="#">Manage Courses</a> |
+        <a href="#">Logout</a>
+        <!-- TODO: Replace # with {% url 'manage_users' %}, {% url 'manage_courses' %}, {% url 'logout' %} once those URLs are defined in urls.py -->
+    </nav>
+
+    <hr>
+
+    <h2>Summary</h2>
+    <p>Total Instructors: {{ instructor_count }}</p>
+    <p>Total TAs: {{ ta_count }}</p>
+
+    <hr>
+
+    <h2>All Lectures</h2>
+    {% if lecture_list %}
+        <table border="1" cellpadding="6">
+            <thead>
+                <tr>
+                    <th>Course</th>
+                    <th>Instructor</th>
+                    <th>Meeting Times</th>
+                    <th>Assigned TA</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for lecture in lecture_list %}
+                    <tr>
+                        <td>{{ lecture.CourseName }}</td>
+                        <td>{{ lecture.Instructor.name|default:"(not assigned)" }}</td>
+                        <td>{{ lecture.MeetingTimes|default:"(not set)" }}</td>
+                        <td>{{ lecture.TA.name|default:"(none)" }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>No lectures found.</p>
+    {% endif %}
+
+</body>
+</html>
