@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>TA Dashboard</title>
+</head>
+<body>
+
+    <h1>TA Dashboard</h1>
+    <p>Welcome, {{ ta_user.username }}</p>
+
+    <nav>
+        <a href="#">Propose Hours</a> |
+        <a href="#">Schedule</a> |
+        <a href="#">Logout</a>
+        <!-- TODO: Replace # with {% url 'propose_hours' %}, {% url 'schedule' %}, {% url 'logout' %} once those URLs are defined in urls.py -->
+    </nav>
+
+    <hr>
+
+    <h2>My Lectures</h2>
+    {% if my_lectures %}
+        <table border="1" cellpadding="6">
+            <thead>
+                <tr>
+                    <th>Course Name</th>
+                    <th>Instructor</th>
+                    <th>Meeting Times</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for lecture in my_lectures %}
+                    <tr>
+                        <td>{{ lecture.CourseName }}</td>
+                        <td>{{ lecture.Instructor.name|default:"(not assigned)" }}</td>
+                        <td>{{ lecture.MeetingTimes|default:"(not set)" }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>No lectures assigned.</p>
+    {% endif %}
+
+    <hr>
+
+    <h2>Upcoming Office Hours</h2>
+    {% if upcoming_office_hours %}
+        <table border="1" cellpadding="6">
+            <thead>
+                <tr>
+                    <th>Course Name</th>
+                    <th>Office Hours</th>
+                    <th>Approved</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for office_hour in upcoming_office_hours %}
+                    <tr>
+                        <td>{{ office_hour.CourseName }}</td>
+                        <td>{{ office_hour.TAOfficeHours|default:"(not set)" }}</td>
+                        <td>{{ office_hour.TAOfficeHoursApproved|yesno:"Yes,No" }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>No upcoming office hours.</p>
+    {% endif %}
+
+</body>
+</html>
