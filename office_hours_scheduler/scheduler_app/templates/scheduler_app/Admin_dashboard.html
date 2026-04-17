@@ -10,9 +10,10 @@
     <p>Welcome, {{ user.username }}</p>
 
     <nav>
-        <a href="{% url 'manage_users' %}">Manage Users</a> |
-        <a href="{% url 'manage_lectures' %}">Manage Courses</a> |
-        <a href="{% url 'logout' %}">Logout</a>
+        <a href="#">Manage Users</a> |
+        <a href="#">Manage Courses</a> |
+        <a href="#">Logout</a>
+        <!-- TODO: Replace # with {% url 'manage_users' %}, {% url 'manage_courses' %}, {% url 'logout' %} once those URLs are defined in urls.py -->
     </nav>
 
     <hr>
@@ -28,19 +29,19 @@
         <table border="1" cellpadding="6">
             <thead>
                 <tr>
-                    <th>Lecture</th>
+                    <th>Course</th>
                     <th>Instructor</th>
-                    <th>Time</th>
-                    <th>TAs Assigned</th>
+                    <th>Meeting Times</th>
+                    <th>Assigned TA</th>
                 </tr>
             </thead>
             <tbody>
                 {% for lecture in lecture_list %}
                     <tr>
-                        <td>{{ lecture.course_name }}</td>
-                        <td>{{ lecture.instructor }}</td>
-                        <td>{{ lecture.time }}</td>
-                        <td>{{ lecture.ta_count }}</td>
+                        <td>{{ lecture.CourseName }}</td>
+                        <td>{{ lecture.Instructor.name|default:"(not assigned)" }}</td>
+                        <td>{{ lecture.MeetingTimes|default:"(not set)" }}</td>
+                        <td>{{ lecture.TA.name|default:"(none)" }}</td>
                     </tr>
                 {% endfor %}
             </tbody>
