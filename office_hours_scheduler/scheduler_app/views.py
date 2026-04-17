@@ -37,3 +37,5 @@ class AdminDashboardView(View):
     def post(self, request):
         # like the design doc says, POST is navigation only so there's nothing to handle here.
         return redirect('/admin/dashboard/')
+
+    ################ Create next View here #########################
