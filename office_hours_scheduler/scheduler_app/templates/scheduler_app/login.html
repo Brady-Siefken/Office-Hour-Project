@@ -17,15 +17,18 @@
       <h2>Sign in</h2>
     </div>
 
+    {% if message %}
+      <p class="form-error">{{ message }}</p>
+    {% endif %}
 
     <form id="login-form" method="post" action="{% url 'login' %}">
       {% csrf_token %}
 
       <div class="field">
-        <label for="email">Email address</label>
+        <label for="username">Username/Email</label>
         <div class="input-wrap">
           <!--request.POST.get('email') -->
-          <input type="email" id="email" name="email" placeholder="you@uwm.edu" autocomplete="email" required/>
+          <input type="text" id="username" name="username" placeholder="username or you@uwm.edu" autocomplete="username" required/>
         </div>
       </div>
 
