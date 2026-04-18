@@ -59,11 +59,15 @@ class TADashboardView(View):
         # Query upcoming office hours for this TA
         upcoming_office_hours = my_lectures.filter(TAOfficeHoursApproved=True)
 
+        # Query upcoming unapproved office hours for this TA
+        pending_office_hours = my_lectures.filter(TAOfficeHoursApproved=False)
+
         # Bundle data for the template
         context = {
             'ta_user': ta_user,
             'my_lectures': my_lectures,
             'upcoming_office_hours': upcoming_office_hours,
+            'pending_office_hours': pending_office_hours,
         }
 
         # Render the template
