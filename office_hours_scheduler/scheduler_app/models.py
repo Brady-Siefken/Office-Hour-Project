@@ -6,24 +6,32 @@ class StudentUser(models.Model):
     username = models.CharField(max_length=20)
     password = models.CharField(max_length=30)
     email = models.CharField(max_length=20)
+    class Meta:
+        app_label = 'scheduler_app'
 
 class AdminUser(models.Model):
     name = models.CharField(max_length=30)
     username = models.CharField(max_length=20)
     password = models.CharField(max_length=30)
     email = models.CharField(max_length=20)
+    class Meta:
+        app_label = 'scheduler_app'
 
 class InstructorUser(models.Model):
     name = models.CharField(max_length=30)
     username = models.CharField(max_length=20)
     password = models.CharField(max_length=30)
     email = models.CharField(max_length=20)
+    class Meta:
+        app_label = 'scheduler_app'
 
 class AssistantUser(models.Model):
     name = models.CharField(max_length=30)
     username = models.CharField(max_length=20)
     password = models.CharField(max_length=30)
     email = models.CharField(max_length=20)
+    class Meta:
+        app_label = 'scheduler_app'
 
 class Timeslot(models.Model):
     start_time = models.TimeField()
@@ -33,6 +41,8 @@ class Timeslot(models.Model):
     wednesday = models.BooleanField(default=False)
     thursday = models.BooleanField(default=False)
     friday = models.BooleanField(default=False)
+    class Meta:
+        app_label = 'scheduler_app'
 
 class Lecture(models.Model):
     CourseName = models.CharField(max_length=20)
@@ -42,3 +52,5 @@ class Lecture(models.Model):
     TA = models.ForeignKey(AssistantUser, on_delete=models.SET_NULL, null=True)
     TAOfficeHours = models.ForeignKey(Timeslot, on_delete=models.SET_NULL, null=True)
     TAOfficeHoursApproved = models.BooleanField(default=False)
+    class Meta:
+        app_label = 'scheduler_app'
