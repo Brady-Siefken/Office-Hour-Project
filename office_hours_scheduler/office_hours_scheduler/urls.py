@@ -26,13 +26,9 @@ urlpatterns = [
     #path('admin/lectures/', AdminManageLecturesView.as_view()),
     #path('ta/dashboard/', TADashboardView.as_view()),
     #path('staff/office-hours/propose/', OfficeHourProposalView.as_view()),
-    #path('staff/office-hours/', OfficeHoursView.as_view()),
+    #path('office-hours/', OfficeHoursView.as_view()),
     #path('instructor/office-hours/approve/', InstructorApproveHoursView.as_view()),
     #path('student/reserve/', StudentReserveHoursView.as_view()),
     #path('student/reservations/', StudentReservationsView.as_view()),
     #path('staff/tardy-report/', TardyReportView.as_view()),
-
-
-
-
 ]
