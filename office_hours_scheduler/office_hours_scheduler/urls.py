@@ -16,7 +16,23 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
+from scheduler_app.views import *
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('', Home.as_view()), #Login Page
+    path('admin/dashboard/', AdminDashboardView.as_view()),
+    #path('admin/users/', AdminManageUsersView.as_view()),
+    #path('admin/lectures/', AdminManageLecturesView.as_view()),
+    #path('ta/dashboard/', TADashboardView.as_view()),
+    #path('staff/office-hours/propose/', OfficeHourProposalView.as_view()),
+    #path('staff/office-hours/', OfficeHoursView.as_view()),
+    #path('instructor/office-hours/approve/', InstructorApproveHoursView.as_view()),
+    #path('student/reserve/', StudentReserveHoursView.as_view()),
+    #path('student/reservations/', StudentReservationsView.as_view()),
+    #path('staff/tardy-report/', TardyReportView.as_view()),
+
+
+
+
 ]
