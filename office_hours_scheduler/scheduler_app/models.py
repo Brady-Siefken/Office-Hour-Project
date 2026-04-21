@@ -46,11 +46,11 @@ class Timeslot(models.Model):
 
 class Lecture(models.Model):
     CourseName = models.CharField(max_length=20)
-    Instructor = models.ForeignKey(InstructorUser, on_delete=models.SET_NULL, null=True)
-    MeetingTimes = models.ForeignKey(Timeslot, on_delete=models.SET_NULL, null=True)
-    InstructorOfficeHours = models.ForeignKey(Timeslot, on_delete=models.SET_NULL, null=True)
-    TA = models.ForeignKey(AssistantUser, on_delete=models.SET_NULL, null=True)
-    TAOfficeHours = models.ForeignKey(Timeslot, on_delete=models.SET_NULL, null=True)
+    Instructor = models.ForeignKey(InstructorUser, on_delete=models.SET_NULL, null=True, related_name='instructor')
+    MeetingTimes = models.ForeignKey(Timeslot, on_delete=models.SET_NULL, null=True, related_name='MeetingTimes')
+    InstructorOfficeHours = models.ForeignKey(Timeslot, on_delete=models.SET_NULL, null=True, related_name='InstructorOfficeHours')
+    TA = models.ForeignKey(AssistantUser, on_delete=models.SET_NULL, null=True, related_name='TA')
+    TAOfficeHours = models.ForeignKey(Timeslot, on_delete=models.SET_NULL, null=True, related_name='TAOfficeHours')
     TAOfficeHoursApproved = models.BooleanField(default=False)
     class Meta:
         app_label = 'scheduler_app'
