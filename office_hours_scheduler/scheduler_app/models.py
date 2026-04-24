@@ -1,4 +1,5 @@
 from django.db import models
+from django.core.validators import MinValueValidator, MaxValueValidator
 
 # Create your models here.
 class StudentUser(models.Model):
@@ -54,3 +55,33 @@ class Lecture(models.Model):
     TAOfficeHoursApproved = models.BooleanField(default=False)
     class Meta:
         app_label = 'scheduler_app'
+
+class Department(models.Model):
+    departmentName = models.CharField(max_length=20)
+
+class Course(models.Model):
+    department = models.ForeignKey(Department, on_delete=models.SET_NULL, null=True, related_name='courses')
+    courseCode = models.IntegerField(validators=[MinValueValidator(1), MaxValueValidator(999)])
+    courseName = models.CharField(max_length=20)
+
+class User(models.Model):
+    USER_TYPES = [
+        ('INSTRUCTOR', 'Instructor'),
+        ('TA', 'TA'),
+        ('STUDENT', 'Student'),
+    ]
+
+    email = models.EmailField(unique=True)
+    password = models.CharField(max_length=128)
+    name = models.CharField(max_length=50)
+    user_type = models.CharField(max_length=20, choices=USER_TYPES)
+
+class Section(models.Model):
+    instructor = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='sections')
+    ta = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='sections_assisting')
+    sectionCode = models.IntegerField(validators=[MinValueValidator(1),MaxValueValidator(999)])
+    course = models.ForeignKey(Course, on_delete=models.SET_NULL, null=True, related_name='sections')
+
+
+
+
