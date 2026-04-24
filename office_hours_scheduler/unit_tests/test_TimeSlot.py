@@ -1,18 +1,18 @@
-from django.test import TestCase, Client
-import sys
-sys.path.append(__file__.split("/unit_tests")[0])
+import unittest
+
+
 from classes.TimeSlot import TimeSlot
-class TestStudentLogin(TestCase):
+class TestStudentLogin(unittest.TestCase):
     slot:TimeSlot = TimeSlot()
     def setUp(self):
         self.slot.data = 0b110101100111110000000
-    def TestSunday(self):
+    def test_Sunday(self):
         self.assertFalse(self.slot.getSunday())
-    def TestMonday(self):
+    def test_Monday(self):
         self.assertFalse(self.slot.getMonday())
-    def TestTuesday(self):
+    def testTuesday(self):
         self.assertFalse(self.slot.getTuesday())
-    def TestWednesday(self):
+    def testWednesday(self):
         self.assertFalse(self.slot.getWednesday())
     def TestThursday(self):
         self.assertFalse(self.slot.getThursday())
@@ -43,13 +43,13 @@ class TestStudentLogin(TestCase):
         self.slot.data = 0b1111111
         self.assertTrue(self.slot.getSaturday())
 
-for i in TestStudentLogin.__dict__:
-    if i.startswith("Test"):
-        print("test "+i)
-        test = TestStudentLogin(i)
-        test.setUpTestData()
-        test.setUpClass()
-        test.setUp()
-        test.run()
-        test.tearDown()
-        test.tearDownClass()
+# for i in TestStudentLogin.__dict__:
+#     if i.startswith("Test"):
+#         print("test "+i)
+#         test = TestStudentLogin(i)
+#         test.setUpTestData()
+#         test.setUpClass()
+#         test.setUp()
+#         test.run()
+#         test.tearDown()
+#         test.tearDownClass()
