@@ -10,36 +10,36 @@ class TestStudentLogin(unittest.TestCase):
         self.assertFalse(self.slot.getSunday())
     def test_Monday(self):
         self.assertFalse(self.slot.getMonday())
-    def testTuesday(self):
+    def test_Tuesday(self):
         self.assertFalse(self.slot.getTuesday())
-    def testWednesday(self):
+    def test_Wednesday(self):
         self.assertFalse(self.slot.getWednesday())
-    def TestThursday(self):
+    def test_Thursday(self):
         self.assertFalse(self.slot.getThursday())
-    def TestFriday(self):
+    def test_Friday(self):
         self.assertFalse(self.slot.getFriday())
-    def TestSaturday(self):
+    def test_Saturday(self):
         self.assertFalse(self.slot.getSaturday())
     
-    def TestSundayTrue(self):
+    def test_SundayTrue(self):
         self.slot.data = 0b1111111
         self.assertTrue(self.slot.getSunday())
-    def TestMondayTrue(self):
+    def test_MondayTrue(self):
         self.slot.data = 0b1111111
         self.assertTrue(self.slot.getMonday())
-    def TestTuesdayTrue(self):
+    def test_TuesdayTrue(self):
         self.slot.data = 0b1111111
         self.assertTrue(self.slot.getTuesday())
-    def TestWednesdayTrue(self):
+    def test_WednesdayTrue(self):
         self.slot.data = 0b1111111
         self.assertTrue(self.slot.getWednesday())
-    def TestThursdayTrue(self):
+    def test_ThursdayTrue(self):
         self.slot.data = 0b1111111
         self.assertTrue(self.slot.getThursday())
-    def TestFridayTrue(self):
+    def test_FridayTrue(self):
         self.slot.data = 0b1111111
         self.assertTrue(self.slot.getFriday())
-    def TestSaturdayTrue(self):
+    def test_SaturdayTrue(self):
         self.slot.data = 0b1111111
         self.assertTrue(self.slot.getSaturday())
 
