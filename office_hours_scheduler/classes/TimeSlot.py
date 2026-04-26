@@ -15,10 +15,14 @@ class TimeSlot:
     def getSaturday(self)->bool:
         return self.data&0b1000000!=0
     def getMinutesIntoDay(self)->int:
-        return 0
+        # shifts the relevant bits into front position, then excludes everything else with a bitmask
+        # may need to switch bitshift direction << to >> and/or change the number of bits shifted
+        # same for length
+        return (self.data<<14)&0b11111111111
     def getLengthMinutes(self)->int:
-        return 0
+        return (self.data<<7)&0b11111111111
     def __str__(self)->str:
+        # TODO
         return ""
 DayOfWeek = {
     0:"Sunday",
