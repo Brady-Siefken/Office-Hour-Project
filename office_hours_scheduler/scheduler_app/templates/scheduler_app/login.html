@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -5,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>UWM Login</title>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
-  <link rel="stylesheet" href="css/styles.css"/>
+  <link rel="stylesheet" href="{% static 'css/styles.css' %}"/>
 </head>
 <body>
 
@@ -21,7 +22,7 @@
       <p class="form-error">{{ message }}</p>
     {% endif %}
 
-    <form id="login-form" method="post" action="{% url 'login' %}">
+    <form id="login-form" method="post" action="/">
       {% csrf_token %}
 
       <div class="field">
