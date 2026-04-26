@@ -1,21 +1,16 @@
-from scheduler_app.models import Course, Department
+from scheduler_app.models import Course
 
 
 class CourseClass:
 
-    def __init__(self, department_name, course_code, course_name):
-
-        # Quietly create department if it doesn't exist
-        department, _ = Department.objects.get_or_create(
-            departmentName=department_name
-        )
-
-        # Natural key: (department, courseCode)
-        self.course, _ = Course.objects.get_or_create(
-            department=department,
-            courseCode=course_code,
-            defaults={"courseName": course_name},
-        )
+    def __init__(self, department_name, course_code):
+        try:
+            self.course = Course.objects.get(
+                department__departmentName=department_name,
+                courseCode=course_code
+            )
+        except Course.DoesNotExist:
+            raise ValueError("Course does not exist")
 
     # ----------------------------
     # Getters (NO side effects)
@@ -32,20 +27,14 @@ class CourseClass:
 
     def getSections(self):
         from classes.Sections import SectionClass
-
-        sections = []
-        for s in self.course.sections.all():
-            instructor_email = s.instructor.email if s.instructor else None
-            ta_email = s.ta.email if s.ta else None
-            sections.append(
-                SectionClass(
-                    s.course.courseCode,
-                    s.sectionCode,
-                    instructor_email,
-                    ta_email,
-                )
+        return [
+            SectionClass(
+                self.course.department.departmentName,
+                self.course.courseCode,
+                s.sectionCode
             )
-        return sections
+            for s in self.course.sections.all()
+        ]
 
     # ----------------------------
     # String representation

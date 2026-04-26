@@ -71,17 +71,23 @@ class Course(models.Model):
 
 
 class User(models.Model):
+    USER_TYPE_CHOICES = [(t, t) for t in USER_TYPES]
     email = models.EmailField(unique=True)
     password = models.CharField(max_length=128)
     name = models.CharField(max_length=50)
-    user_type = models.CharField(max_length=20, choices=USER_TYPES)
+    user_type = models.CharField(max_length=20, choices=USER_TYPE_CHOICES)
+
+from classes.constants import SECTION_TYPES
 
 class Section(models.Model):
-    instructor = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='sections')
-    ta = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='sections_assisting')
-    sectionCode = models.IntegerField(validators=[MinValueValidator(1),MaxValueValidator(999)])
+    SECTION_TYPE_CHOICES = [(t, t) for t in SECTION_TYPES]
+
+    instructor = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name='sections')
+    ta = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name='sections_assisting')
+    sectionCode = models.IntegerField(validators=[MinValueValidator(1), MaxValueValidator(999)])
     course = models.ForeignKey(Course, on_delete=models.SET_NULL, null=True, related_name='sections')
-    timeslot = models.ForeignKey(Timeslot, on_delete=models.SET_NULL, null=True, related_name='sections')
+    timeslot = models.ForeignKey(Timeslot, on_delete=models.SET_NULL, null=True, blank=True, related_name='sections')
+    section_type = models.CharField(max_length=20, choices=SECTION_TYPE_CHOICES, default="LECTURE")
 
 class OfficeHourReservation(models.Model):
     student = models.ForeignKey(

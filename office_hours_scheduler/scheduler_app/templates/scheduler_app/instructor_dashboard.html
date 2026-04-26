@@ -2,18 +2,20 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>TA Dashboard</title>
+    <title>Instructor Dashboard</title>
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
     <link rel="stylesheet" href="/css/styles.css"/>
 </head>
 <body>
 
-    <h1>TA Dashboard</h1>
+    <h1>Instructor Dashboard</h1>
     <p>Welcome, {{ user.getName }}</p>
 
     <div class="action-buttons">
         <a href="/staff/office-hours/propose/" class="btn">Propose Hours</a>
+        <a href="/instructor/office-hours/approve/" class="btn">Approve Hours</a>
         <a href="/office-hours/" class="btn">Schedule</a>
+        <a href="/staff/tardy-report/" class="btn">See Tardy/No Show Report</a>
         <a href="/logout/" class="btn">Logout</a>
     </div>
 
@@ -29,7 +31,7 @@
                     <th>Course Name</th>
                     <th>Section</th>
                     <th>Type</th>
-                    <th>Instructor</th>
+                    <th>TA</th>
                 </tr>
             </thead>
             <tbody>
@@ -40,7 +42,7 @@
                     <td>{{ section.getCourse.getCourseName }}</td>
                     <td>{{ section.getSectionCode }}</td>
                     <td>{{ section.getSectionType }}</td>
-                    <td>{{ section.getInstructor|default:"(none)" }}</td>
+                    <td>{{ section.getTA|default:"(none)" }}</td>
                 </tr>
                 {% endfor %}
             </tbody>

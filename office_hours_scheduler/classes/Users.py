@@ -4,23 +4,15 @@ from classes.constants import USER_TYPES
 
 class UserClass:
 
-    def __init__(self, email, password=None, name=None, user_type=None):
+    def __init__(self, email):
+        try:
+            self.user = User.objects.get(email=email)
+        except User.DoesNotExist:
+            raise ValueError("User does not exist")
 
-        if not User.objects.filter(email=email).exists():
-            if password is None or name is None or user_type is None:
-                self.user = None
-                return
-            if user_type not in USER_TYPES:
-                raise ValueError(f"Invalid user_type '{user_type}'")
-
-        self.user, _ = User.objects.get_or_create(
-            email=email,
-            defaults={
-                "password": password,
-                "name": name,
-                "user_type": user_type,
-            }
-        )
+    # ----------------------------
+    # Getters (NO side effects)
+    # ----------------------------
 
     def getEmail(self):
         return self.user.email
@@ -33,6 +25,10 @@ class UserClass:
 
     def getType(self):
         return self.user.user_type
+
+    # ----------------------------
+    # Setters
+    # ----------------------------
 
     def setName(self, name):
         self.user.name = name
@@ -53,8 +49,10 @@ class UserClass:
             raise ValueError(f"Invalid user_type '{user_type}'")
         self.user.user_type = user_type
         self.user.save()
-    def exists(self):
-        return self.user is not None
+
+    # ----------------------------
+    # String representation
+    # ----------------------------
 
     def __str__(self):
         return self.user.name

@@ -4,18 +4,17 @@
     <meta charset="UTF-8">
     <title>Admin Dashboard</title>
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
-  <link rel="stylesheet" href="css/styles.css"/>
+    <link rel="stylesheet" href="css/styles.css"/>
 </head>
 <body>
 
     <h1>Admin Dashboard</h1>
-    <p>Welcome, {{ user.username }}</p>
+    <p>Welcome, {{ user.getName }}</p>
 
     <div class="action-buttons">
-        <a href="#" class="btn">Manage Users</a>
-        <a href="#" class="btn">Manage Courses</a>
-        <a href="#" class="btn">Logout</a>
-        <!-- TODO: Replace # with {% url 'manage_users' %}, {% url 'manage_courses' %}, {% url 'logout' %} once those URLs are defined in urls.py -->
+        <a href="/admin/users/" class="btn">Manage Users</a>
+        <a href="/admin/courses/" class="btn">Manage Courses</a>
+        <a href="/logout/" class="btn">Logout</a>
     </div>
 
     <hr>
@@ -31,20 +30,40 @@
         <table border="1" cellpadding="6">
             <thead>
                 <tr>
-                    <th>Course</th>
+                    <th>Department</th>
+                    <th>Course Code</th>
+                    <th>Course Name</th>
+                    <th>Section</th>
+                    <th>Type</th>
                     <th>Instructor</th>
-                    <th>Meeting Times</th>
-                    <th>Assigned TA</th>
+                    <th>TA</th>
                 </tr>
             </thead>
             <tbody>
                 {% for lecture in lecture_list %}
-                    <tr>
-                        <td>{{ lecture.CourseName }}</td>
-                        <td>{{ lecture.Instructor.name|default:"(not assigned)" }}</td>
-                        <td>{{ lecture.MeetingTimes|default:"(not set)" }}</td>
-                        <td>{{ lecture.TA.name|default:"(none)" }}</td>
-                    </tr>
+                    {% if lecture.getSections %}
+                        {% for section in lecture.getSections %}
+                        <tr>
+                            <td>{{ lecture.getCourseDepartment }}</td>
+                            <td>{{ lecture.getCourseCode }}</td>
+                            <td>{{ lecture.getCourseName }}</td>
+                            <td>{{ section.getSectionCode }}</td>
+                            <td>{{ section.getSectionType }}</td>
+                            <td>{{ section.getInstructor|default:"(not assigned)" }}</td>
+                            <td>{{ section.getTA|default:"(none)" }}</td>
+                        </tr>
+                        {% endfor %}
+                    {% else %}
+                        <tr>
+                            <td>{{ lecture.getCourseDepartment }}</td>
+                            <td>{{ lecture.getCourseCode }}</td>
+                            <td>{{ lecture.getCourseName }}</td>
+                            <td>(none)</td>
+                            <td>(none)</td>
+                            <td>(not assigned)</td>
+                            <td>(none)</td>
+                        </tr>
+                    {% endif %}
                 {% endfor %}
             </tbody>
         </table>

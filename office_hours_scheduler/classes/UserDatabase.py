@@ -9,13 +9,16 @@ def doesUserWithEmailExist(email):
 
 
 def getUser(email):
-    if not doesUserWithEmailExist(email):
+    try:
+        return UserClass(email)
+    except ValueError:
         return None
-    return UserClass(email)
 
 
 def validatePassword(email, password):
     user = getUser(email)
+    if user is None:
+        return False
     return user.getPassword() == password
 
 
@@ -38,7 +41,14 @@ def countByType(user_type):
 def createUser(email, password, name, user_type):
     if doesUserWithEmailExist(email):
         raise ValueError("User already exists")
-    UserClass(email, password, name, user_type)
+    if user_type not in USER_TYPES:
+        raise ValueError(f"Invalid user_type '{user_type}'")
+    User.objects.create(
+        email=email,
+        password=password,
+        name=name,
+        user_type=user_type
+    )
 
 
 def deleteUser(email):
