@@ -1,5 +1,6 @@
 from django.db import models
 from django.core.validators import MinValueValidator, MaxValueValidator
+from classes.constants import USER_TYPES
 
 # Create your models here.
 class StudentUser(models.Model):
@@ -47,14 +48,17 @@ class Timeslot(models.Model):
 
 class Lecture(models.Model):
     CourseName = models.CharField(max_length=20)
-    Instructor = models.ForeignKey(InstructorUser, on_delete=models.SET_NULL, null=True, related_name='instructor')
-    MeetingTimes = models.ForeignKey(Timeslot, on_delete=models.SET_NULL, null=True, related_name='MeetingTimes')
-    InstructorOfficeHours = models.ForeignKey(Timeslot, on_delete=models.SET_NULL, null=True, related_name='InstructorOfficeHours')
-    TA = models.ForeignKey(AssistantUser, on_delete=models.SET_NULL, null=True, related_name='TA')
-    TAOfficeHours = models.ForeignKey(Timeslot, on_delete=models.SET_NULL, null=True, related_name='TAOfficeHours')
+    Instructor = models.ForeignKey(InstructorUser, on_delete=models.SET_NULL, null=True)
+    MeetingTimes = models.ForeignKey(Timeslot, on_delete=models.SET_NULL, null=True, related_name='lecture_meeting_times')
+    InstructorOfficeHours = models.ForeignKey(Timeslot, on_delete=models.SET_NULL, null=True, related_name='lecture_instructor_hours')
+    TA = models.ForeignKey(AssistantUser, on_delete=models.SET_NULL, null=True)
+    TAOfficeHours = models.ForeignKey(Timeslot, on_delete=models.SET_NULL, null=True, related_name='lecture_ta_hours')
     TAOfficeHoursApproved = models.BooleanField(default=False)
-    class Meta:
-        app_label = 'scheduler_app'
+
+
+
+
+
 
 class Department(models.Model):
     departmentName = models.CharField(max_length=20)
@@ -64,13 +68,9 @@ class Course(models.Model):
     courseCode = models.IntegerField(validators=[MinValueValidator(1), MaxValueValidator(999)])
     courseName = models.CharField(max_length=20)
 
-class User(models.Model):
-    USER_TYPES = [
-        ('INSTRUCTOR', 'Instructor'),
-        ('TA', 'TA'),
-        ('STUDENT', 'Student'),
-    ]
 
+
+class User(models.Model):
     email = models.EmailField(unique=True)
     password = models.CharField(max_length=128)
     name = models.CharField(max_length=50)
@@ -81,6 +81,56 @@ class Section(models.Model):
     ta = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='sections_assisting')
     sectionCode = models.IntegerField(validators=[MinValueValidator(1),MaxValueValidator(999)])
     course = models.ForeignKey(Course, on_delete=models.SET_NULL, null=True, related_name='sections')
+    timeslot = models.ForeignKey(Timeslot, on_delete=models.SET_NULL, null=True, related_name='sections')
+
+class OfficeHourReservation(models.Model):
+    student = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='office_hour_reservations_made'
+    )
+
+    staff = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='office_hour_reservations_received'
+    )
+
+    course = models.ForeignKey(
+        Course,
+        on_delete=models.CASCADE,
+        related_name='office_hour_reservations'
+    )
+
+    timeslot = models.ForeignKey(
+        Timeslot,
+        on_delete=models.CASCADE,
+        related_name='office_hour_reservations'
+    )
+
+    reservationDate = models.DateField()
+    reservedAt = models.DateTimeField(auto_now_add=True)
+
+class OfficeHour(models.Model):
+        staff = models.ForeignKey(
+            User,
+            on_delete=models.CASCADE,
+            related_name='office_hours_given'
+        )
+
+        course = models.ForeignKey(
+            Course,
+            on_delete=models.CASCADE,
+            related_name='office_hours'
+        )
+
+        timeslot = models.ForeignKey(
+            Timeslot,
+            on_delete=models.CASCADE,
+            related_name='office_hours'
+        )
+
+
 
 
 
