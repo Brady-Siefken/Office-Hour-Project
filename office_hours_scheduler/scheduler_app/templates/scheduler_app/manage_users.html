@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Manage Users</title>
+</head>
+<body>
+    <nav>
+        <a href="/admin/dashboard/">Back</a> |
+        <a href="/logout/">Logout</a>
+    </nav>
+
+    <h1>Manage Users</h1>
+
+    {% if duplicate_msg %}
+        <p style="color: red;">{{ duplicate_msg }}</p>
+    {% endif %}
+
+    <!-- Create User Form -->
+    <h2>Create User</h2>
+    <form method="post">
+        {% csrf_token %}
+        <input type="hidden" name="action" value="create">
+        <input type="text" name="name" placeholder="Name" required>
+        <input type="email" name="email" placeholder="Email" required>
+        <input type="password" name="password" placeholder="Password" required>
+        <select name="user_type">
+            <option value="INSTRUCTOR">Instructor</option>
+            <option value="TA">TA</option>
+            <option value="STUDENT">Student</option>
+        </select>
+        <button type="submit">Create</button>
+    </form>
+
+    <!-- Instructors -->
+    <h2>Instructors</h2>
+    <table>
+        <tr>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Actions</th>
+        </tr>
+        {% for instructor in instructor_list %}
+        <tr>
+            <td>{{ instructor.getName }}</td>
+            <td>{{ instructor.getEmail }}</td>
+            <td>
+                <!-- Edit Form -->
+                <form method="post" style="display:inline;">
+                    {% csrf_token %}
+                    <input type="hidden" name="action" value="edit">
+                    <input type="hidden" name="email" value="{{ instructor.getEmail }}">
+                    <input type="text" name="name" placeholder="New name">
+                    <input type="password" name="password" placeholder="New password">
+                    <select name="user_type">
+                        <option value="">-- no change --</option>
+                        <option value="INSTRUCTOR">Instructor</option>
+                        <option value="TA">TA</option>
+                        <option value="STUDENT">Student</option>
+                    </select>
+                    <button type="submit">Edit</button>
+                </form>
+                <!-- Delete Form -->
+                <form method="post" style="display:inline;">
+                    {% csrf_token %}
+                    <input type="hidden" name="action" value="delete">
+                    <input type="hidden" name="email" value="{{ instructor.getEmail }}">
+                    <button type="submit">Delete</button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+
+    <!-- TAs -->
+    <h2>TAs</h2>
+    <table>
+        <tr>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Actions</th>
+        </tr>
+        {% for ta in ta_list %}
+        <tr>
+            <td>{{ ta.getName }}</td>
+            <td>{{ ta.getEmail }}</td>
+            <td>
+                <form method="post" style="display:inline;">
+                    {% csrf_token %}
+                    <input type="hidden" name="action" value="edit">
+                    <input type="hidden" name="email" value="{{ ta.getEmail }}">
+                    <input type="text" name="name" placeholder="New name">
+                    <input type="password" name="password" placeholder="New password">
+                    <select name="user_type">
+                        <option value="">-- no change --</option>
+                        <option value="INSTRUCTOR">Instructor</option>
+                        <option value="TA">TA</option>
+                        <option value="STUDENT">Student</option>
+                    </select>
+                    <button type="submit">Edit</button>
+                </form>
+                <form method="post" style="display:inline;">
+                    {% csrf_token %}
+                    <input type="hidden" name="action" value="delete">
+                    <input type="hidden" name="email" value="{{ ta.getEmail }}">
+                    <button type="submit">Delete</button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+
+    <!-- Students -->
+    <h2>Students</h2>
+    <table>
+        <tr>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Actions</th>
+        </tr>
+        {% for student in student_list %}
+        <tr>
+            <td>{{ student.getName }}</td>
+            <td>{{ student.getEmail }}</td>
+            <td>
+                <form method="post" style="display:inline;">
+                    {% csrf_token %}
+                    <input type="hidden" name="action" value="edit">
+                    <input type="hidden" name="email" value="{{ student.getEmail }}">
+                    <input type="text" name="name" placeholder="New name">
+                    <input type="password" name="password" placeholder="New password">
+                    <select name="user_type">
+                        <option value="">-- no change --</option>
+                        <option value="INSTRUCTOR">Instructor</option>
+                        <option value="TA">TA</option>
+                        <option value="STUDENT">Student</option>
+                    </select>
+                    <button type="submit">Edit</button>
+                </form>
+                <form method="post" style="display:inline;">
+                    {% csrf_token %}
+                    <input type="hidden" name="action" value="delete">
+                    <input type="hidden" name="email" value="{{ student.getEmail }}">
+                    <button type="submit">Delete</button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+
+</body>
+</html>

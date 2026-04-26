@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Manage Courses</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+    <link rel="stylesheet" href="/css/styles.css"/>
+</head>
+<body>
+
+    <h1>Manage Courses</h1>
+    <a href="/admin/dashboard/">Back</a> | <a href="/logout/">Logout</a>
+
+    <hr>
+
+    {% if error_msg %}
+        <p style="color: red;">{{ error_msg }}</p>
+    {% endif %}
+
+    <!-- Create Course Form -->
+    <h2>Create Course</h2>
+    <form method="post">
+        {% csrf_token %}
+        <input type="hidden" name="action" value="create_course">
+        <input type="text" name="department_name" placeholder="Department (e.g. EE)" required>
+        <input type="number" name="course_code" placeholder="Course Code (e.g. 101)" required>
+        <input type="text" name="course_name" placeholder="Course Name" required>
+        <button type="submit">Create Course</button>
+    </form>
+
+    <hr>
+
+    <!-- Course List -->
+    <h2>All Courses</h2>
+    {% if course_list %}
+        {% for course in course_list %}
+        <div style="border: 1px solid #ccc; padding: 10px; margin: 10px 0;">
+            <h3>{{ course.getCourseDepartment }} {{ course.getCourseCode }} - {{ course.getCourseName }}</h3>
+
+            <!-- Delete Course -->
+            <form method="post" style="display:inline;">
+                {% csrf_token %}
+                <input type="hidden" name="action" value="delete_course">
+                <input type="hidden" name="department_name" value="{{ course.getCourseDepartment }}">
+                <input type="hidden" name="course_code" value="{{ course.getCourseCode }}">
+                <button type="submit">Delete Course</button>
+            </form>
+
+            <hr>
+
+            <!-- Sections -->
+            <h4>Sections</h4>
+            {% if course.getSections %}
+                <table border="1" cellpadding="6">
+                    <thead>
+                        <tr>
+                            <th>Section Code</th>
+                            <th>Type</th>
+                            <th>Instructor</th>
+                            <th>TA</th>
+                            <th>Assign Instructor</th>
+                            <th>Assign TA</th>
+                            <th>Delete</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for section in course.getSections %}
+                        <tr>
+                            <td>{{ section.getSectionCode }}</td>
+                            <td>{{ section.getSectionType }}</td>
+                            <td>{{ section.getInstructor|default:"(not assigned)" }}</td>
+                            <td>{{ section.getTA|default:"(none)" }}</td>
+
+                            <!-- Assign Instructor -->
+                            <td>
+                                <form method="post">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="action" value="assign_instructor">
+                                    <input type="hidden" name="department_name" value="{{ course.getCourseDepartment }}">
+                                    <input type="hidden" name="course_code" value="{{ course.getCourseCode }}">
+                                    <input type="hidden" name="section_code" value="{{ section.getSectionCode }}">
+                                    <select name="instructor_email">
+                                        <option value="">-- none --</option>
+                                        {% for instructor in instructor_list %}
+                                        <option value="{{ instructor.getEmail }}">{{ instructor.getName }}</option>
+                                        {% endfor %}
+                                    </select>
+                                    <button type="submit">Assign</button>
+                                </form>
+                            </td>
+
+                            <!-- Assign TA -->
+                            <td>
+                                <form method="post">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="action" value="assign_ta">
+                                    <input type="hidden" name="department_name" value="{{ course.getCourseDepartment }}">
+                                    <input type="hidden" name="course_code" value="{{ course.getCourseCode }}">
+                                    <input type="hidden" name="section_code" value="{{ section.getSectionCode }}">
+                                    <select name="ta_email">
+                                        <option value="">-- none --</option>
+                                        {% for ta in ta_list %}
+                                        <option value="{{ ta.getEmail }}">{{ ta.getName }}</option>
+                                        {% endfor %}
+                                    </select>
+                                    <button type="submit">Assign</button>
+                                </form>
+                            </td>
+
+                            <!-- Delete Section -->
+                            <td>
+                                <form method="post">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="action" value="delete_section">
+                                    <input type="hidden" name="department_name" value="{{ course.getCourseDepartment }}">
+                                    <input type="hidden" name="course_code" value="{{ course.getCourseCode }}">
+                                    <input type="hidden" name="section_code" value="{{ section.getSectionCode }}">
+                                    <button type="submit">Delete</button>
+                                </form>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <p>No sections yet.</p>
+            {% endif %}
+
+            <!-- Create Section Form -->
+            <h4>Add Section</h4>
+            <form method="post">
+                {% csrf_token %}
+                <input type="hidden" name="action" value="create_section">
+                <input type="hidden" name="department_name" value="{{ course.getCourseDepartment }}">
+                <input type="hidden" name="course_code" value="{{ course.getCourseCode }}">
+                <input type="number" name="section_code" placeholder="Section Code (e.g. 1)" required>
+                <select name="section_type">
+                    <option value="LECTURE">Lecture</option>
+                    <option value="LAB">Lab</option>
+                    <option value="DISCUSSION">Discussion</option>
+                </select>
+                <button type="submit">Add Section</button>
+            </form>
+
+        </div>
+        {% endfor %}
+    {% else %}
+        <p>No courses found.</p>
+    {% endif %}
+
+</body>
+</html>
