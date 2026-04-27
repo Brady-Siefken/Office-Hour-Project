@@ -293,38 +293,48 @@ input::placeholder { color: #bfb8ad; }
 .forgot-link:hover { text-decoration: underline; }
 
 
-/* ── Submit Button ─────────────────────────────────────────── */
+/* ============================================================
+   SAFE HOVER ANIMATION (NO TEXT EVER COVERED)
+   ============================================================ */
 
-.btn-submit {
-  width: 100%;
-  padding: 14px;
-  background: var(--ink);
-  color: var(--white);
-  font-family: var(--font-body);
-  font-size: .88rem;
-  font-weight: 500;
-  letter-spacing: .12em;
-  text-transform: uppercase;
-  border: none;
-  border-radius: var(--radius);
-  cursor: pointer;
+.btn-primary,
+.btn-submit,
+.btn-mini,
+.btn-danger {
   position: relative;
   overflow: hidden;
-  transition: background var(--transition-base);
-  animation: fadeUp .6s .36s ease both;
+  isolation: isolate; /* 🔥 critical fix */
 }
 
-.btn-submit::after {
+/* Base text ALWAYS above everything */
+.btn-primary,
+.btn-submit,
+.btn-mini,
+.btn-danger {
+  color: var(--white);
+  z-index: 0;
+}
+
+/* Animated background layer */
+.btn-primary::before,
+.btn-submit::before,
+.btn-mini::before {
   content: "";
   position: absolute;
   inset: 0;
   background: var(--accent);
-  transform: translateX(-102%);
+  transform: scaleX(0);
+  transform-origin: left;
   transition: transform var(--transition-slow);
+  z-index: -1; /* 👈 key fix: forces it behind content */
 }
 
-.btn-submit:hover::after { transform: translateX(0); }
-.btn-submit span { position: relative; z-index: 1; }
+/* Hover animation */
+.btn-primary:hover::before,
+.btn-submit:hover::before,
+.btn-mini:hover::before {
+  transform: scaleX(1);
+}
 
 
 /* ── Divider ───────────────────────────────────────────────── */
@@ -623,4 +633,257 @@ body.dashboard-body {
   .nav { padding: 0 20px; }
   .dashboard-main { padding: 32px 20px 60px; }
   .nav-links { gap: 16px; }
+}
+
+/* ============================================================
+   Unified Dashboard Form Controls (MATCH LOGIN DESIGN SYSTEM)
+   ============================================================ */
+
+/* Base input + select styling for dashboard */
+.dashboard-main input[type="text"],
+.dashboard-main input[type="email"],
+.dashboard-main input[type="password"],
+.dashboard-main select {
+  padding: 10px 12px;
+  background: rgba(245, 240, 232, 0.06);
+  border: 1.5px solid rgba(255, 255, 255, 0.12);
+  border-radius: var(--radius);
+  font-family: var(--font-body);
+  font-size: .85rem;
+  color: rgba(255, 255, 255, .85);
+  outline: none;
+  transition: border-color var(--transition-base),
+              box-shadow var(--transition-base),
+              background var(--transition-base);
+}
+
+/* Focus state (match login accent glow) */
+.dashboard-main input:focus,
+.dashboard-main select:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(181, 65, 10, .18);
+  background: rgba(245, 240, 232, 0.09);
+}
+
+/* Placeholder styling */
+.dashboard-main input::placeholder {
+  color: rgba(255, 255, 255, .35);
+}
+
+/* Make selects match better visually */
+.dashboard-main select {
+  appearance: none;
+  cursor: pointer;
+}
+
+/* ============================================================
+   FORM LAYOUT FIXES (your biggest visual issue)
+   ============================================================ */
+
+/* Create user row */
+.form-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+}
+
+/* Make create form inputs consistent sizing */
+.form-row input,
+.form-row select {
+  min-width: 180px;
+  flex: 1;
+}
+
+/* Inline edit forms inside table */
+.inline-form {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+/* Prevent ugly stretching inside table rows */
+.inline-form input,
+.inline-form select {
+  min-width: 140px;
+}
+
+/* Make table inputs slightly tighter */
+.data-table input,
+.data-table select {
+  font-size: .8rem;
+  padding: 8px 10px;
+}
+
+
+/* ============================================================
+   UNIFIED BUTTON SYSTEM (DASHBOARD + FORMS)
+   ============================================================ */
+
+/* Base button reset */
+button {
+  font-family: var(--font-body);
+  border: none;
+  cursor: pointer;
+  transition: all var(--transition-base);
+}
+
+/* ============================================================
+   PRIMARY BUTTON (used for Create, Submit, etc.)
+   ============================================================ */
+
+.btn-primary,
+.btn-submit,
+.btn-mini {
+  background: var(--ink);
+  color: var(--white);
+  padding: 10px 14px;
+  border-radius: var(--radius);
+  font-size: .8rem;
+  font-weight: 500;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Accent hover sweep (matches login button style) */
+.btn-primary::after,
+.btn-submit::after,
+.btn-mini::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: var(--accent);
+  transform: translateX(-105%);
+  transition: transform var(--transition-slow);
+  z-index: 0;
+}
+
+.btn-primary:hover::after,
+.btn-submit:hover::after,
+.btn-mini:hover::after {
+  transform: translateX(0);
+}
+
+.btn-primary span,
+.btn-submit span,
+.btn-mini span {
+  position: relative;
+  z-index: 1;
+}
+
+/* Ensure text stays above animation */
+.btn-primary,
+.btn-submit,
+.btn-mini {
+  z-index: 0;
+}
+
+/* ============================================================
+   DANGER BUTTON (DELETE)
+   ============================================================ */
+
+.btn-danger {
+  background: rgba(181, 65, 10, 0.15);
+  color: var(--accent);
+  padding: 10px 14px;
+  border-radius: var(--radius);
+  font-size: .8rem;
+  font-weight: 500;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  border: 1px solid rgba(181, 65, 10, 0.35);
+}
+
+.btn-danger:hover {
+  background: var(--accent);
+  color: var(--white);
+  border-color: var(--accent);
+}
+
+/* ============================================================
+   SECONDARY / INLINE ACTION BUTTONS
+   ============================================================ */
+
+.inline-form button {
+  padding: 8px 12px;
+  font-size: .75rem;
+  border-radius: var(--radius-sm);
+}
+
+/* Subtle hover lift for all buttons */
+button:hover {
+  transform: translateY(-1px);
+}
+
+button:active {
+  transform: translateY(0);
+}
+
+/* ============================================================
+   GHOST BUTTONS (optional future use)
+   ============================================================ */
+
+.btn-ghost {
+  background: transparent;
+  color: rgba(255,255,255,.75);
+  border: 1px solid rgba(255,255,255,.15);
+  padding: 9px 12px;
+  border-radius: var(--radius);
+}
+
+.btn-ghost:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+/* ============================================================
+   DASHBOARD INPUT FIX (removes white rectangle issue)
+   ============================================================ */
+
+.dashboard-main input[type="text"],
+.dashboard-main input[type="number"],
+.dashboard-main input[type="email"],
+.dashboard-main input[type="password"] {
+  background: rgba(245, 240, 232, 0.06);
+  border: 1.5px solid rgba(255, 255, 255, 0.12);
+  color: rgba(255, 255, 255, 0.85);
+}
+
+/* Focus state consistent with theme */
+.dashboard-main input:focus {
+  background: rgba(245, 240, 232, 0.09);
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(181, 65, 10, .18);
+}
+
+/* Placeholder fix for dark background */
+.dashboard-main input::placeholder {
+  color: rgba(255, 255, 255, 0.35);
+}
+
+/* ============================================================
+   FORM FIELD SIZE CONTROL (COURSE CODE FIX)
+   ============================================================ */
+
+/* Ensure consistent height across all inputs */
+.form-row input,
+.form-row select {
+  height: 40px;           /* unified height */
+  box-sizing: border-box;
+}
+
+/* Make course code input smaller */
+.form-row input[name="course_code"] {
+  flex: 0 0 120px;        /* fixed narrow width */
+  max-width: 120px;
+}
+
+/* Let other fields expand normally */
+.form-row input:not([name="course_code"]),
+.form-row select {
+  flex: 1;
+  min-width: 180px;
 }

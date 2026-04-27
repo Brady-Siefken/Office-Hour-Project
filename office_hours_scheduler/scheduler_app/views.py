@@ -1,3 +1,4 @@
+from django.contrib.auth import logout
 from django.views import View
 from django.shortcuts import render, redirect
 from classes.Users import UserClass
@@ -264,6 +265,11 @@ class TADashboardView(View):
 
     def post(self, request):
         return redirect("/ta/dashboard/")
+
+def logout_view(request):
+    logout(request)
+    return render(request, "scheduler_app/logout.html")
+
 # class TADashboardView(View):
 #     def get(self, request):
 #         # 1. Check that the logged-in user is a TA
