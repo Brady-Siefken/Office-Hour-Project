@@ -1,53 +1,65 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <title>TA Dashboard</title>
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
-    <link rel="stylesheet" href="/css/styles.css"/>
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}"/>
 </head>
-<body>
+<body class="dashboard-body">
 
-    <h1>TA Dashboard</h1>
-    <p>Welcome, {{ user.getName }}</p>
+<nav class="nav">
+    <div class="nav-brand">OfficeHours</div>
+    <ul class="nav-links">
+        <li><a href="/staff/office-hours/propose/">Propose Hours</a></li>
+        <li><a href="/office-hours/">Schedule</a></li>
+        <li><a href="/logout/" class="nav-logout">Logout</a></li>
+    </ul>
+</nav>
 
-    <div class="action-buttons">
-        <a href="/staff/office-hours/propose/" class="btn">Propose Hours</a>
-        <a href="/office-hours/" class="btn">Schedule</a>
-        <a href="/logout/" class="btn">Logout</a>
-    </div>
+<main class="dashboard-main">
 
-    <hr>
+    <header class="dashboard-header">
+        <h1>TA Dashboard</h1>
+        <p class="welcome-text">Welcome, <strong>{{ user.getName }}</strong></p>
+    </header>
 
-    <h2>My Sections</h2>
-    {% if sections %}
-        <table border="1" cellpadding="6">
-            <thead>
-                <tr>
-                    <th>Department</th>
-                    <th>Course Code</th>
-                    <th>Course Name</th>
-                    <th>Section</th>
-                    <th>Type</th>
-                    <th>Instructor</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for section in sections %}
-                <tr>
-                    <td>{{ section.getCourse.getCourseDepartment }}</td>
-                    <td>{{ section.getCourse.getCourseCode }}</td>
-                    <td>{{ section.getCourse.getCourseName }}</td>
-                    <td>{{ section.getSectionCode }}</td>
-                    <td>{{ section.getSectionType }}</td>
-                    <td>{{ section.getInstructor|default:"(none)" }}</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    {% else %}
-        <p>No sections assigned.</p>
-    {% endif %}
+    <section class="table-section">
+        <h2 class="section-title">My Sections</h2>
+        {% if sections %}
+            <div class="table-wrap">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Department</th>
+                            <th>Course Code</th>
+                            <th>Course Name</th>
+                            <th>Section</th>
+                            <th>Type</th>
+                            <th>Instructor</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for section in sections %}
+                            <tr>
+                                <td>{{ section.getCourse.getCourseDepartment }}</td>
+                                <td>{{ section.getCourse.getCourseCode }}</td>
+                                <td>{{ section.getCourse.getCourseName }}</td>
+                                <td>{{ section.getSectionCode }}</td>
+                                <td>{{ section.getSectionType }}</td>
+                                <td>{{ section.getInstructor|default:"(none)" }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <p class="empty-state">No sections assigned.</p>
+        {% endif %}
+    </section>
+
+</main>
 
 </body>
 </html>

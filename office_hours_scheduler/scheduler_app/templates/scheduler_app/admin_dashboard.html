@@ -1,75 +1,60 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <title>Admin Dashboard</title>
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
-    <link rel="stylesheet" href="css/styles.css"/>
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}"/>
 </head>
-<body>
+<body class="dashboard-body">
 
-    <h1>Admin Dashboard</h1>
-    <p>Welcome, {{ user.getName }}</p>
+<nav class="nav">
+    <div class="nav-brand">OfficeHours</div>
+    <ul class="nav-links">
+        <li><a href="/admin/users/">Manage Users</a></li>
+        <li><a href="/admin/courses/">Manage Courses</a></li>
+        <li><a href="/logout/" class="nav-logout">Logout</a></li>
+    </ul>
+</nav>
 
-    <div class="action-buttons">
-        <a href="/admin/users/" class="btn">Manage Users</a>
-        <a href="/admin/courses/" class="btn">Manage Courses</a>
-        <a href="/logout/" class="btn">Logout</a>
+<main class="dashboard-main">
+
+    <header class="dashboard-header">
+        <h1>Admin Dashboard</h1>
+        <p class="welcome-text">Welcome, <strong>{{ user.getName }}</strong></p>
+    </header>
+
+    <div class="summary-grid">
+        <div class="summary-card">
+            <span class="summary-label">Instructors</span>
+            <span class="summary-value">{{ instructor_count }}</span>
+        </div>
+        <div class="summary-card">
+            <span class="summary-label">TAs</span>
+            <span class="summary-value">{{ ta_count }}</span>
+        </div>
     </div>
 
-    <hr>
-
-    <h2>Summary</h2>
-    <p>Total Instructors: {{ instructor_count }}</p>
-    <p>Total TAs: {{ ta_count }}</p>
-
-    <hr>
-
-    <h2>All Lectures</h2>
-    {% if lecture_list %}
-        <table border="1" cellpadding="6">
-            <thead>
-                <tr>
-                    <th>Department</th>
-                    <th>Course Code</th>
-                    <th>Course Name</th>
-                    <th>Section</th>
-                    <th>Type</th>
-                    <th>Instructor</th>
-                    <th>TA</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for lecture in lecture_list %}
-                    {% if lecture.getSections %}
-                        {% for section in lecture.getSections %}
+    <section class="table-section">
+        <h2 class="section-title">All Lectures</h2>
+        {% if lecture_list %}
+            <div class="table-wrap">
+                <table class="data-table">
+                    <thead>
                         <tr>
-                            <td>{{ lecture.getCourseDepartment }}</td>
-                            <td>{{ lecture.getCourseCode }}</td>
-                            <td>{{ lecture.getCourseName }}</td>
-                            <td>{{ section.getSectionCode }}</td>
-                            <td>{{ section.getSectionType }}</td>
-                            <td>{{ section.getInstructor|default:"(not assigned)" }}</td>
-                            <td>{{ section.getTA|default:"(none)" }}</td>
-                        </tr>
-                        {% endfor %}
-                    {% else %}
-                        <tr>
-                            <td>{{ lecture.getCourseDepartment }}</td>
-                            <td>{{ lecture.getCourseCode }}</td>
-                            <td>{{ lecture.getCourseName }}</td>
-                            <td>(none)</td>
-                            <td>(none)</td>
-                            <td>(not assigned)</td>
-                            <td>(none)</td>
-                        </tr>
-                    {% endif %}
-                {% endfor %}
-            </tbody>
-        </table>
-    {% else %}
-        <p>No lectures found.</p>
-    {% endif %}
+                            <th>Department</th>
+                            <th>Course Code</th>
+                            <th>Course Name</th>
+                            <th>Section</th>
+                            <th>Type</th>
+            </div>
+        {% else %}
+            <p class="empty-state">No lectures found.</p>
+        {% endif %}
+    </section>
+
+</main>
 
 </body>
 </html>
