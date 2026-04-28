@@ -9,6 +9,7 @@ from classes.CourseDatabase import getAllCourses, doesCourseExist, createCourse,
 from classes.Sections import SectionClass
 from classes.SectionsDatabase import createSection, deleteSection, assignInstructor, assignTA
 from classes.UserDatabase import getUser, getUsersByType
+from classes.OfficeHoursDatabase import (getPendingOfficeHoursForInstructor, approveOfficeHour, rejectOfficeHour,)
 
 DASHBOARD_ROUTES = {
     "INSTRUCTOR": "/instructor/dashboard/",
@@ -269,6 +270,45 @@ class TADashboardView(View):
 def logout_view(request):
     logout(request)
     return render(request, "scheduler_app/logout.html")
+
+
+class ApproveOfficeHoursView(View):
+    def get(self, request):
+        user = getUser(request.session.get("user_id"))
+
+        if user is None or user.getType() != "INSTRUCTOR":
+            return redirect("/")
+
+        context = {
+            "user": user,
+            "pending_office_hours": getPendingOfficeHoursForInstructor(user.getEmail()),
+        }
+
+        return render(request, "scheduler_app/approve_office_hours.html", context)
+
+    def post(self, request):
+        user = getUser(request.session.get("user_id"))
+
+        if user is None or user.getType() != "INSTRUCTOR":
+            return redirect("/")
+
+        action = request.POST.get("action")
+        office_hour_id = request.POST.get("office_hours_id")
+
+        if not office_hour_id:
+            return redirect("/instructor/office-hours/approve/")
+
+        try:
+            if action == "approve":
+                approveOfficeHour(int(office_hour_id))
+            elif action == "reject":
+                rejectOfficeHour(int(office_hour_id))
+        except (ValueError, TypeError):
+            # Office hour doesn't exist or invalid id; silently ignore
+            pass
+        return redirect("/instructor/office-hours/approve/")
+
+########################################################################################################################
 
 # class TADashboardView(View):
 #     def get(self, request):

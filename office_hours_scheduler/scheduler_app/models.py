@@ -136,6 +136,8 @@ class OfficeHour(models.Model):
             related_name='office_hours'
         )
 
+        approved = models.BooleanField(default=False) # field needed to implement proposed office hour approval
+
 
 
 
