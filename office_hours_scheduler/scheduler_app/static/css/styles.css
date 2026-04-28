@@ -7,7 +7,7 @@
    ============================================================ */
 
 
-/* ── Reset ────────────────────────────────────────────────── */
+/* ── Reset ─────────────────────────────────────────────────── */
 
 *,
 *::before,
@@ -18,7 +18,7 @@
 }
 
 
-/* ── Design Tokens ─────────────────────────────────────────── */
+/* ── Design Tokens ──────────────────────────────────────────── */
 
 :root {
   --ink:      #1a1410;
@@ -45,7 +45,7 @@
 }
 
 
-/* ── Base ──────────────────────────────────────────────────── */
+/* ── Base ───────────────────────────────────────────────────── */
 
 html {
   scroll-behavior: smooth;
@@ -60,12 +60,16 @@ body {
   background-color: var(--dark-bg);
   font-family: var(--font-body);
   font-size: .95rem;
-  color: var(--ink);
+  color: rgba(255,255,255,.85);
   overflow: hidden;
   position: relative;
 }
 
-/* Ambient gradient overlay */
+/* Login page card gets dark text since it has a light background */
+.card {
+  color: var(--ink);
+}
+
 body::before {
   content: "";
   position: fixed;
@@ -76,7 +80,6 @@ body::before {
   pointer-events: none;
 }
 
-/* Subtle grid texture */
 body::after {
   content: "";
   position: fixed;
@@ -97,13 +100,21 @@ a {
   color: var(--accent);
   text-decoration: none;
   font-weight: 500;
-  transition: text-decoration var(--transition-fast);
+  transition: color var(--transition-fast);
 }
 
 a:hover { text-decoration: underline; }
 
+button {
+  font-family: var(--font-body);
+  cursor: pointer;
+}
 
-/* ── Animations ────────────────────────────────────────────── */
+button:hover  { transform: translateY(-1px); }
+button:active { transform: translateY(0); }
+
+
+/* ── Animations ─────────────────────────────────────────────── */
 
 @keyframes fadeUp {
   from { opacity: 0; transform: translateY(28px); }
@@ -111,7 +122,11 @@ a:hover { text-decoration: underline; }
 }
 
 
-/* ── Card ──────────────────────────────────────────────────── */
+/* ============================================================
+   LOGIN PAGE
+   ============================================================ */
+
+/* ── Card ───────────────────────────────────────────────────── */
 
 .card {
   position: relative;
@@ -125,8 +140,7 @@ a:hover { text-decoration: underline; }
   animation: fadeUp .6s ease both;
 }
 
-
-/* ── Logo ──────────────────────────────────────────────────── */
+/* ── Logo ───────────────────────────────────────────────────── */
 
 .brand-logo {
   display: block;
@@ -136,12 +150,9 @@ a:hover { text-decoration: underline; }
   object-fit: contain;
 }
 
+/* ── Form Header ────────────────────────────────────────────── */
 
-/* ── Form Header ───────────────────────────────────────────── */
-
-.form-header {
-  margin-bottom: 32px;
-}
+.form-header { margin-bottom: 32px; }
 
 .form-header h2 {
   font-family: var(--font-display);
@@ -157,16 +168,10 @@ a:hover { text-decoration: underline; }
   font-weight: 300;
 }
 
-.form-header p a {
-  color: var(--accent);
-  text-decoration: none;
-  font-weight: 500;
-}
-
+.form-header p a { color: var(--accent); }
 .form-header p a:hover { text-decoration: underline; }
 
-
-/* ── Fields ────────────────────────────────────────────────── */
+/* ── Login Fields ───────────────────────────────────────────── */
 
 .field {
   margin-bottom: 20px;
@@ -176,7 +181,7 @@ a:hover { text-decoration: underline; }
 .field:nth-child(1) { animation-delay: .10s; }
 .field:nth-child(2) { animation-delay: .18s; }
 
-label {
+.card label {
   display: block;
   font-size: .75rem;
   font-weight: 500;
@@ -186,13 +191,12 @@ label {
   margin-bottom: 7px;
 }
 
-.input-wrap {
-  position: relative;
-}
+.input-wrap { position: relative; }
 
-input[type="email"],
-input[type="password"],
-input[type="text"] {
+/* Login page inputs — dark text on white background */
+.card input[type="email"],
+.card input[type="password"],
+.card input[type="text"] {
   width: 100%;
   padding: 13px 16px;
   background: var(--white);
@@ -205,15 +209,14 @@ input[type="text"] {
   transition: border-color var(--transition-base), box-shadow var(--transition-base);
 }
 
-input:focus {
+.card input:focus {
   border-color: var(--accent);
   box-shadow: 0 0 0 3px rgba(181, 65, 10, .08);
 }
 
-input::placeholder { color: #bfb8ad; }
+.card input::placeholder { color: #bfb8ad; }
 
-
-/* ── Password Toggle ───────────────────────────────────────── */
+/* ── Password Toggle ────────────────────────────────────────── */
 
 .toggle-pw {
   position: absolute;
@@ -230,114 +233,62 @@ input::placeholder { color: #bfb8ad; }
   transition: color var(--transition-fast);
 }
 
-.toggle-pw:hover { color: var(--ink); }
-
-
-/* ── Options Row (remember me + forgot password) ───────────── */
-
-.options-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 28px;
-  animation: fadeUp .6s .28s ease both;
+.toggle-pw:hover {
+  color: var(--ink);
+  transform: translateY(-50%);  /* prevent button:hover lift from misaligning */
 }
 
-.checkbox-label {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-size: .85rem;
-  color: var(--muted);
-  cursor: pointer;
-  user-select: none;
-}
+/* ── Login Submit Button ────────────────────────────────────── */
 
-.checkbox-label input { display: none; }
-
-.custom-check {
-  width: 16px;
-  height: 16px;
-  border: 1.5px solid var(--border);
-  border-radius: var(--radius-sm);
-  background: var(--cream);
-  display: grid;
-  place-items: center;
-  flex-shrink: 0;
-  transition: background var(--transition-fast), border-color var(--transition-fast);
-}
-
-.checkbox-label input:checked + .custom-check {
-  background: var(--accent);
-  border-color: var(--accent);
-}
-
-.custom-check svg {
-  opacity: 0;
-  transform: scale(.6);
-  transition: opacity var(--transition-fast), transform var(--transition-fast);
-}
-
-.checkbox-label input:checked + .custom-check svg {
-  opacity: 1;
-  transform: scale(1);
-}
-
-.forgot-link {
-  font-size: .85rem;
-  color: var(--accent);
-  text-decoration: none;
+.btn-submit {
+  width: 100%;
+  padding: 14px;
+  background: var(--ink);
+  color: var(--white);
+  font-family: var(--font-body);
+  font-size: .88rem;
   font-weight: 500;
-}
-
-.forgot-link:hover { text-decoration: underline; }
-
-
-/* ============================================================
-   SAFE HOVER ANIMATION (NO TEXT EVER COVERED)
-   ============================================================ */
-
-.btn-primary,
-.btn-submit,
-.btn-mini,
-.btn-danger {
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  border: none;
+  border-radius: var(--radius);
+  cursor: pointer;
   position: relative;
   overflow: hidden;
-  isolation: isolate; /* 🔥 critical fix */
+  isolation: isolate;
+  animation: fadeUp .6s .36s ease both;
 }
 
-/* Base text ALWAYS above everything */
-.btn-primary,
-.btn-submit,
-.btn-mini,
-.btn-danger {
-  color: var(--white);
-  z-index: 0;
-}
-
-/* Animated background layer */
-.btn-primary::before,
-.btn-submit::before,
-.btn-mini::before {
+.btn-submit::after {
   content: "";
   position: absolute;
   inset: 0;
   background: var(--accent);
-  transform: scaleX(0);
-  transform-origin: left;
+  transform: translateX(-102%);
   transition: transform var(--transition-slow);
-  z-index: -1; /* 👈 key fix: forces it behind content */
+  z-index: -1;
 }
 
-/* Hover animation */
-.btn-primary:hover::before,
-.btn-submit:hover::before,
-.btn-mini:hover::before {
-  transform: scaleX(1);
+.btn-submit:hover::after { transform: translateX(0); }
+
+.btn-submit span {
+  position: relative;
+  z-index: 1;
 }
 
+/* ── Form Error ─────────────────────────────────────────────── */
 
-/* ── Divider ───────────────────────────────────────────────── */
+.form-error {
+  font-size: .83rem;
+  color: var(--accent);
+  background: rgba(181, 65, 10, .08);
+  border: 1px solid rgba(181, 65, 10, .2);
+  border-radius: var(--radius);
+  padding: 10px 14px;
+  margin-bottom: 20px;
+}
+
+/* ── Divider ────────────────────────────────────────────────── */
 
 .divider {
   display: flex;
@@ -362,8 +313,7 @@ input::placeholder { color: #bfb8ad; }
   text-transform: uppercase;
 }
 
-
-/* ── Social / OAuth Button ─────────────────────────────────── */
+/* ── Social Button ──────────────────────────────────────────── */
 
 .social-row { animation: fadeUp .6s .48s ease both; }
 
@@ -390,22 +340,16 @@ input::placeholder { color: #bfb8ad; }
   background: var(--cream);
 }
 
-
-/* ── Responsive ────────────────────────────────────────────── */
-
 @media (max-width: 480px) {
   .card { padding: 36px 24px 32px; }
 }
 
 
 /* ============================================================
-   Dashboard Styles
+   DASHBOARD
    ============================================================ */
 
-
-/* ── Dashboard body overrides ──────────────────────────────── */
-/* Overrides the login-page centering so the dashboard fills
-   the full viewport instead of centering a card. */
+/* ── Dashboard body ─────────────────────────────────────────── */
 
 body.dashboard-body {
   display: block;
@@ -413,8 +357,7 @@ body.dashboard-body {
   background-color: var(--dark-bg);
 }
 
-
-/* ── Navigation ────────────────────────────────────────────── */
+/* ── Navigation ─────────────────────────────────────────────── */
 
 .nav {
   position: sticky;
@@ -428,6 +371,13 @@ body.dashboard-body {
   background: rgba(24, 19, 15, .96);
   backdrop-filter: blur(8px);
   border-bottom: 1px solid rgba(255,255,255,.07);
+}
+
+.nav-brand {
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  color: #fff;
+  letter-spacing: .04em;
 }
 
 .nav-brand img {
@@ -467,10 +417,10 @@ body.dashboard-body {
 .nav-logout:hover {
   border-color: var(--accent) !important;
   color: var(--accent) !important;
+  text-decoration: none;
 }
 
-
-/* ── Main content area ─────────────────────────────────────── */
+/* ── Main content ───────────────────────────────────────────── */
 
 .dashboard-main {
   max-width: 1100px;
@@ -478,8 +428,26 @@ body.dashboard-body {
   padding: 48px 40px 80px;
 }
 
+/* ── Back link ──────────────────────────────────────────────── */
 
-/* ── Dashboard header ──────────────────────────────────────── */
+.back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: .83rem;
+  font-weight: 500;
+  color: rgba(255,255,255,.5);
+  text-decoration: none;
+  margin-bottom: 28px;
+  transition: color var(--transition-fast);
+}
+
+.back-link:hover {
+  color: var(--gold);
+  text-decoration: none;
+}
+
+/* ── Dashboard header ───────────────────────────────────────── */
 
 .dashboard-header {
   margin-bottom: 36px;
@@ -506,8 +474,7 @@ body.dashboard-body {
   font-weight: 500;
 }
 
-
-/* ── Summary cards ─────────────────────────────────────────── */
+/* ── Summary cards ──────────────────────────────────────────── */
 
 .summary-grid {
   display: grid;
@@ -549,11 +516,11 @@ body.dashboard-body {
   line-height: 1;
 }
 
-
-/* ── Table section ─────────────────────────────────────────── */
+/* ── Table section ──────────────────────────────────────────── */
 
 .table-section {
   animation: fadeUp .5s .16s ease both;
+  margin-bottom: 48px;
 }
 
 .section-title {
@@ -599,21 +566,16 @@ body.dashboard-body {
   vertical-align: middle;
 }
 
-.data-table tbody tr:last-child td {
-  border-bottom: none;
-}
+.data-table tbody tr:last-child td { border-bottom: none; }
 
 .data-table tbody tr {
   background: rgba(245,240,232,.03);
   transition: background var(--transition-fast);
 }
 
-.data-table tbody tr:hover {
-  background: rgba(245,240,232,.07);
-}
+.data-table tbody tr:hover { background: rgba(245,240,232,.07); }
 
-
-/* ── Empty state ───────────────────────────────────────────── */
+/* ── Empty state ────────────────────────────────────────────── */
 
 .empty-state {
   padding: 40px;
@@ -626,205 +588,180 @@ body.dashboard-body {
   margin: 0;
 }
 
+/* ── Error banner ───────────────────────────────────────────── */
 
-/* ── Dashboard responsive ──────────────────────────────────── */
-
-@media (max-width: 640px) {
-  .nav { padding: 0 20px; }
-  .dashboard-main { padding: 32px 20px 60px; }
-  .nav-links { gap: 16px; }
+.error-banner {
+  font-size: .85rem;
+  color: var(--accent);
+  background: rgba(181,65,10,.08);
+  border: 1px solid rgba(181,65,10,.2);
+  border-radius: var(--radius);
+  padding: 10px 16px;
+  margin-bottom: 24px;
 }
 
+
 /* ============================================================
-   Unified Dashboard Form Controls (MATCH LOGIN DESIGN SYSTEM)
+   DASHBOARD INPUTS & SELECTS
    ============================================================ */
 
-/* Base input + select styling for dashboard */
 .dashboard-main input[type="text"],
+.dashboard-main input[type="number"],
 .dashboard-main input[type="email"],
 .dashboard-main input[type="password"],
 .dashboard-main select {
-  padding: 10px 12px;
-  background: rgba(245, 240, 232, 0.06);
-  border: 1.5px solid rgba(255, 255, 255, 0.12);
+  height: 40px;
+  padding: 0 14px;
+  background: rgba(245,240,232,.06);
+  border: 1.5px solid rgba(255,255,255,.12);
   border-radius: var(--radius);
   font-family: var(--font-body);
   font-size: .85rem;
-  color: rgba(255, 255, 255, .85);
+  color: rgba(255,255,255,.85);
   outline: none;
   transition: border-color var(--transition-base),
               box-shadow var(--transition-base),
               background var(--transition-base);
+  appearance: none;
 }
 
-/* Focus state (match login accent glow) */
 .dashboard-main input:focus,
 .dashboard-main select:focus {
   border-color: var(--accent);
-  box-shadow: 0 0 0 3px rgba(181, 65, 10, .18);
-  background: rgba(245, 240, 232, 0.09);
+  box-shadow: 0 0 0 3px rgba(181,65,10,.18);
+  background: rgba(245,240,232,.09);
 }
 
-/* Placeholder styling */
 .dashboard-main input::placeholder {
-  color: rgba(255, 255, 255, .35);
+  color: rgba(255,255,255,.3);
 }
 
-/* Make selects match better visually */
-.dashboard-main select {
-  appearance: none;
-  cursor: pointer;
+.dashboard-main select option {
+  background: #2a1f18;
+  color: #fff;
 }
+
 
 /* ============================================================
-   FORM LAYOUT FIXES (your biggest visual issue)
+   FORM ROW  (Create Course / Add Section)
    ============================================================ */
 
-/* Create user row */
 .form-row {
   display: flex;
   flex-wrap: wrap;
-  gap: 12px;
   align-items: center;
+  gap: 10px;
+  padding: 20px 24px;
+  background: rgba(245,240,232,.04);
+  border: 1px solid rgba(255,255,255,.07);
+  border-radius: var(--radius);
 }
 
-/* Make create form inputs consistent sizing */
+/* Most inputs grow to fill space */
 .form-row input,
 .form-row select {
-  min-width: 180px;
+  flex: 1;
+  min-width: 160px;
+}
+
+/* Narrow fixed inputs e.g. course/section code */
+.form-row input[name="course_code"],
+.form-row input[name="section_code"] {
+  flex: 0 0 130px;
+  min-width: unset;
+}
+
+
+/* ============================================================
+   INLINE FORM  (Assign Instructor / TA inside table cells)
+   ============================================================ */
+
+.inline-form {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: nowrap;
+}
+
+.inline-form select {
+  min-width: 130px;
   flex: 1;
 }
 
-/* Inline edit forms inside table */
-.inline-form {
-  display: flex;
-  gap: 8px;
-  align-items: center;
-  flex-wrap: wrap;
-}
-
-/* Prevent ugly stretching inside table rows */
-.inline-form input,
-.inline-form select {
-  min-width: 140px;
-}
-
-/* Make table inputs slightly tighter */
-.data-table input,
-.data-table select {
-  font-size: .8rem;
-  padding: 8px 10px;
-}
-
 
 /* ============================================================
-   UNIFIED BUTTON SYSTEM (DASHBOARD + FORMS)
+   BUTTONS
    ============================================================ */
 
-/* Base button reset */
-button {
-  font-family: var(--font-body);
-  border: none;
-  cursor: pointer;
-  transition: all var(--transition-base);
-}
-
-/* ============================================================
-   PRIMARY BUTTON (used for Create, Submit, etc.)
-   ============================================================ */
+/* ── Primary / Mini (dark with accent sweep) ────────────────── */
 
 .btn-primary,
-.btn-submit,
 .btn-mini {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 16px;
+  height: 40px;
   background: var(--ink);
   color: var(--white);
-  padding: 10px 14px;
-  border-radius: var(--radius);
-  font-size: .8rem;
+  font-family: var(--font-body);
+  font-size: .78rem;
   font-weight: 500;
-  letter-spacing: .06em;
+  letter-spacing: .08em;
   text-transform: uppercase;
+  border: none;
+  border-radius: var(--radius);
   position: relative;
   overflow: hidden;
+  isolation: isolate;
+  white-space: nowrap;
 }
 
-/* Accent hover sweep (matches login button style) */
 .btn-primary::after,
-.btn-submit::after,
 .btn-mini::after {
   content: "";
   position: absolute;
   inset: 0;
   background: var(--accent);
-  transform: translateX(-105%);
+  transform: translateX(-102%);
   transition: transform var(--transition-slow);
-  z-index: 0;
+  z-index: -1;
 }
 
 .btn-primary:hover::after,
-.btn-submit:hover::after,
 .btn-mini:hover::after {
   transform: translateX(0);
 }
 
-.btn-primary span,
-.btn-submit span,
-.btn-mini span {
-  position: relative;
-  z-index: 1;
-}
-
-/* Ensure text stays above animation */
-.btn-primary,
-.btn-submit,
-.btn-mini {
-  z-index: 0;
-}
-
-/* ============================================================
-   DANGER BUTTON (DELETE)
-   ============================================================ */
+/* ── Danger (delete) ────────────────────────────────────────── */
 
 .btn-danger {
-  background: rgba(181, 65, 10, 0.15);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 16px;
+  height: 40px;
+  background: rgba(181,65,10,.12);
   color: var(--accent);
-  padding: 10px 14px;
-  border-radius: var(--radius);
-  font-size: .8rem;
+  font-family: var(--font-body);
+  font-size: .78rem;
   font-weight: 500;
-  letter-spacing: .06em;
+  letter-spacing: .08em;
   text-transform: uppercase;
-  border: 1px solid rgba(181, 65, 10, 0.35);
+  border: 1px solid rgba(181,65,10,.3);
+  border-radius: var(--radius);
+  isolation: isolate;
+  white-space: nowrap;
 }
 
 .btn-danger:hover {
   background: var(--accent);
   color: var(--white);
   border-color: var(--accent);
-}
-
-/* ============================================================
-   SECONDARY / INLINE ACTION BUTTONS
-   ============================================================ */
-
-.inline-form button {
-  padding: 8px 12px;
-  font-size: .75rem;
-  border-radius: var(--radius-sm);
-}
-
-/* Subtle hover lift for all buttons */
-button:hover {
   transform: translateY(-1px);
 }
 
-button:active {
-  transform: translateY(0);
-}
-
-/* ============================================================
-   GHOST BUTTONS (optional future use)
-   ============================================================ */
+/* ── Ghost ──────────────────────────────────────────────────── */
 
 .btn-ghost {
   background: transparent;
@@ -832,6 +769,7 @@ button:active {
   border: 1px solid rgba(255,255,255,.15);
   padding: 9px 12px;
   border-radius: var(--radius);
+  font-size: .8rem;
 }
 
 .btn-ghost:hover {
@@ -839,51 +777,95 @@ button:active {
   color: var(--accent);
 }
 
-/* ============================================================
-   DASHBOARD INPUT FIX (removes white rectangle issue)
-   ============================================================ */
-
-.dashboard-main input[type="text"],
-.dashboard-main input[type="number"],
-.dashboard-main input[type="email"],
-.dashboard-main input[type="password"] {
-  background: rgba(245, 240, 232, 0.06);
-  border: 1.5px solid rgba(255, 255, 255, 0.12);
-  color: rgba(255, 255, 255, 0.85);
-}
-
-/* Focus state consistent with theme */
-.dashboard-main input:focus {
-  background: rgba(245, 240, 232, 0.09);
-  border-color: var(--accent);
-  box-shadow: 0 0 0 3px rgba(181, 65, 10, .18);
-}
-
-/* Placeholder fix for dark background */
-.dashboard-main input::placeholder {
-  color: rgba(255, 255, 255, 0.35);
-}
 
 /* ============================================================
-   FORM FIELD SIZE CONTROL (COURSE CODE FIX)
+   COURSE CARD
    ============================================================ */
 
-/* Ensure consistent height across all inputs */
-.form-row input,
-.form-row select {
-  height: 40px;           /* unified height */
-  box-sizing: border-box;
+.course-card {
+  background: rgba(245,240,232,.06);
+  border: 1px solid rgba(255,255,255,.14);
+  border-radius: var(--radius-md);
+  padding: 28px 28px 24px;
+  margin-bottom: 24px;
+  transition: border-color var(--transition-base), background var(--transition-base);
 }
 
-/* Make course code input smaller */
-.form-row input[name="course_code"] {
-  flex: 0 0 120px;        /* fixed narrow width */
-  max-width: 120px;
+.course-card:hover {
+  background: rgba(245,240,232,.09);
+  border-color: rgba(201,151,58,.4);
 }
 
-/* Let other fields expand normally */
-.form-row input:not([name="course_code"]),
-.form-row select {
-  flex: 1;
-  min-width: 180px;
+.course-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+  gap: 16px;
+}
+
+.course-card-header h3 {
+  font-family: var(--font-display);
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #fff;
+  margin: 0;
+}
+
+/* Section subheadings (e.g. "Sections", "Add Section") */
+.course-card h4 {
+  font-size: .72rem;
+  font-weight: 500;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin: 20px 0 10px;
+}
+
+/* All text inside a course card table should be bright */
+.course-card .data-table td {
+  color: rgba(255,255,255,.92);
+}
+
+/* Instructor / TA name columns — slightly softer */
+.course-card .data-table td:nth-child(3),
+.course-card .data-table td:nth-child(4) {
+  color: rgba(255,255,255,.70);
+  font-style: italic;
+}
+
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+
+@media (max-width: 640px) {
+  .nav { padding: 0 20px; }
+  .dashboard-main { padding: 32px 20px 60px; }
+  .nav-links { gap: 16px; }
+
+  .form-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .form-row input,
+  .form-row select,
+  .form-row input[name="course_code"],
+  .form-row input[name="section_code"] {
+    flex: unset;
+    width: 100%;
+    min-width: unset;
+  }
+
+  .course-card-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .btn-primary,
+  .btn-mini,
+  .btn-danger {
+    width: 100%;
+  }
 }

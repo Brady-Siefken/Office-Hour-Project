@@ -37,22 +37,37 @@
     </div>
 
     <section class="table-section">
-        <h2 class="section-title">All Lectures</h2>
-        {% if lecture_list %}
-            <div class="table-wrap">
-                <table class="data-table">
-                    <thead>
+    <h2 class="section-title">All Lectures</h2>
+
+    {% if lecture_list %}
+        <div class="table-wrap">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Department</th>
+                        <th>Course Code</th>
+                        <th>Course Name</th>
+                        <th>Section</th>
+                        <th>Type</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for lecture in lecture_list %}
                         <tr>
-                            <th>Department</th>
-                            <th>Course Code</th>
-                            <th>Course Name</th>
-                            <th>Section</th>
-                            <th>Type</th>
-            </div>
-        {% else %}
-            <p class="empty-state">No lectures found.</p>
-        {% endif %}
-    </section>
+                            <td>{{ lecture.getCourseDepartment }}</td>
+                            <td>{{ lecture.getCourseCode }}</td>
+                            <td>{{ lecture.getCourseName }}</td>
+                            <td>{{ lecture.getSectionCode }}</td>
+                            <td>{{ lecture.getSectionType }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <p class="empty-state">No lectures found.</p>
+    {% endif %}
+</section>
 
 </main>
 
