@@ -42,3 +42,19 @@ def rejectOfficeHour(office_hour_id):
     if not OfficeHour.objects.filter(id = office_hour_id).exists():
         raise ValueError("There are currently no proposed office hours")
     OfficeHour.objects.filter(id = office_hour_id).delete()
+
+def getApprovedOfficeHours(course_filter=None, staff_filter=None):
+
+    # Returns a list of OfficeHoursClass for all approved office hours
+    # 2 optional filters
+    # course_filter: a course code (int)
+    # staff_filter: a staff email (str)
+    # Results are ordered by course code, then staff name.
+
+    qs = OfficeHour.objects.filter(approved=True)
+    if course_filter is not None:
+        qs = qs.filter(course__courseCode=course_filter)
+    if staff_filter:
+        qs = qs.filter(staff__email=staff_filter)
+    qs = qs.order_by("course__courseCode", "staff__name")
+    return [OfficeHoursClass(oh.id) for oh in qs]
