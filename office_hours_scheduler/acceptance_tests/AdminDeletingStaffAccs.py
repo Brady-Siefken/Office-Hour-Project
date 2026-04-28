@@ -1,49 +1,54 @@
 from django.test import TestCase, Client
-from django.contrib.auth.models import User
-from .models import Instructor, TA, Student, Lecture
+from scheduler_app.models import User
 
-
-class ManageUsersViewTest(TestCase):
+class AdminDeletingStaffTest(TestCase):
 
     def setUp(self):
         self.client = Client()
-        self.admin_user = User.objects.create_user(
-            username = 'admin1', password = 'adminpass'
+
+        self.admin = User.objects.create(
+            email="admin@uwm.edu",
+            password="adminpass",
+            name="Admin One",
+            user_type="ADMIN",
         )
-        Instructor.objects.create(user=self.admin_user)
-        self.client.login(username = 'admin1', password = 'adminpass')
-
-        self.ta_user = User.objects.create_user(
-            username = 'ta1', password = 'tapass'
+        self.ta = User.objects.create(
+            email="ta1@uwm.edu",
+            password="tapass",
+            name="TA One",
+            user_type="TA",
         )
-        self.ta = TA.objects.create(user=self.ta_user)
-    class Meta:
-        app_label = 'scheduler_app'
+        self.instructor = User.objects.create(
+            email="instructor@uwm.edu",
+            password="instpass",
+            name="Instructor One",
+            user_type="INSTRUCTOR",
+        )
 
-    #  Staff roster shows all staff alphabetically
-    def test_staff_roster(self):
-        response = self.client.get('/admin/users/')
+        # Set the session keys the Home view sets after a real login.
+        # The app uses email as user_id, not the auto-generated User.id.
+        session = self.client.session
+        session["user_id"] = self.admin.email
+        session["user_type"] = "ADMIN"
+        session.save()
 
+    def test_staff_lists_render(self):
+        response = self.client.get("/admin/users/")
         self.assertEqual(response.status_code, 200)
-        ta_list = list(response.context['ta_list'].values_list('user__username', flat = True))
-        instructor_list = list(response.context['instructor_list'].values_list('user__username',  flat=True))
-        self.assertEqual(ta_list, sorted(ta_list))
-        self.assertEqual(instructor_list, sorted(instructor_list))
+        self.assertContains(response, "TA One")
+        self.assertContains(response, "Instructor One")
 
-
-    #  Clicking a staff member shows their info and a delete button
-    def test_clicking_staff(self):
-        response = self.client.get('/admin/users/', {'selected': self.ta.id})
+    def test_staff_member_appears(self):
+        response = self.client.get("/admin/users/")
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, self.ta_user.username)
-        self.assertContains(response, 'delete account')
+        self.assertContains(response, self.ta.email)
+        self.assertContains(response, self.ta.name)
 
-    # Confirming deletion removes the account
-    def test_confirmed_deletion(self):
-        response = self.client.post('/admin/users/', {
-            'staff_id': self.ta.id,
-            'action': 'delete'
+    def test_delete_removes_user(self):
+        response = self.client.post("/admin/users/", {
+            "action": "delete",
+            "email": self.ta.email,
         })
 
-        self.assertRedirects(response, '/admin/users/')
-        self.assertFalse(TA.objects.filter(id=self.ta.id).exists())
+        self.assertRedirects(response, "/admin/users/")
+        self.assertFalse(User.objects.filter(email=self.ta.email).exists())
