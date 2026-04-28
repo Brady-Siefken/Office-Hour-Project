@@ -58,3 +58,30 @@ def getApprovedOfficeHours(course_filter=None, staff_filter=None):
         qs = qs.filter(staff__email=staff_filter)
     qs = qs.order_by("course__courseCode", "staff__name")
     return [OfficeHoursClass(oh.id) for oh in qs]
+
+def createOfficeHour(user_email, section, start_time, end_time, days):
+    from scheduler_app.models import OfficeHour, User, Timeslot
+
+    try:
+        staff = User.objects.get(email=user_email)
+    except User.DoesNotExist:
+        raise ValueError("User does not exist")
+
+    timeslot = Timeslot.objects.create(
+        start_time=start_time,
+        end_time=end_time,
+        monday=days['monday'],
+        tuesday=days['tuesday'],
+        wednesday=days['wednesday'],
+        thursday=days['thursday'],
+        friday=days['friday'],
+    )
+
+    new_office_hour = OfficeHour.objects.create(
+        staff=staff,
+        course=section.getCourse().course,
+        timeslot=timeslot,
+        approved=False
+    )
+
+    return OfficeHoursClass(new_office_hour.id)

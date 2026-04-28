@@ -9,7 +9,8 @@ from classes.CourseDatabase import getAllCourses, doesCourseExist, createCourse,
 from classes.Sections import SectionClass
 from classes.SectionsDatabase import createSection, deleteSection, assignInstructor, assignTA
 from classes.UserDatabase import getUser, getUsersByType
-from classes.OfficeHoursDatabase import (getPendingOfficeHoursForInstructor, approveOfficeHour, rejectOfficeHour, getApprovedOfficeHours,)
+from classes.OfficeHoursDatabase import createOfficeHour, getOfficeHour, getApprovedOfficeHours, getPendingOfficeHoursForInstructor, rejectOfficeHour, approveOfficeHour
+from classes.TimeSlot import TimeSlot
 
 DASHBOARD_ROUTES = {
     "INSTRUCTOR": "/instructor/dashboard/",
@@ -376,3 +377,101 @@ class ViewOfficeHoursView(View):
 #         def post(self, request):
 #             # like the design doc says, POST is navigation only so there's nothing to handle here.
 #             return redirect('/ta/dashboard/')
+class ProposeOfficeHoursView(View):
+    def get(self, request):
+        user = getUser(request.session.get("user_id"))
+
+        if user is not None and user.getType() == "INSTRUCTOR":
+            sections = getSectionsByInstructor(user.getEmail())
+        elif user is not None and user.getType() == "TA":
+            sections = getSectionsByTA(user.getEmail())
+        else:
+            return redirect("/")
+
+        # Deduplicate by course code, keeping only one section per course
+        seen_courses = set()
+        unique_sections = []
+        for section in sections:
+            course_code = section.getCourse().getCourseCode()
+            if course_code not in seen_courses:
+                seen_courses.add(course_code)
+                unique_sections.append(section)
+
+        approved_hours = getApprovedOfficeHours(staff_filter=user.getEmail())
+        context = {
+            "user": user,
+            "sections": unique_sections,
+            "all_sections": sections,
+            "approved_hours": approved_hours,
+        }
+
+        return render(request, "scheduler_app/propose_office_hours.html", context)
+
+    def post(self, request):
+        user = getUser(request.session.get("user_id"))
+
+        if user is None or (user.getType() != "TA" and user.getType() != "INSTRUCTOR"):
+            return redirect("/")
+
+        # Re-fetch sections for this user
+        if user.getType() == "INSTRUCTOR":
+            sections = getSectionsByInstructor(user.getEmail())
+        else:
+            sections = getSectionsByTA(user.getEmail())
+
+        section_code = request.POST.get("section_selection")
+        if not section_code:
+            return redirect("/staff/office-hours/propose/")
+
+        # Find the matching section from the fetched list
+        selected_section = next(
+            (s for s in sections if s.getSectionCode() == section_code), None
+        )
+        if selected_section is None:
+            return redirect("/staff/office-hours/propose/")
+
+        # Extract day booleans
+        days = {
+            'monday': request.POST.get('monday') == 'on',
+            'tuesday': request.POST.get('tuesday') == 'on',
+            'wednesday': request.POST.get('wednesday') == 'on',
+            'thursday': request.POST.get('thursday') == 'on',
+            'friday': request.POST.get('friday') == 'on',
+        }
+
+        if not any(days.values()):
+            return redirect("/staff/office-hours/propose/")
+
+        if not any(days.values()):
+            return redirect("/staff/office-hours/propose/")
+
+        # Extract and validate time fields
+        try:
+            start_hour = int(request.POST.get('start_hour'))
+            start_minutes = int(request.POST.get('start_minutes'))
+            end_hour = int(request.POST.get('end_hour'))
+            end_minutes = int(request.POST.get('end_minutes'))
+        except (TypeError, ValueError):
+            return redirect("/staff/office-hours/propose/")
+
+        if not (0 <= start_hour <= 23 and 0 <= end_hour <= 23):
+            return redirect("/staff/office-hours/propose/")
+        if not (0 <= start_minutes <= 59 and 0 <= end_minutes <= 59):
+            return redirect("/staff/office-hours/propose/")
+
+        start_total = start_hour * 60 + start_minutes
+        end_total = end_hour * 60 + end_minutes
+
+        if end_total <= start_total:
+            return redirect("/staff/office-hours/propose/")
+
+        # Format as HH:MM strings for the Timeslot model
+        start_time = f"{start_hour:02d}:{start_minutes:02d}"
+        end_time = f"{end_hour:02d}:{end_minutes:02d}"
+
+        createOfficeHour(user.getEmail(), selected_section, start_time, end_time, days)
+
+        if user.getType() == "INSTRUCTOR":
+            return redirect("/instructor/office-hours/approve/")
+
+        return redirect("/office-hours/")
