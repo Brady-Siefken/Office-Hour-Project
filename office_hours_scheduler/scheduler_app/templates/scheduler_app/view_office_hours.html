@@ -13,7 +13,9 @@
 <nav class="nav">
     <div class="nav-brand">OfficeHours</div>
     <ul class="nav-links">
-        <li><a href="/">Back</a></li>
+        <li>
+            <a href="{% if user.getType == 'INSTRUCTOR' %}/instructor/dashboard/{% elif user.getType == 'TA' %}/ta/dashboard/{% else %}/{% endif %}">Back</a>
+        </li>
         <li><a href="/logout/" class="nav-logout">Logout</a></li>
     </ul>
 </nav>
