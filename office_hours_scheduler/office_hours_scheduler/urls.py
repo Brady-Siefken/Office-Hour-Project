@@ -44,6 +44,7 @@ urlpatterns = [
     path('admin/users/', ManageUsersView.as_view()),
     path('admin/courses/', ManageCoursesView.as_view()),
     path('instructor/dashboard/', InstructorDashboardView.as_view()),
+    path('instructor/office-hours/approve/', ApproveOfficeHoursView.as_view()),
     # path('ta/dashboard/', TADashboardView.as_view()),
     path('ta/dashboard/', TADashboardView.as_view()),
     # not written yet

@@ -67,6 +67,27 @@ class OfficeHoursDatabaseTestSetup(TestCase):
 
 class TestGetPendingOfficeHoursForInstructor(OfficeHoursDatabaseTestSetup):
 
+    def test_instructor_with_multiple_courses(self):
+        #An instructor teaching multiple courses sees pending hours from all of them.
+        second_course = Course.objects.create(
+            department = self.dept, courseCode = 400, courseName = "Advanced Topic"
+        )
+        Section.objects.create(
+            course = second_course, sectionCode=1,
+            instructor = self.instructor, ta = self.ta1,
+        )
+        second_course_pending = OfficeHour.objects.create(
+            staff = self.ta1, course = second_course, timeslot = self.timeslot,
+            approved = False,
+        )
+
+        result = getPendingOfficeHoursForInstructor("instructor@uwm.edu")
+        ids = [oh.getId() for oh in result]
+
+        # Should see the pending hour from BOTH courses
+        self.assertIn(self.pending_hour.id, ids)
+        self.assertIn(second_course_pending.id, ids)
+
     def test_pending_hours_for_my_courses(self):
         result = getPendingOfficeHoursForInstructor("instructor@uwm.edu")
         ids = [oh.getId() for oh in result]
