@@ -9,7 +9,7 @@ from classes.CourseDatabase import getAllCourses, doesCourseExist, createCourse,
 from classes.Sections import SectionClass
 from classes.SectionsDatabase import createSection, deleteSection, assignInstructor, assignTA
 from classes.UserDatabase import getUser, getUsersByType
-from classes.OfficeHoursDatabase import (getPendingOfficeHoursForInstructor, approveOfficeHour, rejectOfficeHour,)
+from classes.OfficeHoursDatabase import (getPendingOfficeHoursForInstructor, approveOfficeHour, rejectOfficeHour, getApprovedOfficeHours,)
 
 DASHBOARD_ROUTES = {
     "INSTRUCTOR": "/instructor/dashboard/",
@@ -307,6 +307,35 @@ class ApproveOfficeHoursView(View):
             # Office hour doesn't exist or invalid id; silently ignore
             pass
         return redirect("/instructor/office-hours/approve/")
+
+class ViewOfficeHoursView(View):
+    def get(self, request):
+        user = getUser(request.session.get("user_id"))
+        if user is None:
+            return redirect("/")
+
+        lecture_str = request.GET.get("lecture", "").strip()
+        ta_email = request.GET.get("ta", "").strip()
+
+        course_filter = None
+        if lecture_str:
+            try:
+                course_filter = int(lecture_str)
+            except ValueError:
+                course_filter = None
+
+        staff_filter = ta_email or None
+
+        context = {
+            "user": user,
+            "ta_office_hours_list": getApprovedOfficeHours(
+                course_filter=course_filter,
+                staff_filter=staff_filter,
+            ),
+            "lecture_filter": lecture_str,
+            "ta_filter": ta_email,
+        }
+        return render(request, "scheduler_app/view_office_hours.html", context)
 
 ########################################################################################################################
 

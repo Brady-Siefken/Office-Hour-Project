@@ -1,0 +1,70 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Office Hours Schedule</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500&display=swap"
+          rel="stylesheet"/>
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}"/>
+</head>
+<body class="dashboard-body">
+
+<nav class="nav">
+    <div class="nav-brand">OfficeHours</div>
+    <ul class="nav-links">
+        <li>
+            <a href="{% if user.getType == 'INSTRUCTOR' %}/instructor/dashboard/{% elif user.getType == 'TA' %}/ta/dashboard/{% else %}/{% endif %}">Back</a>
+        </li>
+        <li><a href="/logout/" class="nav-logout">Logout</a></li>
+    </ul>
+</nav>
+
+<main class="dashboard-main">
+
+    <header class="dashboard-header">
+        <h1>Office Hours Schedule</h1>
+        <p class="welcome-text">Welcome, <strong>{{ user.getName }}</strong></p>
+    </header>
+
+    <section class="table-section">
+        <h2 class="section-title">All Approved Office Hours</h2>
+
+        <form method="get" class="form-row" style="margin-bottom: 28px;">
+            <input type="text" name="lecture" value="{{ lecture_filter }}" placeholder="Course code (e.g. 361)"/>
+            <input type="text" name="ta" value="{{ ta_filter }}" placeholder="Staff email"/>
+            <button type="submit" class="btn-submit"><span>Filter</span></button>
+        </form>
+
+        {% if ta_office_hours_list %}
+        <div class="table-wrap">
+            <table class="data-table">
+                <thead>
+                <tr>
+                    <th>Course</th>
+                    <th>Staff</th>
+                    <th>Role</th>
+                    <th>Time</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for oh in ta_office_hours_list %}
+                <tr>
+                    <td>{{ oh.getCourse }}</td>
+                    <td>{{ oh.getStaff.getName }}</td>
+                    <td>{{ oh.getStaff.getType }}</td>
+                    <td>{{ oh.getTimeslot }}</td>
+                </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <p class="empty-state">No office hours match your filters.</p>
+        {% endif %}
+    </section>
+
+</main>
+
+</body>
+</html>
