@@ -1,0 +1,24 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Logged out</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}"/>
+</head>
+<body>
+
+<div class="card">
+    <div class="form-header">
+        <h2>You've been logged out</h2>
+        <p>Thanks for using Office Hours. See you next time.</p>
+    </div>
+
+    <a href="{% url 'login' %}" class="btn-social">
+        Sign in again
+    </a>
+</div>
+
+</body>
+</html>

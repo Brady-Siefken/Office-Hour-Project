@@ -1,0 +1,73 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Approve Office Hours</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}"/>
+</head>
+<body class="dashboard-body">
+
+<nav class="nav">
+    <div class="nav-brand">OfficeHours</div>
+    <ul class="nav-links">
+        <li><a href="/instructor/dashboard/">Back to Dashboard</a></li>
+        <li><a href="/logout/" class="nav-logout">Logout</a></li>
+    </ul>
+</nav>
+
+<main class="dashboard-main">
+
+    <header class="dashboard-header">
+        <h1>Approve Office Hours</h1>
+        <p class="welcome-text">Welcome, <strong>{{ user.getName }}</strong></p>
+    </header>
+
+    <section class="table-section">
+        <h2 class="section-title">Pending TA Office Hours</h2>
+        {% if pending_office_hours %}
+            <div class="table-wrap">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>TA</th>
+                            <th>Course</th>
+                            <th>Time</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for office_hour in pending_office_hours %}
+                            <tr>
+                                <td>{{ office_hour.getStaff.getName }}</td>
+                                <td>{{ office_hour.getCourse }}</td>
+                                <td>{{ office_hour.getTimeslot }}</td>
+                                <td>
+                                    <form method="post" action="/instructor/office-hours/approve/" style="display:inline;">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="office_hours_id" value="{{ office_hour.getId }}">
+                                        <input type="hidden" name="action" value="approve">
+                                        <button type="submit">Approve</button>
+                                    </form>
+                                    <form method="post" action="/instructor/office-hours/approve/" style="display:inline;">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="office_hours_id" value="{{ office_hour.getId }}">
+                                        <input type="hidden" name="action" value="reject">
+                                        <button type="submit">Reject</button>
+                                    </form>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <p class="empty-state">No pending office hours to approve.</p>
+        {% endif %}
+    </section>
+
+</main>
+
+</body>
+</html>

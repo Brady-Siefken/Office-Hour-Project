@@ -1,72 +1,65 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <title>TA Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}"/>
 </head>
-<body>
+<body class="dashboard-body">
 
-    <h1>TA Dashboard</h1>
-    <p>Welcome, {{ ta_user.username }}</p>
+<nav class="nav">
+    <div class="nav-brand">OfficeHours</div>
+    <ul class="nav-links">
+        <li><a href="/staff/office-hours/propose/">Propose Hours</a></li>
+        <li><a href="/office-hours/">Schedule</a></li>
+        <li><a href="/logout/" class="nav-logout">Logout</a></li>
+    </ul>
+</nav>
 
-    <nav>
-        <a href="#">Propose Hours</a> |
-        <a href="#">Schedule</a> |
-        <a href="#">Logout</a>
-        <!-- TODO: Replace # with {% url 'propose_hours' %}, {% url 'schedule' %}, {% url 'logout' %} once those URLs are defined in urls.py -->
-    </nav>
+<main class="dashboard-main">
 
-    <hr>
+    <header class="dashboard-header">
+        <h1>TA Dashboard</h1>
+        <p class="welcome-text">Welcome, <strong>{{ user.getName }}</strong></p>
+    </header>
 
-    <h2>My Lectures</h2>
-    {% if my_lectures %}
-        <table border="1" cellpadding="6">
-            <thead>
-                <tr>
-                    <th>Course Name</th>
-                    <th>Instructor</th>
-                    <th>Meeting Times</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for lecture in my_lectures %}
-                    <tr>
-                        <td>{{ lecture.CourseName }}</td>
-                        <td>{{ lecture.Instructor.name|default:"(not assigned)" }}</td>
-                        <td>{{ lecture.MeetingTimes|default:"(not set)" }}</td>
-                    </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    {% else %}
-        <p>No lectures assigned.</p>
-    {% endif %}
+    <section class="table-section">
+        <h2 class="section-title">My Sections</h2>
+        {% if sections %}
+            <div class="table-wrap">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Department</th>
+                            <th>Course Code</th>
+                            <th>Course Name</th>
+                            <th>Section</th>
+                            <th>Type</th>
+                            <th>Instructor</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for section in sections %}
+                            <tr>
+                                <td>{{ section.getCourse.getCourseDepartment }}</td>
+                                <td>{{ section.getCourse.getCourseCode }}</td>
+                                <td>{{ section.getCourse.getCourseName }}</td>
+                                <td>{{ section.getSectionCode }}</td>
+                                <td>{{ section.getSectionType }}</td>
+                                <td>{{ section.getInstructor|default:"(none)" }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <p class="empty-state">No sections assigned.</p>
+        {% endif %}
+    </section>
 
-    <hr>
-
-    <h2>Upcoming Office Hours</h2>
-    {% if upcoming_office_hours %}
-        <table border="1" cellpadding="6">
-            <thead>
-                <tr>
-                    <th>Course Name</th>
-                    <th>Office Hours</th>
-                    <th>Approved</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for office_hour in upcoming_office_hours %}
-                    <tr>
-                        <td>{{ office_hour.CourseName }}</td>
-                        <td>{{ office_hour.TAOfficeHours|default:"(not set)" }}</td>
-                        <td>{{ office_hour.TAOfficeHoursApproved|yesno:"Yes,No" }}</td>
-                    </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    {% else %}
-        <p>No upcoming office hours.</p>
-    {% endif %}
+</main>
 
 </body>
 </html>

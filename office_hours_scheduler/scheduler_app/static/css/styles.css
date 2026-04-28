@@ -1,0 +1,871 @@
+/* ============================================================
+   UWM Site Stylesheet
+   Fonts: Playfair Display (headings) + DM Sans (body)
+   Add to <head>:
+     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+     <link rel="stylesheet" href="styles.css"/>
+   ============================================================ */
+
+
+/* ── Reset ─────────────────────────────────────────────────── */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+
+/* ── Design Tokens ──────────────────────────────────────────── */
+
+:root {
+  --ink:      #1a1410;
+  --dark-bg:  #18130f;
+  --cream:    #ede7d9;
+  --accent:   #b5410a;
+  --gold:     #c9973a;
+  --muted:    #8a7f72;
+  --border:   #cfc5b2;
+  --white:    #ffffff;
+
+  --font-display: "Playfair Display", Georgia, serif;
+  --font-body:    "DM Sans", system-ui, sans-serif;
+
+  --radius:    4px;
+  --radius-md: 6px;
+  --radius-sm: 3px;
+
+  --transition-fast: .15s ease;
+  --transition-base: .2s ease;
+  --transition-slow: .35s cubic-bezier(.4, 0, .2, 1);
+
+  --shadow-card: 0 32px 80px rgba(0,0,0,.45), 0 0 0 1px rgba(255,255,255,.06);
+}
+
+
+/* ── Base ───────────────────────────────────────────────────── */
+
+html {
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--dark-bg);
+  font-family: var(--font-body);
+  font-size: .95rem;
+  color: rgba(255,255,255,.85);
+  overflow: hidden;
+  position: relative;
+}
+
+/* Login page card gets dark text since it has a light background */
+.card {
+  color: var(--ink);
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 70% 60% at 20% 80%, rgba(181,65,10,.25) 0%, transparent 65%),
+    radial-gradient(ellipse 50% 50% at 80% 20%, rgba(201,151,58,.12) 0%, transparent 60%);
+  pointer-events: none;
+}
+
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(255,255,255,.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,.03) 1px, transparent 1px);
+  background-size: 48px 48px;
+  pointer-events: none;
+}
+
+img {
+  display: block;
+  max-width: 100%;
+}
+
+a {
+  color: var(--accent);
+  text-decoration: none;
+  font-weight: 500;
+  transition: color var(--transition-fast);
+}
+
+a:hover { text-decoration: underline; }
+
+button {
+  font-family: var(--font-body);
+  cursor: pointer;
+}
+
+button:hover  { transform: translateY(-1px); }
+button:active { transform: translateY(0); }
+
+
+/* ── Animations ─────────────────────────────────────────────── */
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(28px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+
+/* ============================================================
+   LOGIN PAGE
+   ============================================================ */
+
+/* ── Card ───────────────────────────────────────────────────── */
+
+.card {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 420px;
+  padding: 48px 44px 44px;
+  background: rgba(245, 240, 232, .97);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-card);
+  animation: fadeUp .6s ease both;
+}
+
+/* ── Logo ───────────────────────────────────────────────────── */
+
+.brand-logo {
+  display: block;
+  height: 64px;
+  width: auto;
+  margin: 0 auto 36px;
+  object-fit: contain;
+}
+
+/* ── Form Header ────────────────────────────────────────────── */
+
+.form-header { margin-bottom: 32px; }
+
+.form-header h2 {
+  font-family: var(--font-display);
+  font-size: 1.9rem;
+  font-weight: 700;
+  color: var(--ink);
+  margin-bottom: 6px;
+}
+
+.form-header p {
+  font-size: .875rem;
+  color: var(--muted);
+  font-weight: 300;
+}
+
+.form-header p a { color: var(--accent); }
+.form-header p a:hover { text-decoration: underline; }
+
+/* ── Login Fields ───────────────────────────────────────────── */
+
+.field {
+  margin-bottom: 20px;
+  animation: fadeUp .6s ease both;
+}
+
+.field:nth-child(1) { animation-delay: .10s; }
+.field:nth-child(2) { animation-delay: .18s; }
+
+.card label {
+  display: block;
+  font-size: .75rem;
+  font-weight: 500;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 7px;
+}
+
+.input-wrap { position: relative; }
+
+/* Login page inputs — dark text on white background */
+.card input[type="email"],
+.card input[type="password"],
+.card input[type="text"] {
+  width: 100%;
+  padding: 13px 16px;
+  background: var(--white);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius);
+  font-family: var(--font-body);
+  font-size: .95rem;
+  color: var(--ink);
+  outline: none;
+  transition: border-color var(--transition-base), box-shadow var(--transition-base);
+}
+
+.card input:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(181, 65, 10, .08);
+}
+
+.card input::placeholder { color: #bfb8ad; }
+
+/* ── Password Toggle ────────────────────────────────────────── */
+
+.toggle-pw {
+  position: absolute;
+  right: 13px;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+  color: var(--muted);
+  display: flex;
+  align-items: center;
+  background: none;
+  border: none;
+  padding: 0;
+  transition: color var(--transition-fast);
+}
+
+.toggle-pw:hover {
+  color: var(--ink);
+  transform: translateY(-50%);  /* prevent button:hover lift from misaligning */
+}
+
+/* ── Login Submit Button ────────────────────────────────────── */
+
+.btn-submit {
+  width: 100%;
+  padding: 14px;
+  background: var(--ink);
+  color: var(--white);
+  font-family: var(--font-body);
+  font-size: .88rem;
+  font-weight: 500;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  border: none;
+  border-radius: var(--radius);
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+  animation: fadeUp .6s .36s ease both;
+}
+
+.btn-submit::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: var(--accent);
+  transform: translateX(-102%);
+  transition: transform var(--transition-slow);
+  z-index: -1;
+}
+
+.btn-submit:hover::after { transform: translateX(0); }
+
+.btn-submit span {
+  position: relative;
+  z-index: 1;
+}
+
+/* ── Form Error ─────────────────────────────────────────────── */
+
+.form-error {
+  font-size: .83rem;
+  color: var(--accent);
+  background: rgba(181, 65, 10, .08);
+  border: 1px solid rgba(181, 65, 10, .2);
+  border-radius: var(--radius);
+  padding: 10px 14px;
+  margin-bottom: 20px;
+}
+
+/* ── Divider ────────────────────────────────────────────────── */
+
+.divider {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin: 26px 0;
+  animation: fadeUp .6s .42s ease both;
+}
+
+.divider::before,
+.divider::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+}
+
+.divider span {
+  font-size: .72rem;
+  color: var(--muted);
+  letter-spacing: .06em;
+  text-transform: uppercase;
+}
+
+/* ── Social Button ──────────────────────────────────────────── */
+
+.social-row { animation: fadeUp .6s .48s ease both; }
+
+.btn-social {
+  width: 100%;
+  padding: 12px;
+  background: var(--white);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  font-family: var(--font-body);
+  font-size: .88rem;
+  color: var(--ink);
+  cursor: pointer;
+  transition: border-color var(--transition-base), background var(--transition-base);
+  text-decoration: none;
+}
+
+.btn-social:hover {
+  border-color: var(--ink);
+  background: var(--cream);
+}
+
+@media (max-width: 480px) {
+  .card { padding: 36px 24px 32px; }
+}
+
+
+/* ============================================================
+   DASHBOARD
+   ============================================================ */
+
+/* ── Dashboard body ─────────────────────────────────────────── */
+
+body.dashboard-body {
+  display: block;
+  overflow: auto;
+  background-color: var(--dark-bg);
+}
+
+/* ── Navigation ─────────────────────────────────────────────── */
+
+.nav {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 40px;
+  height: 64px;
+  background: rgba(24, 19, 15, .96);
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid rgba(255,255,255,.07);
+}
+
+.nav-brand {
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  color: #fff;
+  letter-spacing: .04em;
+}
+
+.nav-brand img {
+  height: 36px;
+  width: auto;
+  object-fit: contain;
+  display: block;
+  filter: brightness(0) invert(1);
+}
+
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 32px;
+  list-style: none;
+}
+
+.nav-links a {
+  font-size: .83rem;
+  font-weight: 400;
+  letter-spacing: .04em;
+  color: rgba(255,255,255,.65);
+  text-decoration: none;
+  transition: color var(--transition-fast);
+}
+
+.nav-links a:hover { color: #fff; text-decoration: none; }
+
+.nav-logout {
+  padding: 7px 16px;
+  border: 1.5px solid rgba(255,255,255,.2) !important;
+  border-radius: var(--radius) !important;
+  color: rgba(255,255,255,.7) !important;
+  transition: border-color var(--transition-base), color var(--transition-base) !important;
+}
+
+.nav-logout:hover {
+  border-color: var(--accent) !important;
+  color: var(--accent) !important;
+  text-decoration: none;
+}
+
+/* ── Main content ───────────────────────────────────────────── */
+
+.dashboard-main {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 48px 40px 80px;
+}
+
+/* ── Back link ──────────────────────────────────────────────── */
+
+.back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: .83rem;
+  font-weight: 500;
+  color: rgba(255,255,255,.5);
+  text-decoration: none;
+  margin-bottom: 28px;
+  transition: color var(--transition-fast);
+}
+
+.back-link:hover {
+  color: var(--gold);
+  text-decoration: none;
+}
+
+/* ── Dashboard header ───────────────────────────────────────── */
+
+.dashboard-header {
+  margin-bottom: 36px;
+  animation: fadeUp .5s ease both;
+}
+
+.dashboard-header h1 {
+  font-family: var(--font-display);
+  font-size: 2.1rem;
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 4px;
+}
+
+.welcome-text {
+  font-size: .9rem;
+  color: rgba(255,255,255,.5);
+  font-weight: 300;
+  margin: 0;
+}
+
+.welcome-text strong {
+  color: rgba(255,255,255,.8);
+  font-weight: 500;
+}
+
+/* ── Summary cards ──────────────────────────────────────────── */
+
+.summary-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 16px;
+  margin-bottom: 48px;
+  animation: fadeUp .5s .08s ease both;
+}
+
+.summary-card {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 24px 28px;
+  background: rgba(245,240,232,.06);
+  border: 1px solid rgba(255,255,255,.08);
+  border-radius: var(--radius-md);
+  transition: background var(--transition-base), border-color var(--transition-base);
+}
+
+.summary-card:hover {
+  background: rgba(245,240,232,.1);
+  border-color: rgba(201,151,58,.3);
+}
+
+.summary-label {
+  font-size: .72rem;
+  font-weight: 500;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,.45);
+}
+
+.summary-value {
+  font-family: var(--font-display);
+  font-size: 2.4rem;
+  font-weight: 700;
+  color: var(--gold);
+  line-height: 1;
+}
+
+/* ── Table section ──────────────────────────────────────────── */
+
+.table-section {
+  animation: fadeUp .5s .16s ease both;
+  margin-bottom: 48px;
+}
+
+.section-title {
+  font-family: var(--font-display);
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 20px;
+}
+
+.table-wrap {
+  overflow-x: auto;
+  border-radius: var(--radius-md);
+  border: 1px solid rgba(255,255,255,.08);
+}
+
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: .88rem;
+}
+
+.data-table thead {
+  background: rgba(201,151,58,.12);
+}
+
+.data-table th {
+  padding: 13px 18px;
+  text-align: left;
+  font-size: .72rem;
+  font-weight: 500;
+  letter-spacing: .09em;
+  text-transform: uppercase;
+  color: var(--gold);
+  white-space: nowrap;
+  border-bottom: 1px solid rgba(255,255,255,.08);
+}
+
+.data-table td {
+  padding: 14px 18px;
+  color: rgba(255,255,255,.75);
+  border-bottom: 1px solid rgba(255,255,255,.05);
+  vertical-align: middle;
+}
+
+.data-table tbody tr:last-child td { border-bottom: none; }
+
+.data-table tbody tr {
+  background: rgba(245,240,232,.03);
+  transition: background var(--transition-fast);
+}
+
+.data-table tbody tr:hover { background: rgba(245,240,232,.07); }
+
+/* ── Empty state ────────────────────────────────────────────── */
+
+.empty-state {
+  padding: 40px;
+  text-align: center;
+  color: rgba(255,255,255,.35);
+  font-size: .9rem;
+  background: rgba(245,240,232,.03);
+  border: 1px solid rgba(255,255,255,.07);
+  border-radius: var(--radius-md);
+  margin: 0;
+}
+
+/* ── Error banner ───────────────────────────────────────────── */
+
+.error-banner {
+  font-size: .85rem;
+  color: var(--accent);
+  background: rgba(181,65,10,.08);
+  border: 1px solid rgba(181,65,10,.2);
+  border-radius: var(--radius);
+  padding: 10px 16px;
+  margin-bottom: 24px;
+}
+
+
+/* ============================================================
+   DASHBOARD INPUTS & SELECTS
+   ============================================================ */
+
+.dashboard-main input[type="text"],
+.dashboard-main input[type="number"],
+.dashboard-main input[type="email"],
+.dashboard-main input[type="password"],
+.dashboard-main select {
+  height: 40px;
+  padding: 0 14px;
+  background: rgba(245,240,232,.06);
+  border: 1.5px solid rgba(255,255,255,.12);
+  border-radius: var(--radius);
+  font-family: var(--font-body);
+  font-size: .85rem;
+  color: rgba(255,255,255,.85);
+  outline: none;
+  transition: border-color var(--transition-base),
+              box-shadow var(--transition-base),
+              background var(--transition-base);
+  appearance: none;
+}
+
+.dashboard-main input:focus,
+.dashboard-main select:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(181,65,10,.18);
+  background: rgba(245,240,232,.09);
+}
+
+.dashboard-main input::placeholder {
+  color: rgba(255,255,255,.3);
+}
+
+.dashboard-main select option {
+  background: #2a1f18;
+  color: #fff;
+}
+
+
+/* ============================================================
+   FORM ROW  (Create Course / Add Section)
+   ============================================================ */
+
+.form-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  padding: 20px 24px;
+  background: rgba(245,240,232,.04);
+  border: 1px solid rgba(255,255,255,.07);
+  border-radius: var(--radius);
+}
+
+/* Most inputs grow to fill space */
+.form-row input,
+.form-row select {
+  flex: 1;
+  min-width: 160px;
+}
+
+/* Narrow fixed inputs e.g. course/section code */
+.form-row input[name="course_code"],
+.form-row input[name="section_code"] {
+  flex: 0 0 130px;
+  min-width: unset;
+}
+
+
+/* ============================================================
+   INLINE FORM  (Assign Instructor / TA inside table cells)
+   ============================================================ */
+
+.inline-form {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: nowrap;
+}
+
+.inline-form select {
+  min-width: 130px;
+  flex: 1;
+}
+
+
+/* ============================================================
+   BUTTONS
+   ============================================================ */
+
+/* ── Primary / Mini (dark with accent sweep) ────────────────── */
+
+.btn-primary,
+.btn-mini {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 16px;
+  height: 40px;
+  background: var(--ink);
+  color: var(--white);
+  font-family: var(--font-body);
+  font-size: .78rem;
+  font-weight: 500;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  border: none;
+  border-radius: var(--radius);
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+  white-space: nowrap;
+}
+
+.btn-primary::after,
+.btn-mini::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: var(--accent);
+  transform: translateX(-102%);
+  transition: transform var(--transition-slow);
+  z-index: -1;
+}
+
+.btn-primary:hover::after,
+.btn-mini:hover::after {
+  transform: translateX(0);
+}
+
+/* ── Danger (delete) ────────────────────────────────────────── */
+
+.btn-danger {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 16px;
+  height: 40px;
+  background: rgba(181,65,10,.12);
+  color: var(--accent);
+  font-family: var(--font-body);
+  font-size: .78rem;
+  font-weight: 500;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  border: 1px solid rgba(181,65,10,.3);
+  border-radius: var(--radius);
+  isolation: isolate;
+  white-space: nowrap;
+}
+
+.btn-danger:hover {
+  background: var(--accent);
+  color: var(--white);
+  border-color: var(--accent);
+  transform: translateY(-1px);
+}
+
+/* ── Ghost ──────────────────────────────────────────────────── */
+
+.btn-ghost {
+  background: transparent;
+  color: rgba(255,255,255,.75);
+  border: 1px solid rgba(255,255,255,.15);
+  padding: 9px 12px;
+  border-radius: var(--radius);
+  font-size: .8rem;
+}
+
+.btn-ghost:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+
+/* ============================================================
+   COURSE CARD
+   ============================================================ */
+
+.course-card {
+  background: rgba(245,240,232,.06);
+  border: 1px solid rgba(255,255,255,.14);
+  border-radius: var(--radius-md);
+  padding: 28px 28px 24px;
+  margin-bottom: 24px;
+  transition: border-color var(--transition-base), background var(--transition-base);
+}
+
+.course-card:hover {
+  background: rgba(245,240,232,.09);
+  border-color: rgba(201,151,58,.4);
+}
+
+.course-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+  gap: 16px;
+}
+
+.course-card-header h3 {
+  font-family: var(--font-display);
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #fff;
+  margin: 0;
+}
+
+/* Section subheadings (e.g. "Sections", "Add Section") */
+.course-card h4 {
+  font-size: .72rem;
+  font-weight: 500;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin: 20px 0 10px;
+}
+
+/* All text inside a course card table should be bright */
+.course-card .data-table td {
+  color: rgba(255,255,255,.92);
+}
+
+/* Instructor / TA name columns — slightly softer */
+.course-card .data-table td:nth-child(3),
+.course-card .data-table td:nth-child(4) {
+  color: rgba(255,255,255,.70);
+  font-style: italic;
+}
+
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+
+@media (max-width: 640px) {
+  .nav { padding: 0 20px; }
+  .dashboard-main { padding: 32px 20px 60px; }
+  .nav-links { gap: 16px; }
+
+  .form-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .form-row input,
+  .form-row select,
+  .form-row input[name="course_code"],
+  .form-row input[name="section_code"] {
+    flex: unset;
+    width: 100%;
+    min-width: unset;
+  }
+
+  .course-card-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .btn-primary,
+  .btn-mini,
+  .btn-danger {
+    width: 100%;
+  }
+}

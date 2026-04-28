@@ -195,7 +195,7 @@ input[type="password"],
 input[type="text"] {
   width: 100%;
   padding: 13px 16px;
-  background: var(--white);
+  background: transparent;
   border: 1.5px solid var(--border);
   border-radius: var(--radius);
   font-family: var(--font-body);
@@ -203,6 +203,17 @@ input[type="text"] {
   color: var(--ink);
   outline: none;
   transition: border-color var(--transition-base), box-shadow var(--transition-base);
+}
+
+/* Inline error message used by login/forms */
+.form-error {
+  margin-bottom: 16px;
+  padding: 10px 14px;
+  font-size: .85rem;
+  color: var(--accent);
+  background: rgba(181, 65, 10, .08);
+  border: 1px solid rgba(181, 65, 10, .25);
+  border-radius: var(--radius);
 }
 
 input:focus {
@@ -564,63 +575,4 @@ body.dashboard-body {
   width: 100%;
   border-collapse: collapse;
   font-size: .88rem;
-}
-
-.data-table thead {
-  background: rgba(201,151,58,.12);
-}
-
-.data-table th {
-  padding: 13px 18px;
-  text-align: left;
-  font-size: .72rem;
-  font-weight: 500;
-  letter-spacing: .09em;
-  text-transform: uppercase;
-  color: var(--gold);
-  white-space: nowrap;
-  border-bottom: 1px solid rgba(255,255,255,.08);
-}
-
-.data-table td {
-  padding: 14px 18px;
-  color: rgba(255,255,255,.75);
-  border-bottom: 1px solid rgba(255,255,255,.05);
-  vertical-align: middle;
-}
-
-.data-table tbody tr:last-child td {
-  border-bottom: none;
-}
-
-.data-table tbody tr {
-  background: rgba(245,240,232,.03);
-  transition: background var(--transition-fast);
-}
-
-.data-table tbody tr:hover {
-  background: rgba(245,240,232,.07);
-}
-
-
-/* ── Empty state ───────────────────────────────────────────── */
-
-.empty-state {
-  padding: 40px;
-  text-align: center;
-  color: rgba(255,255,255,.35);
-  font-size: .9rem;
-  background: rgba(245,240,232,.03);
-  border: 1px solid rgba(255,255,255,.07);
-  border-radius: var(--radius-md);
-  margin: 0;
-}
-
-
-/* ── Dashboard responsive ──────────────────────────────────── */
-
-@media (max-width: 640px) {
-  .nav { padding: 0 20px; }
-  .dashboard-main { padding: 32px 20px 60px; }
-  .nav-links { gap: 16px; }
 }

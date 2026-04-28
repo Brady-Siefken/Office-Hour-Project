@@ -14,21 +14,48 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+# from django.contrib import admin
+# from django.urls import path
+# from scheduler_app.views import *
+#
+# urlpatterns = [
+#     path('admin/', admin.site.urls),
+#     path('', Home.as_view()), #Login Page
+#     path('admin/dashboard/', AdminDashboardView.as_view()),
+#     #path('admin/users/', AdminManageUsersView.as_view()),
+#     #path('admin/lectures/', AdminManageLecturesView.as_view()),
+#     #path('ta/dashboard/', TADashboardView.as_view()),
+#     #path('staff/office-hours/propose/', OfficeHourProposalView.as_view()),
+#     #path('office-hours/', OfficeHoursView.as_view()),
+#     #path('instructor/office-hours/approve/', InstructorApproveHoursView.as_view()),
+#     #path('student/reserve/', StudentReserveHoursView.as_view()),
+#     #path('student/reservations/', StudentReservationsView.as_view()),
+#     #path('staff/tardy-report/', TardyReportView.as_view()),
+# ]
 from django.contrib import admin
 from django.urls import path
 from scheduler_app.views import *
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('', Home.as_view()), #Login Page
+    # path('admin/', admin.site.urls),
+    path('', Home.as_view(), name='login'),
+    path('logout/', logout_view, name='logout'),
     path('admin/dashboard/', AdminDashboardView.as_view()),
-    #path('admin/users/', AdminManageUsersView.as_view()),
-    #path('admin/lectures/', AdminManageLecturesView.as_view()),
-    #path('ta/dashboard/', TADashboardView.as_view()),
-    #path('staff/office-hours/propose/', OfficeHourProposalView.as_view()),
-    #path('office-hours/', OfficeHoursView.as_view()),
-    #path('instructor/office-hours/approve/', InstructorApproveHoursView.as_view()),
-    #path('student/reserve/', StudentReserveHoursView.as_view()),
-    #path('student/reservations/', StudentReservationsView.as_view()),
-    #path('staff/tardy-report/', TardyReportView.as_view()),
+    path('admin/users/', ManageUsersView.as_view()),
+    path('admin/courses/', ManageCoursesView.as_view()),
+    path('instructor/dashboard/', InstructorDashboardView.as_view()),
+    path('instructor/office-hours/approve/', ApproveOfficeHoursView.as_view()),
+    # path('ta/dashboard/', TADashboardView.as_view()),
+    path('ta/dashboard/', TADashboardView.as_view()),
+    # not written yet
+    #path('admin/courses/', ManageCoursesView.as_view()),
+    #path('instructor/dashboard/', InstructorDashboardView.as_view()),
+    #path('instructor/office-hours/approve/', ApproveOfficeHoursView.as_view()),
+    #path('staff/office-hours/propose/', ProposeOfficeHoursView.as_view()),
+    #path('office-hours/', ViewOfficeHoursView.as_view()),
+    #path('student/dashboard/', StudentDashboardView.as_view()),
+    #path('student/reserve/', ReserveSlotView.as_view()),
+    #path('student/reservations/', MyReservationsView.as_view()),
+    #path('staff/tardy-report/', TardyNoShowView.as_view()),
+    #path('logout/', LogoutView.as_view()),
 ]

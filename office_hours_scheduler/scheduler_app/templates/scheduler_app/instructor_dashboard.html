@@ -1,0 +1,67 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Instructor Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}"/>
+</head>
+<body class="dashboard-body">
+
+<nav class="nav">
+    <div class="nav-brand">OfficeHours</div>
+    <ul class="nav-links">
+        <li><a href="/staff/office-hours/propose/">Propose Hours</a></li>
+        <li><a href="/instructor/office-hours/approve/">Approve Hours</a></li>
+        <li><a href="/office-hours/">Schedule</a></li>
+        <li><a href="/staff/tardy-report/">Tardy / No-Show Report</a></li>
+        <li><a href="/logout/" class="nav-logout">Logout</a></li>
+    </ul>
+</nav>
+
+<main class="dashboard-main">
+
+    <header class="dashboard-header">
+        <h1>Instructor Dashboard</h1>
+        <p class="welcome-text">Welcome, <strong>{{ user.getName }}</strong></p>
+    </header>
+
+    <section class="table-section">
+        <h2 class="section-title">My Sections</h2>
+        {% if sections %}
+            <div class="table-wrap">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Department</th>
+                            <th>Course Code</th>
+                            <th>Course Name</th>
+                            <th>Section</th>
+                            <th>Type</th>
+                            <th>TA</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for section in sections %}
+                            <tr>
+                                <td>{{ section.getCourse.getCourseDepartment }}</td>
+                                <td>{{ section.getCourse.getCourseCode }}</td>
+                                <td>{{ section.getCourse.getCourseName }}</td>
+                                <td>{{ section.getSectionCode }}</td>
+                                <td>{{ section.getSectionType }}</td>
+                                <td>{{ section.getTA|default:"(none)" }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <p class="empty-state">No sections assigned.</p>
+        {% endif %}
+    </section>
+
+</main>
+
+</body>
+</html>
