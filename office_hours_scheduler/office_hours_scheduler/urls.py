@@ -51,7 +51,7 @@ urlpatterns = [
     #path('admin/courses/', ManageCoursesView.as_view()),
     #path('instructor/dashboard/', InstructorDashboardView.as_view()),
     #path('instructor/office-hours/approve/', ApproveOfficeHoursView.as_view()),
-    #path('staff/office-hours/propose/', ProposeOfficeHoursView.as_view()),
+    path('staff/office-hours/propose/', ProposeOfficeHoursView.as_view()),
     path('office-hours/', ViewOfficeHoursView.as_view()),
     #path('student/dashboard/', StudentDashboardView.as_view()),
     #path('student/reserve/', ReserveSlotView.as_view()),
