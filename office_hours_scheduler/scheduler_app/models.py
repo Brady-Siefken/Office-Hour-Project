@@ -46,6 +46,25 @@ class Timeslot(models.Model):
     class Meta:
         app_label = 'scheduler_app'
 
+    def __str__(self):
+        # Build day abbreviations in calendar order (Mon-Fri).
+        # Tuesday is "T" and Thursday is "Th" so they're distinguishable
+        # when both are present (e.g., "TTh").
+        day_tokens = []
+        if self.monday:    day_tokens.append("M")
+        if self.tuesday:   day_tokens.append("T")
+        if self.wednesday: day_tokens.append("W")
+        if self.thursday:  day_tokens.append("Th")
+        if self.friday:    day_tokens.append("F")
+        days_str = "".join(day_tokens)
+
+        time_str = f"{self.start_time.strftime('%H:%M')}-{self.end_time.strftime('%H:%M')}"
+
+        if days_str:
+            return f"{days_str} {time_str}"
+        return time_str
+
+
 class Lecture(models.Model):
     CourseName = models.CharField(max_length=20)
     Instructor = models.ForeignKey(InstructorUser, on_delete=models.SET_NULL, null=True)

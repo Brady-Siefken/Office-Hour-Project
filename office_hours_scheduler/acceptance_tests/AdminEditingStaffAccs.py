@@ -1,57 +1,93 @@
 from django.test import TestCase, Client
-from django.contrib.auth.models import User
-from .models import Instructor, TA, Student, Lecture
+from scheduler_app.models import User
 
-class ManageUsersViewTest(TestCase):
+class AdminEditingStaffTest(TestCase):
 
     def setUp(self):
         self.client = Client()
-        self.admin_user = User.objects.create_user(
-            username = 'admin1', password = 'adminpass'
+
+        self.admin = User.objects.create(
+            email="admin@uwm.edu",
+            password="adminpass",
+            name="Admin One",
+            user_type="ADMIN",
         )
-        Instructor.objects.create(user=self.admin_user)
-        self.client.login(username = 'admin1', password = 'adminpass')
-
-        self.ta_user = User.objects.create_user(
-            username = 'ta1', password = 'tapass'
+        self.ta = User.objects.create(
+            email="ta1@uwm.edu",
+            password="tapass",
+            name="TA Original",
+            user_type="TA",
         )
-        self.ta = TA.objects.create(user=self.ta_user)
 
-    #  Staff roster shows all staff alphabetically
-# Clicking a staff member shows their info and an edit button
-def test_clicking_staff(self):
-    response = self.client.get('/admin/users/', {'selected': self.ta.id})
+        # Log in as admin via the same session pattern Home.post uses
+        session = self.client.session
+        session["user_id"] = self.admin.email
+        session["user_type"] = "ADMIN"
+        session.save()
 
-    self.assertEqual(response.status_code, 200)
-    self.assertContains(response, self.ta_user.username)
-    self.assertContains(response, 'edit account')
+    # The manage users page renders for an admin
+    def test_manage_users_page_renders(self):
+        response = self.client.get("/admin/users/")
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, self.ta.email)
+        self.assertContains(response, self.ta.name)
 
+    # Editing a staff member updates their name
+    def test_edit_updates_name(self):
+        response = self.client.post("/admin/users/", {
+            "action": "edit",
+            "email": self.ta.email,
+            "name": "TA Updated",
+            "password": "",
+            "user_type": "TA",
+        })
 
-# Clicking edit shows editable fields and a confirm button
-def test_edit_account(self):
-    response = self.client.get('/admin/users/', {
-        'selected': self.ta.id,
-        'action': 'edit'
-    })
+        self.assertRedirects(response, "/admin/users/")
 
-    self.assertEqual(response.status_code, 200)
-    self.assertContains(response, 'name = "username"')
-    self.assertContains(response, 'name = "email"')
-    self.assertContains(response, 'confirm')
+        self.ta.refresh_from_db()
+        self.assertEqual(self.ta.name, "TA Updated")
 
+    # Editing a staff member updates their password
+    def test_edit_updates_password(self):
+        response = self.client.post("/admin/users/", {
+            "action": "edit",
+            "email": self.ta.email,
+            "name": "",
+            "password": "newpass123",
+            "user_type": "TA",
+        })
 
-# Confirming updates the staff account with new info
-def test_confirm_updates_staff_account(self):
-    response = self.client.post('/admin/users/', {
-        'staff_id': self.ta.id,
-        'action': 'edit',
-        'username': 'updated_ta',
-        'email': 'updated@example.com',
-        'password': 'newpass123',
-        'user_type': 'ta'
-    })
+        self.assertRedirects(response, "/admin/users/")
 
-    self.assertRedirects(response, '/admin/users/')
-    self.ta_user.refresh_from_db()
-    self.assertEqual(self.ta_user.username, 'updated_ta')
-    self.assertEqual(self.ta_user.email, 'updated@wtv.com')
+        self.ta.refresh_from_db()
+        self.assertEqual(self.ta.password, "newpass123")
+
+    # Editing a staff member updates their user type
+    def test_edit_updates_user_type(self):
+        response = self.client.post("/admin/users/", {
+            "action": "edit",
+            "email": self.ta.email,
+            "name": "",
+            "password": "",
+            "user_type": "INSTRUCTOR",
+        })
+
+        self.assertRedirects(response, "/admin/users/")
+
+        self.ta.refresh_from_db()
+        self.assertEqual(self.ta.user_type, "INSTRUCTOR")
+
+    # Editing with an unknown email redirects without crashing
+    def test_edit_unknown_email_redirects(self):
+        response = self.client.post("/admin/users/", {
+            "action": "edit",
+            "email": "doesntexist@uwm.edu",
+            "name": "Whatever",
+            "password": "whatever",
+            "user_type": "TA",
+        })
+
+        self.assertRedirects(response, "/admin/users/")
+        self.assertFalse(
+            User.objects.filter(email="doesntexist@uwm.edu").exists()
+        )
