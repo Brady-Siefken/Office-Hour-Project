@@ -55,7 +55,7 @@ class TestOfficeHourProposal(TestCase):
     #  POST – success paths                                               #
     # ------------------------------------------------------------------ #
 
-    def test_ta_proposal_success_redirects_to_office_hours(self):
+    def test_ta_proposal_success(self):
         self._login_as("ta@gmail.com")
         response = self.monkey.post("/staff/office-hours/propose/", {
             'section_selection': 1,
@@ -67,8 +67,11 @@ class TestOfficeHourProposal(TestCase):
         })
         self.assertRedirects(response, "/office-hours/",
             msg_prefix="TA proposal should redirect to /office-hours/")
+        approved = getApprovedOfficeHours(staff_filter="ta@gmail.com")
+        self.assertEqual(len(approved), 0,
+                         "TA proposed office hour should be pending, not approved")
 
-    def test_instructor_proposal_success_redirects_to_approve(self):
+    def test_instructor_proposal_success(self):
         self._login_as("instruct@gmail.com")
         response = self.monkey.post("/staff/office-hours/propose/", {
             'section_selection': 1,
@@ -78,10 +81,13 @@ class TestOfficeHourProposal(TestCase):
             'end_hour':      '15',
             'end_minutes':   '30',
         })
-        self.assertRedirects(response, "/instructor/office-hours/approve/",
+        self.assertRedirects(response, "/office-hours/",
             msg_prefix="Instructor proposal should redirect to approve page")
+        approved = getApprovedOfficeHours(staff_filter="instruct@gmail.com")
+        self.assertEqual(len(approved), 1,
+                         "Instructor proposed office hour should be approved, not pending")
 
-    def test_office_hour_created_in_database(self):
+    def test_office_hour_created(self):
         self._login_as("ta@gmail.com")
         self.monkey.post("/staff/office-hours/propose/", {
             'section_selection': 1,
