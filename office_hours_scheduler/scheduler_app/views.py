@@ -469,9 +469,9 @@ class ProposeOfficeHoursView(View):
         start_time = f"{start_hour:02d}:{start_minutes:02d}"
         end_time = f"{end_hour:02d}:{end_minutes:02d}"
 
-        createOfficeHour(user.getEmail(), selected_section, start_time, end_time, days)
+        office_hours = createOfficeHour(user.getEmail(), selected_section, start_time, end_time, days)
 
         if user.getType() == "INSTRUCTOR":
-            return redirect("/instructor/office-hours/approve/")
+            office_hours.setApproved(True)
 
         return redirect("/office-hours/")
