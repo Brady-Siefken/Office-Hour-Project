@@ -1,102 +1,60 @@
 from django.test import TestCase, Client
-from .models import Administrators, Instructors, TAs, Lectures, OfficeHours
+from scheduler_app.models import User
+from classes.UserDatabase import  getUser, createUser
 
 
-#As an administrator, I want to be able to create new staff accounts so they than reliably meet with
-#students
 class TestCreateStaff(TestCase):
     monkey = None
-    admins = []
-    instructors = []
-    TAs = []
+
     def setUp(self):
         self.monkey = Client()
 
-        # Create admin user and add them to the Administrators table
-        self.admins[{
-            'id':'0',
-            'name':'Admin',
-            'username':'admin1',
-            'password':'password123',
-            'email':'admin@test.com'
-        }]
+        createUser("admin@gmail.com", "Test", "Admin Doe", "ADMIN")
+        createUser("instruct@gmail.com", "Test", "Instruct Doe", "INSTRUCTOR")
+        createUser("ta@gmail.com", "Test", "TA Doe", "TA")
 
-        # Log in as admin
-        self.monkey.post("/login/", {
-            'username': 'admin1',
-            'password': 'password123',
-        },follow=True)
-
+        session = self.monkey.session
+        session['user_id'] = "admin@gmail.com"
+        session.save()
 
     def test_new_ta_success(self):
-        response = self.monkey.post("/admin/users/", {
-            'id': '0',
-            'username': 'new_ta',
-            'email': 'ta@test.com',
-            'password': 'pass123',
-            'name': 'TA'
+        self.monkey.post("/admin/users/", {
+            'action': 'create',  # ← this is critical
+            'email': 'new@gmail.com',
+            'password': 'New',
+            'name': 'TA Doe',
+            'user_type': 'TA'
         })
-
-        self.assertEquals([{
-            'id': '0',
-            'username': 'new_ta',
-            'email': 'ta@test.com',
-            'password': 'pass123',
-            'name': 'TA'
-        }],response.context["TAs"],"TA not added to TA database")
+        new_user = User.objects.filter(email="new@gmail.com").first()
+        self.assertIsNotNone(new_user, "Valid TA not created")
+        self.assertEqual(new_user.user_type, "TA", "User was not created as a TA")
 
     def test_duplicate_ta(self):
-        response = self.monkey.post("/admin/users/", {
-            'id': '0',
-            'username': 'new_ta',
-            'email': 'ta@test.com',
-            'password': 'pass123',
-            'name': 'TA'
+        self.monkey.post("/admin/users/", {
+            'email': 'ta@gmail.com',
+            'password': 'Test',
+            'name': 'TA Doe',
+            'user_type': 'TA'  # changed from user_role
         })
-
-        response = self.monkey.post("/admin/users/", {
-            'id': '0',
-            'username': 'new_ta',
-            'email': 'ta@test.com',
-            'password': 'pass123',
-            'name': 'TA'
-        })
-
-        self.assertEqual(len(TAs), 1, "Added duplicate TA to database")
+        self.assertEqual(len(User.objects.filter(user_type="TA")), 1, "Added duplicate TA to database")
 
     def test_new_instructor_success(self):
-        response = self.monkey.post("/admin/users/", {
-            'id': '0',
-            'username': 'new_instructor',
-            'email': 'instructor@test.com',
-            'password': 'pass123',
-            'name': 'Instructor'
+        self.monkey.post("/admin/users/", {
+            'action': 'create',
+            'email': 'new@gmail.com',
+            'password': 'New',
+            'name': 'Instructor Doe',
+            'user_type': 'INSTRUCTOR'
         })
-
-        self.assertEquals([{
-            'id': '0',
-            'username': 'new_instructor',
-            'email': 'instructor@test.com',
-            'password': 'pass123',
-            'name': 'Instructor'
-        }], response.context["Instructors"], "Instructor not added to TA database")
+        new_user = User.objects.filter(email="new@gmail.com").first()
+        self.assertIsNotNone(new_user, "Valid Instructor not created")
+        self.assertEqual(new_user.user_type, "INSTRUCTOR", "User was not created as an Instructor")
 
     def test_duplicate_instructor(self):
-        response = self.monkey.post("/admin/users/", {
-            'id': '0',
-            'username': 'new_instructor',
-            'email': 'instructor@test.com',
-            'password': 'pass123',
-            'name': 'Instructor'
+        self.monkey.post("/admin/users/", {
+            'email': 'instruct@gmail.com',
+            'password': 'Test',
+            'name': 'Instructor Doe',
+            'user_type': 'INSTRUCTOR'  # changed from user_role
         })
-
-        response = self.monkey.post("/admin/users/", {
-            'id': '0',
-            'username': 'new_instructor',
-            'email': 'instructor@test.com',
-            'password': 'pass123',
-            'name': 'Instructor'
-        })
-
-        self.assertEqual(len(Instructors), 1, "Added duplicate instructor to database")
-
+        self.assertEqual(len(User.objects.filter(user_type="INSTRUCTOR")), 1, "Added duplicate Instructor to database")

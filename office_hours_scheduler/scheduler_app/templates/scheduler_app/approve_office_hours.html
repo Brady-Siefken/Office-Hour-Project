@@ -44,18 +44,20 @@
                                 <td>{{ office_hour.getCourse }}</td>
                                 <td>{{ office_hour.getTimeslot }}</td>
                                 <td>
-                                    <form method="post" action="/instructor/office-hours/approve/" style="display:inline;">
-                                        {% csrf_token %}
-                                        <input type="hidden" name="office_hours_id" value="{{ office_hour.getId }}">
-                                        <input type="hidden" name="action" value="approve">
-                                        <button type="submit">Approve</button>
-                                    </form>
-                                    <form method="post" action="/instructor/office-hours/approve/" style="display:inline;">
-                                        {% csrf_token %}
-                                        <input type="hidden" name="office_hours_id" value="{{ office_hour.getId }}">
-                                        <input type="hidden" name="action" value="reject">
-                                        <button type="submit">Reject</button>
-                                    </form>
+                                    <div class="inline-form">
+                                        <form method="post" action="/instructor/office-hours/approve/" style="display:inline;">
+                                            {% csrf_token %}
+                                            <input type="hidden" name="office_hours_id" value="{{ office_hour.getId }}">
+                                            <input type="hidden" name="action" value="approve">
+                                            <button type="submit" class="btn-mini">Approve</button>
+                                        </form>
+                                        <form method="post" action="/instructor/office-hours/approve/" style="display:inline;">
+                                            {% csrf_token %}
+                                            <input type="hidden" name="office_hours_id" value="{{ office_hour.getId }}">
+                                            <input type="hidden" name="action" value="reject">
+                                            <button type="submit" class="btn-danger">Reject</button>
+                                        </form>
+                                    </div>
                                 </td>
                             </tr>
                         {% endfor %}

@@ -42,3 +42,46 @@ def rejectOfficeHour(office_hour_id):
     if not OfficeHour.objects.filter(id = office_hour_id).exists():
         raise ValueError("There are currently no proposed office hours")
     OfficeHour.objects.filter(id = office_hour_id).delete()
+
+def getApprovedOfficeHours(course_filter=None, staff_filter=None):
+
+    # Returns a list of OfficeHoursClass for all approved office hours
+    # 2 optional filters
+    # course_filter: a course code (int)
+    # staff_filter: a staff email (str)
+    # Results are ordered by course code, then staff name.
+
+    qs = OfficeHour.objects.filter(approved=True)
+    if course_filter is not None:
+        qs = qs.filter(course__courseCode=course_filter)
+    if staff_filter:
+        qs = qs.filter(staff__email=staff_filter)
+    qs = qs.order_by("course__courseCode", "staff__name")
+    return [OfficeHoursClass(oh.id) for oh in qs]
+
+def createOfficeHour(user_email, section, start_time, end_time, days):
+    from scheduler_app.models import OfficeHour, User, Timeslot
+
+    try:
+        staff = User.objects.get(email=user_email)
+    except User.DoesNotExist:
+        raise ValueError("User does not exist")
+
+    timeslot = Timeslot.objects.create(
+        start_time=start_time,
+        end_time=end_time,
+        monday=days['monday'],
+        tuesday=days['tuesday'],
+        wednesday=days['wednesday'],
+        thursday=days['thursday'],
+        friday=days['friday'],
+    )
+
+    new_office_hour = OfficeHour.objects.create(
+        staff=staff,
+        course=section.getCourse().course,
+        timeslot=timeslot,
+        approved=False
+    )
+
+    return OfficeHoursClass(new_office_hour.id)
