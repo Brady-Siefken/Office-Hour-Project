@@ -473,6 +473,6 @@ class ProposeOfficeHoursView(View):
 
         if user.getType() == "INSTRUCTOR":
             office_hours.setApproved(True)
-            return redirect("/office-hours/")
 
-        else: return redirect("/ta/dashboard")
+        return redirect("/office-hours/")
+
