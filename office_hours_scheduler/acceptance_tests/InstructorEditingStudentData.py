@@ -2,7 +2,7 @@ from django.test import TestCase, Client
 from django.contrib.auth.models import User
 from .models import Instructor, TA, Student, Lecture
 
-
+# OUT OF SCOPE
 class InstructorEditStudentTest(TestCase):
 
     def setUp(self):

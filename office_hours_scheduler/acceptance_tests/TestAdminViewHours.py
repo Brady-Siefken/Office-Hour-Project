@@ -42,8 +42,8 @@ class TestAdminViewHours(TestCase):
         oh.setApproved(True)
         return oh
 
-    def test_instructor_sees_all_office_hours(self):
-        self.login_as("prof@uwm.edu")
+    def test_admin_sees_all_office_hours(self):
+        self.login_as("admin@uwm.edu")
 
         response = self.client.get("/office-hours/")
         listed_ids = [h.getId() for h in response.context["ta_office_hours_list"]]
@@ -52,7 +52,7 @@ class TestAdminViewHours(TestCase):
         self.assertIn(self.approved_351.getId(), listed_ids)
 
     def test_filter_by_course(self):
-        self.login_as("prof@uwm.edu")
+        self.login_as("admin@uwm.edu")
 
         response = self.client.get("/office-hours/?lecture=361")
         listed_ids = [h.getId() for h in response.context["ta_office_hours_list"]]
@@ -61,7 +61,7 @@ class TestAdminViewHours(TestCase):
         self.assertNotIn(self.approved_351.getId(), listed_ids)
 
     def test_filter_by_staff(self):
-        self.login_as("prof@uwm.edu")
+        self.login_as("admin@uwm.edu")
 
         response = self.client.get("/office-hours/?ta=ta2@uwm.edu")
         listed_ids = [h.getId() for h in response.context["ta_office_hours_list"]]
