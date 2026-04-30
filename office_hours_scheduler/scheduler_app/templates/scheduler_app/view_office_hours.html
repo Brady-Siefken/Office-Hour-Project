@@ -13,9 +13,7 @@
 <nav class="nav">
     <div class="nav-brand">OfficeHours</div>
     <ul class="nav-links">
-        <li>
-            <a href="{% if user.getType == 'INSTRUCTOR' %}/instructor/dashboard/{% elif user.getType == 'TA' %}/ta/dashboard/{% else %}/{% endif %}">Back</a>
-        </li>
+        <li><a href="/staff/office-hours/propose/">Propose Hours</a></li>
         <li><a href="/logout/" class="nav-logout">Logout</a></li>
     </ul>
 </nav>
@@ -23,6 +21,13 @@
 <main class="dashboard-main">
 
     <header class="dashboard-header">
+        {% if user.getType == "INSTRUCTOR" %}
+            <a href="/instructor/dashboard/" class="back-link">&#8592; Back to Dashboard</a>
+        {% elif user.getType == "ADMIN" %}
+            <a href="/admin/dashboard/" class="back-link">&#8592; Back to Dashboard</a>
+        {% else %}
+            <a href="/ta/dashboard/" class="back-link">&#8592; Back to Dashboard</a>
+        {% endif %}
         <h1>Office Hours Schedule</h1>
         <p class="welcome-text">Welcome, <strong>{{ user.getName }}</strong></p>
     </header>

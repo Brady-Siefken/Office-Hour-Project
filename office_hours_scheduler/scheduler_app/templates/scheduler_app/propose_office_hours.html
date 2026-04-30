@@ -6,14 +6,89 @@
     <title>Propose Office Hours</title>
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
     <link rel="stylesheet" href="{% static 'css/styles.css' %}"/>
+    <style>
+        .day-toggle { display: none; }
+        .day-toggle + span {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 44px;
+            height: 40px;
+            border: 1.5px solid rgba(255,255,255,.12);
+            border-radius: 4px;
+            font-family: var(--font-body);
+            font-size: .72rem;
+            font-weight: 500;
+            letter-spacing: .08em;
+            text-transform: uppercase;
+            color: rgba(255,255,255,.45);
+            background: rgba(245,240,232,.04);
+            cursor: pointer;
+            transition: border-color .15s ease, background .15s ease, color .15s ease;
+        }
+        .day-toggle + span:hover {
+            border-color: rgba(255,255,255,.3);
+            color: rgba(255,255,255,.8);
+        }
+        .day-toggle:checked + span {
+            background: var(--accent);
+            border-color: var(--accent);
+            color: #fff;
+        }
+        label.day-label { display: inline-flex; cursor: pointer; }
+
+        /* AM / PM radio pills */
+        .ampm-toggle { display: none; }
+        .ampm-toggle + span {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 44px;
+            height: 40px;
+            border: 1.5px solid rgba(255,255,255,.12);
+            font-family: var(--font-body);
+            font-size: .72rem;
+            font-weight: 500;
+            letter-spacing: .08em;
+            text-transform: uppercase;
+            color: rgba(255,255,255,.45);
+            background: rgba(245,240,232,.04);
+            cursor: pointer;
+            transition: border-color .15s ease, background .15s ease, color .15s ease;
+        }
+        .ampm-toggle + span:hover {
+            border-color: rgba(255,255,255,.3);
+            color: rgba(255,255,255,.8);
+        }
+        .ampm-toggle:checked + span {
+            background: var(--accent);
+            border-color: var(--accent);
+            color: #fff;
+        }
+        label.ampm-label:first-of-type .ampm-toggle + span { border-radius: 4px 0 0 4px; }
+        label.ampm-label:last-of-type  .ampm-toggle + span { border-radius: 0 4px 4px 0; border-left: none; }
+        label.ampm-label { display: inline-flex; cursor: pointer; }
+        .ampm-group { display: inline-flex; }
+        .time-sep {
+            display: flex;
+            align-items: center;
+            color: rgba(255,255,255,.35);
+            font-size: .9rem;
+            padding: 0 2px;
+        }
+        select[name="start_minutes"],
+        select[name="end_minutes"] {
+            flex: 0 0 72px;
+            min-width: unset;
+        }
+    </style>
 </head>
 <body class="dashboard-body">
 
 <nav class="nav">
     <div class="nav-brand">OfficeHours</div>
     <ul class="nav-links">
-        <li><a href="/staff/office-hours/propose/">Propose Hours</a></li>
-        <li><a href="/instructor/office-hours/approve/">Approve Hours</a></li>
+        {% if user.getType == "INSTRUCTOR" %}<li><a href="/instructor/office-hours/approve/">Approve Hours</a></li>{% endif %}
         <li><a href="/office-hours/">Schedule</a></li>
         <li><a href="/staff/tardy-report/">Tardy / No-Show Report</a></li>
         <li><a href="/logout/" class="nav-logout">Logout</a></li>
@@ -23,136 +98,135 @@
 <main class="dashboard-main">
 
     <header class="dashboard-header">
+        {% if user.getType == "INSTRUCTOR" %}
+            <a href="/instructor/dashboard/" class="back-link">&#8592; Back to Dashboard</a>
+        {% else %}
+            <a href="/ta/dashboard/" class="back-link">&#8592; Back to Dashboard</a>
+        {% endif %}
         <h1>Propose Office Hours</h1>
         <p class="welcome-text">Welcome, <strong>{{ user.getName }}</strong></p>
     </header>
 
-    <div style="display: flex; gap: 2rem; align-items: flex-start;">
+    <!-- Left: Proposal Form -->
+    <section class="table-section">
+        <h2 class="section-title">New Proposal</h2>
 
-        <!-- Left: Proposal Form -->
-        <section class="table-section" style="flex: 1;">
-            <h2 class="section-title">New Proposal</h2>
+        <form method="POST" action="/staff/office-hours/propose/">
+            {% csrf_token %}
 
-            <form method="POST" action="/staff/office-hours/propose/">
-                {% csrf_token %}
+            <!-- Section + Days -->
+            <div class="form-row">
+                <select name="section_selection" required>
+                    <option value="" disabled selected>Select a course</option>
+                    {% for section in sections %}
+                        <option value="{{ section.getSectionCode }}">
+                            {{ section.getCourse.getCourseDepartment }}
+                            {{ section.getCourse.getCourseCode }} —
+                            {{ section.getCourse.getCourseName }}
+                        </option>
+                    {% endfor %}
+                </select>
+                <label class="day-label"><input class="day-toggle" type="checkbox" name="monday"/>    <span>Mon</span></label>
+                <label class="day-label"><input class="day-toggle" type="checkbox" name="tuesday"/>   <span>Tue</span></label>
+                <label class="day-label"><input class="day-toggle" type="checkbox" name="wednesday"/> <span>Wed</span></label>
+                <label class="day-label"><input class="day-toggle" type="checkbox" name="thursday"/>  <span>Thu</span></label>
+                <label class="day-label"><input class="day-toggle" type="checkbox" name="friday"/>    <span>Fri</span></label>
+            </div>
 
-                <!-- Section -->
-                <div class="form-group">
-                    <label class="form-label">Section</label>
-                    <select name="section_selection" class="form-input" required>
-                        <option value="" disabled selected>Select a course</option>
-                        {% for section in sections %}
-                            <option value="{{ section.getSectionCode }}">
-                                {{ section.getCourse.getCourseDepartment }}
-                                {{ section.getCourse.getCourseCode }} —
-                                {{ section.getCourse.getCourseName }}
-                            </option>
+            <!-- Start + End Time + Submit -->
+            <div class="form-row">
+                <input type="number" name="start_hour"    placeholder="Start HH" min="1" max="23" required/>
+                <span class="time-sep">:</span>
+                <select name="start_minutes" required>
+                    <option value="" disabled selected>MM</option>
+                    <option value="00">00</option>
+                    <option value="15">15</option>
+                    <option value="30">30</option>
+                    <option value="45">45</option>
+                </select>
+                <!--<div class="ampm-group">
+                    <label class="ampm-label"><input class="ampm-toggle" type="radio" name="start_ampm" value="AM" required/><span>AM</span></label>
+                    <label class="ampm-label"><input class="ampm-toggle" type="radio" name="start_ampm" value="PM"/><span>PM</span></label>
+                </div> -->
+                <input type="number" name="end_hour"      placeholder="End HH"   min="1" max="23" required/>
+                <span class="time-sep">:</span>
+                <select name="end_minutes" required>
+                    <option value="" disabled selected>MM</option>
+                    <option value="00">00</option>
+                    <option value="15">15</option>
+                    <option value="30">30</option>
+                    <option value="45">45</option>
+                </select>
+                <!--<div class="ampm-group">
+                    <label class="ampm-label"><input class="ampm-toggle" type="radio" name="end_ampm" value="AM" required/><span>AM</span></label>
+                    <label class="ampm-label"><input class="ampm-toggle" type="radio" name="end_ampm" value="PM"/><span>PM</span></label>
+                </div> -->
+                <button type="submit" class="btn-primary">Submit</button>
+            </div>
+        </form>
+    </section>
+
+    <!-- My Sections -->
+    <section class="table-section">
+        <h2 class="section-title">My Sections</h2>
+        {% if all_sections %}
+            <div class="table-wrap">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Department</th>
+                            <th>Course Code</th>
+                            <th>Section</th>
+                            <th>Type</th>
+                            <th>Instructor</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for section in all_sections %}
+                            <tr>
+                                <td>{{ section.getCourse.getCourseDepartment }}</td>
+                                <td>{{ section.getCourse.getCourseCode }}</td>
+                                <td>{{ section.getSectionCode }}</td>
+                                <td>{{ section.getSectionType }}</td>
+                                <td>{{ section.getInstructor|default:"(none)" }}</td>
+                            </tr>
                         {% endfor %}
-                    </select>
-                </div>
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <p class="empty-state">No sections assigned.</p>
+        {% endif %}
+    </section>
 
-                <!-- Days of the Week -->
-                <div class="form-group">
-                    <label class="form-label">Days</label>
-                    <div class="checkbox-row">
-                        <label class="checkbox-label"><input type="checkbox" name="monday"/>    Mon</label>
-                        <label class="checkbox-label"><input type="checkbox" name="tuesday"/>   Tue</label>
-                        <label class="checkbox-label"><input type="checkbox" name="wednesday"/> Wed</label>
-                        <label class="checkbox-label"><input type="checkbox" name="thursday"/>  Thu</label>
-                        <label class="checkbox-label"><input type="checkbox" name="friday"/>    Fri</label>
-                    </div>
-                </div>
-
-                <!-- Start Time -->
-                <div class="form-group">
-                    <label class="form-label">Start Time</label>
-                    <div class="time-row">
-                        <input type="number" name="start_hour" class="form-input time-input"
-                               placeholder="HH" min="0" max="23" required/>
-                        <span class="time-sep">:</span>
-                        <input type="number" name="start_minutes" class="form-input time-input"
-                               placeholder="MM" min="0" max="59" required/>
-                    </div>
-                </div>
-
-                <!-- End Time -->
-                <div class="form-group">
-                    <label class="form-label">End Time</label>
-                    <div class="time-row">
-                        <input type="number" name="end_hour" class="form-input time-input"
-                               placeholder="HH" min="0" max="23" required/>
-                        <span class="time-sep">:</span>
-                        <input type="number" name="end_minutes" class="form-input time-input"
-                               placeholder="MM" min="0" max="59" required/>
-                    </div>
-                </div>
-
-                <button type="submit" class="btn-primary">Submit Proposal</button>
-            </form>
-        </section>
-
-        <!-- Right: Sections and Office Hours -->
-        <section class="table-section" style="flex: 1; margin-top: -2rem;">
-
-            <h2 class="section-title">My Sections</h2>
-            {% if all_sections %}
-                <div class="table-wrap" style="font-size: 1.05rem;">
-                    <table class="data-table" style="width: 100%; min-width: 500px;">
-                        <thead>
+    <!-- My Approved Office Hours -->
+    <section class="table-section">
+        <h2 class="section-title">My Approved Office Hours</h2>
+        {% if approved_hours %}
+            <div class="table-wrap">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Department</th>
+                            <th>Course Code</th>
+                            <th>Timeslot</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for oh in approved_hours %}
                             <tr>
-                                <th style="padding: 14px 16px;">Department</th>
-                                <th style="padding: 14px 16px;">Course Code</th>
-                                <th style="padding: 14px 16px;">Section</th>
-                                <th style="padding: 14px 16px;">Type</th>
-                                <th style="padding: 14px 16px;">Instructor</th>
+                                <td>{{ oh.getCourse.getCourseDepartment }}</td>
+                                <td>{{ oh.getCourse.getCourseCode }}</td>
+                                <td>{{ oh.getTimeslot }}</td>
                             </tr>
-                        </thead>
-                        <tbody>
-                            {% for section in all_sections %}
-                                <tr>
-                                    <td style="padding: 12px 16px;">{{ section.getCourse.getCourseDepartment }}</td>
-                                    <td style="padding: 12px 16px;">{{ section.getCourse.getCourseCode }}</td>
-                                    <td style="padding: 12px 16px;">{{ section.getSectionCode }}</td>
-                                    <td style="padding: 12px 16px;">{{ section.getSectionType }}</td>
-                                    <td style="padding: 12px 16px;">{{ section.getInstructor|default:"(none)" }}</td>
-                                </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
-            {% else %}
-                <p class="empty-state">No sections assigned.</p>
-            {% endif %}
-
-            <h2 class="section-title" style="margin-top: 2rem;">My Approved Office Hours</h2>
-            {% if approved_hours %}
-                <div class="table-wrap" style="font-size: 1.05rem;">
-                    <table class="data-table" style="width: 100%; min-width: 500px;">
-                        <thead>
-                            <tr>
-                                <th style="padding: 14px 16px;">Department</th>
-                                <th style="padding: 14px 16px;">Course Code</th>
-                                <th style="padding: 14px 16px;">Timeslot</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for oh in approved_hours %}
-                                <tr>
-                                    <td style="padding: 12px 16px;">{{ oh.getCourse.getCourseDepartment }}</td>
-                                    <td style="padding: 12px 16px;">{{ oh.getCourse.getCourseCode }}</td>
-                                    <td style="padding: 12px 16px;">{{ oh.getTimeslot }}</td>
-                                </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
-            {% else %}
-                <p class="empty-state">No approved office hours yet.</p>
-            {% endif %}
-
-        </section>
-
-    </div>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <p class="empty-state">No approved office hours yet.</p>
+        {% endif %}
+    </section>
 
 </main>
 
