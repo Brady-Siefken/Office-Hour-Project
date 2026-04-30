@@ -64,7 +64,7 @@ def getSectionsByInstructor(instructor_email):
             s.course.courseCode,
             s.sectionCode
         )
-        for s in Section.objects.filter(instructor__email=instructor_email)
+        for s in Section.objects.filter(instructor__email=instructor_email, course__isnull = False,)
     ]
 
 
@@ -75,7 +75,7 @@ def getSectionsByTA(ta_email):
             s.course.courseCode,
             s.sectionCode
         )
-        for s in Section.objects.filter(ta__email=ta_email)
+        for s in Section.objects.filter(ta__email=ta_email, course__isnull = False,)
     ]
 
 
