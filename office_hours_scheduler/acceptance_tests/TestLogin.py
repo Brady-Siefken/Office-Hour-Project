@@ -1,186 +1,133 @@
 from django.test import TestCase, Client
-import sys
-sys.path.append(__file__.split("/acceptance_tests")[0])
-#sys.path.pop(-1)
-from scheduler_app.models import InstructorUser as Instructor
-from scheduler_app.models import AssistantUser as Assistant
-from scheduler_app.models import AdminUser as Admin
-from scheduler_app.models import StudentUser as Student
-# Create your tests here.
-
-# Name of user story here, also its description can go here while working on it
-
-class TestStudentLogin(TestCase):
-    monkey=None
-    students=[]
-    class Meta:
-        app_label = 'scheduler_app'
-
-    def setUp(self):
-        #completed
-        self.monkey = Client()
-        self.students = [ # Initial contents of DB
-            {"name": "nova", "password": "randompasssword", "username": "liminalmushroom", "email": "nova@example.com"},
-            {"name": "leo", "password": "differentpassword", "username": "ogaboga", "email": "leo@example.com"},
-            {"name": "ben", "password": "anotherpassword", "username": "benjamin", "email": "ben@example.com"}
-        ]
-
-        #fill test database with students
-        for i in self.students:
-            temp = Student(name=i["name"],password=i["password"],username=i["username"],email=i["email"])
-            temp.save()
-
-    def test_login_via_email(self):
-        for i in self.students:
-            resp = self.monkey.post("/",{"username":i["email"],"password":i["password"]},follow=True)
-            self.assertEqual(resp.context["name"],i["name"],"Name should be passed as part of successful login via email")
-
-    def test_login_via_username(self):
-        for i in self.students:
-            resp = self.monkey.post("/",{"username":i["username"],"password":i["password"]},follow=True)
-            self.assertEqual(resp.context["name"],i["name"],"Name should be passed as part of successful login via username")
-
-    def test_login_incorrect_uname(self):
-        for i in self.students:
-            resp = self.monkey.post("/",{"username":"not a valid username","password":i["password"]},follow=True)
-            self.assertEqual(resp.context["error_msg"],"Username or password not correct","No error message")
-    
-    def test_login__via_email_incorrect_password(self):
-        for i in self.students:
-            resp = self.monkey.post("/",{"username":i["email"],"password":"not a valid password"},follow=True)
-            self.assertEqual(resp.context["error_msg"],"Username or password not correct","No error message")
-
-    def test_login__via_uname_incorrect_password(self):
-        for i in self.students:
-            resp = self.monkey.post("/",{"username":i["username"],"password":"not a valid password"},follow=True)
-            self.assertEqual(resp.context["error_msg"],"Username or password not correct","No error message")
-
-
-class TestAssistantLogin(TestCase):
-    monkey=None
-    assistants=[]
-
-    def setUp(self):
-        #completed
-        self.monkey = Client()
-        self.assistants = [ # Initial contents of DB
-            {"name": "nova", "password": "randompasssword", "username": "liminalmushroom", "email": "nova@example.com"},
-            {"name": "leo", "password": "differentpassword", "username": "ogaboga", "email": "leo@example.com"},
-            {"name": "ben", "password": "anotherpassword", "username": "benjamin", "email": "ben@example.com"}
-        ]
-
-        #fill test database with the TAs
-        for i in self.assistants:
-            temp = Assistant(name=i["name"],password=i["password"],username=i["username"],email=i["email"])
-            temp.save()
-
-    def test_login_via_email(self):
-        for i in self.assistants:
-            resp = self.monkey.post("/",{"username":i["email"],"password":i["password"]},follow=True)
-            self.assertEqual(resp.context["name"],i["name"],"Name should be passed as part of successful login via email")
-
-    def test_login_via_username(self):
-        for i in self.assistants:
-            resp = self.monkey.post("/",{"username":i["username"],"password":i["password"]},follow=True)
-            self.assertEqual(resp.context["name"],i["name"],"Name should be passed as part of successful login via username")
-
-    def test_login_incorrect_uname(self):
-        for i in self.assistants:
-            resp = self.monkey.post("/",{"username":"not a valid username","password":i["password"]},follow=True)
-            self.assertEqual(resp.context["error_msg"],"Username or password not correct","No error message")
-    
-    def test_login__via_email_incorrect_password(self):
-        for i in self.assistants:
-            resp = self.monkey.post("/",{"username":i["email"],"password":"not a valid password"},follow=True)
-            self.assertEqual(resp.context["error_msg"],"Username or password not correct","No error message")
-
-    def test_login__via_uname_incorrect_password(self):
-        for i in self.assistants:
-            resp = self.monkey.post("/",{"username":i["username"],"password":"not a valid password"},follow=True)
-            self.assertEqual(resp.context["error_msg"],"Username or password not correct","No error message")
+from scheduler_app.models import User
 
 class TestAdminLogin(TestCase):
-    monkey=None
-    admins=[]
+    # tests for admin login .
 
     def setUp(self):
-        #completed
-        self.monkey = Client()
-        self.admins = [ # Initial contents of DB
-            {"name": "nova", "password": "randompasssword", "username": "liminalmushroom", "email": "nova@example.com"},
-            {"name": "leo", "password": "differentpassword", "username": "ogaboga", "email": "leo@example.com"},
-            {"name": "ben", "password": "anotherpassword", "username": "benjamin", "email": "ben@example.com"}
-        ]
+        self.client = Client()
+        self.admin = User.objects.create(
+            email = "admin@uwm.edu",
+            password = "adminpass",
+            name = "Admin",
+            user_type = "ADMIN",
+        )
 
-        #fill test database with the TAs
-        for i in self.admins:
-            temp = Admin(name=i["name"],password=i["password"],username=i["username"],email=i["email"])
-            temp.save()
+    def test_login_redirects_to_admin_dashboard(self):
+        response = self.client.post("/", {
+            "email": self.admin.email,
+            "password": self.admin.password,
+        })
+        self.assertRedirects(response, "/admin/dashboard/")
 
-    def test_login_via_email(self):
-        for i in self.admins:
-            resp = self.monkey.post("/",{"username":i["email"],"password":i["password"]},follow=True)
-            self.assertEqual(resp.context["name"],i["name"],"Name should be passed as part of successful login via email")
+    def test_login_sets_session_keys(self):
+        self.client.post("/", {
+            "email": self.admin.email,
+            "password": self.admin.password,
+        })
+        self.assertEqual(self.client.session["user_id"], self.admin.email)
+        self.assertEqual(self.client.session["user_type"], "ADMIN")
 
-    def test_login_via_username(self):
-        for i in self.admins:
-            resp = self.monkey.post("/",{"username":i["username"],"password":i["password"]},follow=True)
-            self.assertEqual(resp.context["name"],i["name"],"Name should be passed as part of successful login via username")
+    def test_login_unknown_email(self):
+        response = self.client.post("/", {
+            "email": "nobody@uwm.edu",
+            "password": "doesntmatter",
+        })
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "No such user")
 
-    def test_login_incorrect_uname(self):
-        for i in self.admins:
-            resp = self.monkey.post("/",{"username":"not a valid username","password":i["password"]},follow=True)
-            self.assertEqual(resp.context["error_msg"],"Username or password not correct","No error message")
-    
-    def test_login__via_email_incorrect_password(self):
-        for i in self.admins:
-            resp = self.monkey.post("/",{"username":i["email"],"password":"not a valid password"},follow=True)
-            self.assertEqual(resp.context["error_msg"],"Username or password not correct","No error message")
+    def test_login_wrong_password(self):
+        response = self.client.post("/", {
+            "email": self.admin.email,
+            "password": "wrongpassword",
+        })
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "Incorrect password")
 
-    def test_login__via_uname_incorrect_password(self):
-        for i in self.admins:
-            resp = self.monkey.post("/",{"username":i["username"],"password":"not a valid password"},follow=True)
-            self.assertEqual(resp.context["error_msg"],"Username or password not correct","No error message")
 
 class TestInstructorLogin(TestCase):
-    monkey=None
-    instructors=[]
+    # Acceptance tests for instructor login
 
     def setUp(self):
-        #completed
-        self.monkey = Client()
-        self.instructors = [ # Initial contents of DB
-            {"name": "nova", "password": "randompasssword", "username": "liminalmushroom", "email": "nova@example.com"},
-            {"name": "leo", "password": "differentpassword", "username": "ogaboga", "email": "leo@example.com"},
-            {"name": "ben", "password": "anotherpassword", "username": "benjamin", "email": "ben@example.com"}
-        ]
+        self.client = Client()
+        self.instructor = User.objects.create(
+            email = "instructor@uwm.edu",
+            password = "instpass",
+            name =  "Instructor One",
+            user_type = "INSTRUCTOR",
+        )
 
-        #fill test database with the TAs
-        for i in self.instructors:
-            temp = Instructor(name=i["name"],password=i["password"],username=i["username"],email=i["email"])
-            temp.save()
+    def test_login_redirects_to_instructor_dashboard(self):
+        response = self.client.post("/", {
+            "email": self.instructor.email,
+            "password": self.instructor.password,
+        })
+        self.assertRedirects(response, "/instructor/dashboard/")
 
-    def test_login_via_email(self):
-        for i in self.instructors:
-            resp = self.monkey.post("/",{"username":i["email"],"password":i["password"]},follow=True)
-            self.assertEqual(resp.context["name"],i["name"],"Name should be passed as part of successful login via email")
+    def test_login_sets_session_keys(self):
+        self.client.post("/", {
+            "email": self.instructor.email,
+            "password": self.instructor.password,
+        })
+        self.assertEqual(self.client.session["user_id"], self.instructor.email)
+        self.assertEqual(self.client.session["user_type"], "INSTRUCTOR")
 
-    def test_login_via_username(self):
-        for i in self.instructors:
-            resp = self.monkey.post("/",{"username":i["username"],"password":i["password"]},follow=True)
-            self.assertEqual(resp.context["name"],i["name"],"Name should be passed as part of successful login via username")
+    def test_login_unknown_email(self):
+        response = self.client.post("/", {
+            "email": "nobody@uwm.edu",
+            "password": "doesntmatter",
+        })
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "No such user")
 
-    def test_login_incorrect_uname(self):
-        for i in self.instructors:
-            resp = self.monkey.post("/",{"username":"not a valid username","password":i["password"]},follow=True)
-            self.assertEqual(resp.context["error_msg"],"Username or password not correct","No error message")
-    
-    def test_login__via_email_incorrect_password(self):
-        for i in self.instructors:
-            resp = self.monkey.post("/",{"username":i["email"],"password":"not a valid password"},follow=True)
-            self.assertEqual(resp.context["error_msg"],"Username or password not correct","No error message")
+    def test_login_wrong_password(self):
+        response = self.client.post("/", {
+            "email": self.instructor.email,
+            "password": "wrongpassword",
+        })
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "Incorrect password")
 
-    def test_login__via_uname_incorrect_password(self):
-        for i in self.instructors:
-            resp = self.monkey.post("/",{"username":i["username"],"password":"not a valid password"},follow=True)
-            self.assertEqual(resp.context["error_msg"],"Username or password not correct","No error message")
+
+class TestTALogin(TestCase):
+    # Acceptance tests for TA login.
+
+    def setUp(self):
+        self.client = Client()
+        self.ta = User.objects.create(
+            email = "ta@uwm.edu",
+            password = "tapass",
+            name = "TA One",
+            user_type = "TA",
+        )
+
+    def test_login_redirects_to_ta_dashboard(self):
+        response = self.client.post("/", {
+            "email": self.ta.email,
+            "password": self.ta.password,
+        })
+        self.assertRedirects(response, "/ta/dashboard/")
+
+    def test_login_sets_session_keys(self):
+        self.client.post("/", {
+            "email": self.ta.email,
+            "password": self.ta.password,
+        })
+        self.assertEqual(self.client.session["user_id"], self.ta.email)
+        self.assertEqual(self.client.session["user_type"], "TA")
+
+    def test_login_unknown_email(self):
+        response = self.client.post("/", {
+            "email": "nobody@uwm.edu",
+            "password": "doesntmatter",
+        })
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "No such user")
+
+    def test_login_wrong_password(self):
+        response = self.client.post("/", {
+            "email": self.ta.email,
+            "password": "wrongpassword",
+        })
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "Incorrect password")
