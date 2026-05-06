@@ -869,3 +869,40 @@ body.dashboard-body {
     width: 100%;
   }
 }
+/* ============================================================
+   LOGIN BACK ARROW (VISIBLE + ACCESSIBLE)
+   ============================================================ */
+
+.card .back-arrow {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 36px;
+  height: 36px;
+
+  border-radius: 50%;
+
+  background: rgba(26, 20, 16, 0.10); /* stronger background */
+  color: var(--ink);                  /* solid dark icon */
+
+  font-size: 20px;
+  font-weight: 700;
+
+  margin-bottom: 18px;
+
+  transition: all var(--transition-fast);
+}
+
+.card .back-arrow:hover {
+  background: var(--accent);
+  color: var(--white);
+  transform: translateX(-3px);
+}
+
+.card .back-arrow:active {
+  transform: translateX(-5px);
+}
+.card .back-arrow {
+  border: 1px solid rgba(26, 20, 16, 0.15);
+}

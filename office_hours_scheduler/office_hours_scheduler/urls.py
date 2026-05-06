@@ -38,7 +38,9 @@ from scheduler_app.views import *
 
 urlpatterns = [
     # path('admin/', admin.site.urls),
-    path('', Home.as_view(), name='login'),
+    path('', AccountSelectView.as_view(), name='account_select'),
+    path('staff/login/', Home.as_view(), name='login'),
+    path('student/login/', StudentLoginView.as_view(), name='student-login'),
     path('logout/', logout_view, name='logout'),
     path('admin/dashboard/', AdminDashboardView.as_view()),
     path('admin/users/', ManageUsersView.as_view()),
