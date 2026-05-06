@@ -18,7 +18,12 @@ DASHBOARD_ROUTES = {
     "STUDENT": "/student/dashboard/",
     "ADMIN": "/admin/dashboard/",
 }
-class Home(View):
+
+class AccountSelectView(View):
+    def get(self, request):
+        return render(request, "scheduler_app/account_select.html", {})
+
+class Home(View): # staff login
     def get(self, request):
         return render(request, "scheduler_app/login.html", {})
 
@@ -36,11 +41,40 @@ class Home(View):
         request.session["user_id"] = user.getEmail()
         request.session["user_type"] = user.getType()
 
+        # Students cannot log in via the staff portal
+        if user.getType() == "STUDENT":
+            return render(request, "scheduler_app/login.html", {"message": "Please use the student login"})
+
         route = DASHBOARD_ROUTES.get(user.getType())
         if route is None:
             return render(request, "scheduler_app/login.html", {"message": "Unknown user type"})
 
         return redirect(route)
+
+class StudentLoginView(View):
+    def get(self, request):
+        return render(request, "scheduler_app/student_login.html", {})
+    ##### I just pasted the original login view, needs to be updated
+    def post(self, request):
+        email = request.POST.get("email")
+        password = request.POST.get("password")
+
+        if not doesUserWithEmailExist(email):
+            return render(request, "scheduler_app/student_login.html", {"message": "No such user"})
+
+        if not validatePassword(email, password):
+            return render(request, "scheduler_app/student_login.html", {"message": "Incorrect password"})
+
+        user = UserClass(email)
+        request.session["user_id"] = user.getEmail()
+        request.session["user_type"] = user.getType()
+
+        # Staff cannot log in via the student portal
+        if user.getType() != "STUDENT":
+            return render(request, "scheduler_app/student_login.html", {"message": "Please use the staff login"})
+
+        return redirect(DASHBOARD_ROUTES["STUDENT"])
+
 
 class AdminDashboardView(View):
     def get(self, request):
