@@ -1,5 +1,5 @@
 from scheduler_app.models import User
-from classes.constants import USER_TYPES
+from classes.constants import USER_TYPES, PLACEHOLDER_PASSWORD
 
 
 class UserClass:
@@ -26,6 +26,9 @@ class UserClass:
     def getType(self):
         return self.user.user_type
 
+    def hasPlaceholderPassword(self):
+        return self.user.password == PLACEHOLDER_PASSWORD
+
     # ----------------------------
     # Setters
     # ----------------------------
@@ -35,6 +38,8 @@ class UserClass:
         self.user.save()
 
     def setPassword(self, password):
+        if password == PLACEHOLDER_PASSWORD:
+            raise ValueError("Password can't be empty")
         self.user.password = password
         self.user.save()
 
