@@ -41,6 +41,8 @@ urlpatterns = [
     path('', AccountSelectView.as_view(), name='account_select'),
     path('staff/login/', Home.as_view(), name='login'),
     path('student/login/', StudentLoginView.as_view(), name='student-login'),
+    path('set/password/', SetPasswordView.as_view(), name='set_password'),
+    path('enter/password/', StudentPasswordView.as_view(), name='enter_password'),
     path('logout/', logout_view, name='logout'),
     path('admin/dashboard/', AdminDashboardView.as_view()),
     path('admin/users/', ManageUsersView.as_view()),
@@ -49,6 +51,7 @@ urlpatterns = [
     path('instructor/office-hours/approve/', ApproveOfficeHoursView.as_view()),
     # path('ta/dashboard/', TADashboardView.as_view()),
     path('ta/dashboard/', TADashboardView.as_view()),
+    path('student/dashboard/', StudentDashboardView.as_view(), name='student_dashboard'),
     # not written yet
     #path('admin/courses/', ManageCoursesView.as_view()),
     #path('instructor/dashboard/', InstructorDashboardView.as_view()),

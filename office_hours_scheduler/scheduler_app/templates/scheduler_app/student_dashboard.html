@@ -1,0 +1,60 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Student Dashboard — OfficeHours</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}"/>
+</head>
+<body class="dashboard-body">
+
+<nav class="nav">
+    <div class="nav-brand">OfficeHours</div>
+    <ul class="nav-links">
+        <li><a href="#">Office Hours</a></li>
+        <li><a href="/logout/" class="nav-logout">Logout</a></li>
+    </ul>
+</nav>
+
+<main class="dashboard-main">
+
+    <header class="dashboard-header">
+        <h1>My Dashboard</h1>
+        <p class="welcome-text">Welcome, <strong>{{ user.getName }}</strong></p>
+    </header>
+
+    <section class="table-section">
+        <h2 class="section-title">My Courses</h2>
+
+        {% if courses %}
+            <div class="table-wrap">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Department</th>
+                            <th>Course Code</th>
+                            <th>Course Name</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for course in courses %}
+                            <tr>
+                                <td>{{ course.getCourseDepartment }}</td>
+                                <td>{{ course.getCourseCode }}</td>
+                                <td>{{ course.getCourseName }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <p class="empty-state">You are not enrolled in any courses yet.</p>
+        {% endif %}
+
+    </section>
+
+</main>
+
+</body>
+</html>
