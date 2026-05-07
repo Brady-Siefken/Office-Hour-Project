@@ -57,13 +57,10 @@ class StudentLoginView(View):
     ##### I just pasted the original login view, needs to be updated
     def post(self, request):
         email = request.POST.get("email")
-        password = request.POST.get("password")
+        #password = request.POST.get("password")
 
         if not doesUserWithEmailExist(email):
             return render(request, "scheduler_app/student_login.html", {"message": "No such user"})
-
-        if not validatePassword(email, password):
-            return render(request, "scheduler_app/student_login.html", {"message": "Incorrect password"})
 
         user = UserClass(email)
         request.session["user_id"] = user.getEmail()
@@ -72,6 +69,46 @@ class StudentLoginView(View):
         # Staff cannot log in via the student portal
         if user.getType() != "STUDENT":
             return render(request, "scheduler_app/student_login.html", {"message": "Please use the staff login"})
+
+        #return redirect(DASHBOARD_ROUTES["STUDENT"])
+
+        return redirect("/set/password/")
+
+class SetPasswordView(View):
+    def get(self, request):
+        return render(request, "scheduler_app/set_password.html", {})
+
+    ##### I just pasted the original login view, needs to be updated
+    def post(self, request):
+        #email = request.POST.get("email")
+        password = request.POST.get("password")
+
+        #user = UserClass(email)
+        #request.session["user_id"] = user.getEmail()
+        #request.session["user_type"] = user.getType()
+
+        # Staff cannot log in via the student portal
+        #if user.getType() != "STUDENT":
+            #return render(request, "scheduler_app/student_login.html", {"message": "Please use the staff login"})
+
+        return redirect(DASHBOARD_ROUTES["STUDENT"])
+
+class StudentPasswordView(View):
+    def get(self, request):
+        return render(request, "scheduler_app/student_enter_password.html", {})
+
+    ##### I just pasted the original login view, needs to be updated
+    def post(self, request):
+        #email = request.POST.get("email")
+        password = request.POST.get("password")
+
+        #user = UserClass(email)
+        #request.session["user_id"] = user.getEmail()
+        #request.session["user_type"] = user.getType()
+
+        # Staff cannot log in via the student portal
+        #if user.getType() != "STUDENT":
+            #return render(request, "scheduler_app/student_login.html", {"message": "Please use the staff login"})
 
         return redirect(DASHBOARD_ROUTES["STUDENT"])
 
@@ -301,6 +338,25 @@ class TADashboardView(View):
 
     def post(self, request):
         return redirect("/ta/dashboard/")
+
+class StudentDashboardView(View):
+    def get(self, request):
+        user = request.session.get("user_id")
+
+        if user is None or request.session.get("user_type") != "STUDENT":
+            return redirect("{% url 'student-login' %}")
+
+        #sections = getSectionsByTA(user.getEmail())
+
+        context = {
+            "user": user,
+            "courses": [],
+        }
+
+        return render(request, "scheduler_app/student_dashboard.html", context)
+
+    def post(self, request):
+        return redirect("/student/dashboard/")
 
 def logout_view(request):
     logout(request)
