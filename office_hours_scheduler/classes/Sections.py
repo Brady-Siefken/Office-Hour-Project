@@ -84,3 +84,34 @@ class SectionClass:
 
     def __str__(self):
         return f"{self.section.course} Section {self.section.sectionCode}"
+
+    def getStudents(self):
+        from classes.Users import UserClass
+        return [UserClass(u.email) for u in self.section.students.all()]
+
+    def addStudentsFromText(self, text):
+        from scheduler_app.models import User
+        lines = text.strip().splitlines()
+
+        for line in lines:
+            line = line.strip()
+            if not line:
+                continue
+
+            parts = line.split(',')
+            if len(parts) != 2:
+                continue
+
+            email = parts[0].strip()
+            name = parts[1].strip()
+
+            user, created = User.objects.get_or_create(
+                email=email,
+                defaults={
+                    'name': name,
+                    'password': email,
+                    'user_type': 'STUDENT'
+                }
+            )
+            if user.user_type == 'STUDENT':
+                self.section.students.add(user)

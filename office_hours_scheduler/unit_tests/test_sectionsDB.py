@@ -1,6 +1,19 @@
 import unittest
 from scheduler_app.models import Course, Department, Section, User
 from classes.Sections import SectionClass
+# from classes.SectionsDatabase import (
+#     doesSectionExist,
+#     getSection,
+#     getAllSections,
+#     getSectionsByCourse,
+#     getSectionsByType,
+#     getSectionsByInstructor,
+#     getSectionsByTA,
+#     assignInstructor,
+#     assignTA,
+#     createSection,
+#     deleteSection
+# )
 from classes.SectionsDatabase import (
     doesSectionExist,
     getSection,
@@ -12,7 +25,9 @@ from classes.SectionsDatabase import (
     assignInstructor,
     assignTA,
     createSection,
-    deleteSection
+    deleteSection,
+    addStudentsFromText,
+    getStudents
 )
 
 
@@ -377,3 +392,117 @@ class TestSectionDatabase(unittest.TestCase):
         deleteSection("EE", 101, 1)
         self.assertFalse(doesSectionExist("EE", 101, 1))
         self.assertTrue(doesSectionExist("EE", 101, 2))
+
+
+
+
+
+
+
+
+
+    # ----------------------------
+    # getStudents tests
+    # ----------------------------
+
+    def test_get_students_returns_empty_when_no_students(self):
+        result = getStudents("EE", 101, 1)
+        self.assertEqual(result, [])
+
+    def test_get_students_returns_correct_student(self):
+        from classes.Users import UserClass
+        student = User.objects.create(
+            email="student@test.com",
+            password="pass",
+            name="Test Student",
+            user_type="STUDENT"
+        )
+        self.section.students.add(student)
+        result = getStudents("EE", 101, 1)
+        self.assertEqual(len(result), 1)
+        self.assertIsInstance(result[0], UserClass)
+        self.assertEqual(result[0].getEmail(), "student@test.com")
+
+    def test_get_students_returns_multiple_students(self):
+        student1 = User.objects.create(email="s1@test.com", password="pass", name="Student One", user_type="STUDENT")
+        student2 = User.objects.create(email="s2@test.com", password="pass", name="Student Two", user_type="STUDENT")
+        self.section.students.add(student1, student2)
+        result = getStudents("EE", 101, 1)
+        self.assertEqual(len(result), 2)
+
+    def test_get_students_raises_for_missing_section(self):
+        with self.assertRaises(ValueError):
+            getStudents("EE", 101, 999)
+
+    # ----------------------------
+    # addStudentsFromText tests
+    # ----------------------------
+
+    def test_add_students_from_text_creates_new_user(self):
+        addStudentsFromText("EE", 101, 1, "newstudent@test.com, New Student")
+        self.assertTrue(User.objects.filter(email="newstudent@test.com").exists())
+
+    def test_add_students_from_text_new_user_is_student(self):
+        addStudentsFromText("EE", 101, 1, "newstudent@test.com, New Student")
+        user = User.objects.get(email="newstudent@test.com")
+        self.assertEqual(user.user_type, "STUDENT")
+
+    def test_add_students_from_text_new_user_password_is_email(self):
+        addStudentsFromText("EE", 101, 1, "newstudent@test.com, New Student")
+        user = User.objects.get(email="newstudent@test.com")
+        self.assertEqual(user.password, "newstudent@test.com")
+
+    def test_add_students_from_text_existing_student_is_added(self):
+        student = User.objects.create(
+            email="existing@test.com",
+            password="pass",
+            name="Existing Student",
+            user_type="STUDENT"
+        )
+        addStudentsFromText("EE", 101, 1, "existing@test.com, Existing Student")
+        result = getStudents("EE", 101, 1)
+        self.assertEqual(len(result), 1)
+        self.assertEqual(result[0].getEmail(), "existing@test.com")
+
+    def test_add_students_from_text_existing_user_not_overwritten(self):
+        User.objects.create(
+            email="existing@test.com",
+            password="oldpassword",
+            name="Old Name",
+            user_type="STUDENT"
+        )
+        addStudentsFromText("EE", 101, 1, "existing@test.com, New Name")
+        user = User.objects.get(email="existing@test.com")
+        self.assertEqual(user.name, "Old Name")
+        self.assertEqual(user.password, "oldpassword")
+
+    def test_add_students_from_text_non_student_is_skipped(self):
+        User.objects.create(
+            email="instructor@test.com",
+            password="pass",
+            name="An Instructor",
+            user_type="INSTRUCTOR"
+        )
+        addStudentsFromText("EE", 101, 1, "instructor@test.com, An Instructor")
+        result = getStudents("EE", 101, 1)
+        self.assertEqual(len(result), 0)
+
+    def test_add_students_from_text_skips_malformed_lines(self):
+        addStudentsFromText("EE", 101, 1, "bademail\nnoemail")
+        result = getStudents("EE", 101, 1)
+        self.assertEqual(len(result), 0)
+
+    def test_add_students_from_text_skips_blank_lines(self):
+        addStudentsFromText("EE", 101, 1, "\n\n\n")
+        result = getStudents("EE", 101, 1)
+        self.assertEqual(len(result), 0)
+
+    def test_add_students_from_text_multiple_lines(self):
+        addStudentsFromText("EE", 101, 1,
+                            "s1@test.com, Student One\ns2@test.com, Student Two\ns3@test.com, Student Three")
+        result = getStudents("EE", 101, 1)
+        self.assertEqual(len(result), 3)
+
+    def test_add_students_from_text_raises_for_missing_section(self):
+        with self.assertRaises(ValueError):
+            addStudentsFromText("EE", 101, 999, "student@test.com, Test Student")

@@ -7,7 +7,8 @@ from classes.UserDatabase import doesUserWithEmailExist, validatePassword, getUs
 from classes.CourseDatabase import getAllCourses
 from classes.CourseDatabase import getAllCourses, doesCourseExist, createCourse, deleteCourse
 from classes.Sections import SectionClass
-from classes.SectionsDatabase import createSection, deleteSection, assignInstructor, assignTA
+from classes.SectionsDatabase import createSection, deleteSection, assignInstructor, assignTA, getStudents, \
+    addStudentsFromText
 from classes.UserDatabase import getUser, getUsersByType
 from classes.OfficeHoursDatabase import createOfficeHour, getOfficeHour, getApprovedOfficeHours, getPendingOfficeHoursForInstructor, rejectOfficeHour, approveOfficeHour
 from classes.TimeSlot import TimeSlot
@@ -566,3 +567,72 @@ class ProposeOfficeHoursView(View):
 
         return redirect("/office-hours/")
 
+from classes.SectionsDatabase import getSectionsByInstructor, addStudentsFromText, getStudents
+
+from classes.SectionsDatabase import getSectionsByInstructor, addStudentsFromText, getStudents
+
+from classes.SectionsDatabase import getSectionsByInstructor, addStudentsFromText, getStudents
+
+class AddStudentsView(View):
+    def get(self, request):
+        user = getUser(request.session.get("user_id"))
+
+        if user is None or user.getType() != "INSTRUCTOR":
+            return redirect("/")
+
+        sections = getSectionsByInstructor(user.getEmail())
+
+        seen = set()
+        unique_courses = []
+        for s in sections:
+            code = s.getCourse().getCourseCode()
+            if code not in seen:
+                seen.add(code)
+                unique_courses.append(s)
+
+        selected_course_code = request.GET.get("course", "")
+        if selected_course_code:
+            selected_course_code = int(selected_course_code)
+
+        selected_section = None
+        students = []
+
+        section_key = request.GET.get("section")
+        if section_key and selected_course_code:
+            for s in sections:
+                if s.getSectionCode() == section_key and s.getCourse().getCourseCode() == selected_course_code:
+                    selected_section = s
+                    students = getStudents(
+                        s.getCourse().getCourseDepartment(),
+                        s.getCourse().getCourseCode(),
+                        int(s.getSectionCode())
+                    )
+                    break
+
+        context = {
+            "user": user,
+            "unique_courses": unique_courses,
+            "sections": sections,
+            "selected_course_code": selected_course_code,
+            "selected_section": selected_section,
+            "students": students,
+        }
+        return render(request, "scheduler_app/add_students.html", context)
+
+    def post(self, request):
+        user = getUser(request.session.get("user_id"))
+
+        if user is None or user.getType() != "INSTRUCTOR":
+            return redirect("/")
+
+        department_name = request.POST.get("department_name")
+        course_code = int(request.POST.get("course_code"))
+        section_code = int(request.POST.get("section_code"))
+        students_text = request.POST.get("students_text", "")
+
+        try:
+            addStudentsFromText(department_name, course_code, section_code, students_text)
+        except ValueError:
+            pass
+
+        return redirect(f"/instructor/add-students/?course={course_code}&section={section_code}")

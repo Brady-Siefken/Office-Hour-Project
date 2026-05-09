@@ -143,3 +143,16 @@ def deleteSection(department_name, course_code, section_code):
         course__courseCode=course_code,
         sectionCode=section_code
     ).delete()
+
+def addStudentsFromText(department_name, course_code, section_code, text):
+    section = getSection(department_name, course_code, section_code)
+    if section is None:
+        raise ValueError("Section does not exist")
+    section.addStudentsFromText(text)
+
+def getStudents(department_name, course_code, section_code):
+    section = getSection(department_name, course_code, section_code)
+    if section is None:
+        raise ValueError("Section does not exist")
+    return section.getStudents()
+

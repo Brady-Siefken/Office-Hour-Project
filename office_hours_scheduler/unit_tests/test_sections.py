@@ -157,3 +157,132 @@ class TestSectionClass(unittest.TestCase):
         Section.objects.create(course=self.course, sectionCode=101)
         section = SectionClass("EE", 140, 101)
         self.assertIn("101", str(section))
+
+
+
+    #----------------------------
+    # this is for the new tests
+    #----------------------------
+    # ----------------------------
+    # getStudents tests
+    # ----------------------------
+
+    def test_get_students_returns_empty_when_no_students(self):
+        Section.objects.create(course=self.course, sectionCode=101)
+        section = SectionClass("EE", 140, 101)
+        self.assertEqual(section.getStudents(), [])
+
+    def test_get_students_returns_user_class_objects(self):
+        from classes.Users import UserClass
+        student = User.objects.create(
+            email="student@test.com",
+            password="pass",
+            name="Test Student",
+            user_type="STUDENT"
+        )
+        s = Section.objects.create(course=self.course, sectionCode=101)
+        s.students.add(student)
+        section = SectionClass("EE", 140, 101)
+        students = section.getStudents()
+        self.assertEqual(len(students), 1)
+        self.assertIsInstance(students[0], UserClass)
+
+    def test_get_students_returns_correct_student(self):
+        student = User.objects.create(
+            email="student@test.com",
+            password="pass",
+            name="Test Student",
+            user_type="STUDENT"
+        )
+        s = Section.objects.create(course=self.course, sectionCode=101)
+        s.students.add(student)
+        section = SectionClass("EE", 140, 101)
+        self.assertEqual(section.getStudents()[0].getEmail(), "student@test.com")
+
+    def test_get_students_returns_multiple_students(self):
+        student1 = User.objects.create(email="s1@test.com", password="pass", name="Student One", user_type="STUDENT")
+        student2 = User.objects.create(email="s2@test.com", password="pass", name="Student Two", user_type="STUDENT")
+        s = Section.objects.create(course=self.course, sectionCode=101)
+        s.students.add(student1, student2)
+        section = SectionClass("EE", 140, 101)
+        self.assertEqual(len(section.getStudents()), 2)
+
+    # ----------------------------
+    # addStudentsFromText tests
+    # ----------------------------
+
+    def test_add_students_creates_new_user(self):
+        Section.objects.create(course=self.course, sectionCode=101)
+        section = SectionClass("EE", 140, 101)
+        section.addStudentsFromText("newstudent@test.com, New Student")
+        self.assertTrue(User.objects.filter(email="newstudent@test.com").exists())
+
+    def test_add_students_new_user_type_is_student(self):
+        Section.objects.create(course=self.course, sectionCode=101)
+        section = SectionClass("EE", 140, 101)
+        section.addStudentsFromText("newstudent@test.com, New Student")
+        user = User.objects.get(email="newstudent@test.com")
+        self.assertEqual(user.user_type, "STUDENT")
+
+    def test_add_students_new_user_password_is_email(self):
+        Section.objects.create(course=self.course, sectionCode=101)
+        section = SectionClass("EE", 140, 101)
+        section.addStudentsFromText("newstudent@test.com, New Student")
+        user = User.objects.get(email="newstudent@test.com")
+        self.assertEqual(user.password, "newstudent@test.com")
+
+    def test_add_students_existing_student_is_added(self):
+        student = User.objects.create(
+            email="existing@test.com",
+            password="pass",
+            name="Existing Student",
+            user_type="STUDENT"
+        )
+        Section.objects.create(course=self.course, sectionCode=101)
+        section = SectionClass("EE", 140, 101)
+        section.addStudentsFromText("existing@test.com, Existing Student")
+        self.assertIn(student, section.section.students.all())
+
+    def test_add_students_existing_user_not_overwritten(self):
+        User.objects.create(
+            email="existing@test.com",
+            password="oldpassword",
+            name="Old Name",
+            user_type="STUDENT"
+        )
+        Section.objects.create(course=self.course, sectionCode=101)
+        section = SectionClass("EE", 140, 101)
+        section.addStudentsFromText("existing@test.com, New Name")
+        user = User.objects.get(email="existing@test.com")
+        self.assertEqual(user.name, "Old Name")
+        self.assertEqual(user.password, "oldpassword")
+
+    def test_add_students_non_student_user_is_skipped(self):
+        User.objects.create(
+            email="instructor@test.com",
+            password="pass",
+            name="An Instructor",
+            user_type="INSTRUCTOR"
+        )
+        Section.objects.create(course=self.course, sectionCode=101)
+        section = SectionClass("EE", 140, 101)
+        section.addStudentsFromText("instructor@test.com, An Instructor")
+        self.assertEqual(len(section.getStudents()), 0)
+
+    def test_add_students_skips_malformed_lines(self):
+        Section.objects.create(course=self.course, sectionCode=101)
+        section = SectionClass("EE", 140, 101)
+        section.addStudentsFromText("bademail\nnoemail")
+        self.assertEqual(len(section.getStudents()), 0)
+
+    def test_add_students_skips_blank_lines(self):
+        Section.objects.create(course=self.course, sectionCode=101)
+        section = SectionClass("EE", 140, 101)
+        section.addStudentsFromText("\n\n\n")
+        self.assertEqual(len(section.getStudents()), 0)
+
+    def test_add_students_multiple_lines(self):
+        Section.objects.create(course=self.course, sectionCode=101)
+        section = SectionClass("EE", 140, 101)
+        section.addStudentsFromText("s1@test.com, Student One\ns2@test.com, Student Two\ns3@test.com, Student Three")
+        self.assertEqual(len(section.getStudents()), 3)

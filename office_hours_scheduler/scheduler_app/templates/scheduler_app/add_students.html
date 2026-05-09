@@ -1,0 +1,107 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Add Students</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}"/>
+</head>
+<body class="dashboard-body">
+
+<nav class="nav">
+    <div class="nav-brand">OfficeHours</div>
+    <ul class="nav-links">
+        <li><a href="/instructor/dashboard/">Dashboard</a></li>
+        <li><a href="/logout/" class="nav-logout">Logout</a></li>
+    </ul>
+</nav>
+
+<main class="dashboard-main">
+
+    <a href="/instructor/dashboard/" class="back-link">&larr; Back to Dashboard</a>
+
+    <header class="dashboard-header">
+        <h1>Add Students to Section</h1>
+    </header>
+
+    <!-- Course + Section selector -->
+    <section class="table-section" style="margin-bottom: 48px;">
+        <h2 class="section-title">Select Section</h2>
+        <form method="get" class="form-row">
+            <select name="course" onchange="this.form.submit()">
+                <option value="">-- select a course --</option>
+                {% for s in unique_courses %}
+                    <option value="{{ s.getCourse.getCourseCode }}"
+                        {% if selected_course_code == s.getCourse.getCourseCode %}selected{% endif %}>
+                        {{ s.getCourse.getCourseDepartment }} {{ s.getCourse.getCourseCode }} — {{ s.getCourse.getCourseName }}
+                    </option>
+                {% endfor %}
+            </select>
+
+            {% if selected_course_code %}
+                <select name="section" onchange="this.form.submit()">
+                    <option value="">-- select a section --</option>
+                    {% for s in sections %}
+                        {% if s.getCourse.getCourseCode == selected_course_code %}
+                            <option value="{{ s.getSectionCode }}"
+                                {% if selected_section and selected_section.getSectionCode == s.getSectionCode %}selected{% endif %}>
+                                Section {{ s.getSectionCode }} ({{ s.getSectionType }})
+                            </option>
+                        {% endif %}
+                    {% endfor %}
+                </select>
+            {% endif %}
+        </form>
+    </section>
+
+    {% if selected_section %}
+
+        <!-- Paste students -->
+        <section class="table-section" style="margin-bottom: 48px;">
+            <h2 class="section-title">Paste Students</h2>
+            <form method="post">
+                {% csrf_token %}
+                <input type="hidden" name="department_name" value="{{ selected_section.getCourse.getCourseDepartment }}">
+                <input type="hidden" name="course_code" value="{{ selected_section.getCourse.getCourseCode }}">
+                <input type="hidden" name="section_code" value="{{ selected_section.getSectionCode }}">
+                <textarea name="students_text" rows="8" style="width:100%; font-family: monospace;"
+                    placeholder="email@test.com, First Last
+email2@test.com, First Last"></textarea>
+                <button type="submit" class="btn-mini" style="margin-top: 12px;">Add Students</button>
+            </form>
+        </section>
+
+        <!-- Current students -->
+        <section class="table-section">
+            <h2 class="section-title">Current Students</h2>
+            {% if students %}
+                <div class="table-wrap">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Email</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for student in students %}
+                                <tr>
+                                    <td>{{ student.getName }}</td>
+                                    <td>{{ student.getEmail }}</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <p class="empty-state">No students enrolled yet.</p>
+            {% endif %}
+        </section>
+
+    {% endif %}
+
+</main>
+
+</body>
+</html>

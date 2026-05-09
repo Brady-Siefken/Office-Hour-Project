@@ -103,6 +103,7 @@ class Section(models.Model):
 
     instructor = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name='sections')
     ta = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name='sections_assisting')
+    students = models.ManyToManyField(User, blank=True, related_name='enrolled_sections')
     sectionCode = models.IntegerField(validators=[MinValueValidator(1), MaxValueValidator(999)])
     course = models.ForeignKey(Course, on_delete=models.SET_NULL, null=True, related_name='sections')
     timeslot = models.ForeignKey(Timeslot, on_delete=models.SET_NULL, null=True, blank=True, related_name='sections')
