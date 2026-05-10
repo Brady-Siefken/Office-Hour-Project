@@ -11,7 +11,6 @@ from classes.SectionsDatabase import createSection, deleteSection, assignInstruc
     addStudentsFromText
 from classes.UserDatabase import getUser, getUsersByType
 from classes.OfficeHoursDatabase import createOfficeHour, getOfficeHour, getApprovedOfficeHours, getPendingOfficeHoursForInstructor, rejectOfficeHour, approveOfficeHour
-from classes.TimeSlot import TimeSlot
 
 DASHBOARD_ROUTES = {
     "INSTRUCTOR": "/instructor/dashboard/",
@@ -19,10 +18,6 @@ DASHBOARD_ROUTES = {
     "STUDENT": "/student/dashboard/",
     "ADMIN": "/admin/dashboard/",
 }
-
-class AccountSelectView(View):
-    def get(self, request):
-        return render(request, "scheduler_app/account_select.html", {})
 
 class Home(View): # staff login
     def get(self, request):
@@ -35,16 +30,16 @@ class Home(View): # staff login
         if not doesUserWithEmailExist(email):
             return render(request, "scheduler_app/login.html", {"message": "No such user"})
 
-        if not validatePassword(email, password):
-            return render(request, "scheduler_app/login.html", {"message": "Incorrect password"})
-
         user = UserClass(email)
         request.session["user_id"] = user.getEmail()
         request.session["user_type"] = user.getType()
 
-        # Students cannot log in via the staff portal
-        if user.getType() == "STUDENT":
-            return render(request, "scheduler_app/login.html", {"message": "Please use the student login"})
+        if user.getType() == "STUDENT" and user.hasPlaceholderPassword():
+            return redirect("/set/password")
+
+        if not validatePassword(email, password):
+            return render(request, "scheduler_app/login.html", {"message": "Incorrect password"})
+
 
         route = DASHBOARD_ROUTES.get(user.getType())
         if route is None:
@@ -52,64 +47,24 @@ class Home(View): # staff login
 
         return redirect(route)
 
-class StudentLoginView(View):
-    def get(self, request):
-        return render(request, "scheduler_app/student_login.html", {})
-    ##### I just pasted the original login view, needs to be updated
-    def post(self, request):
-        email = request.POST.get("email")
-        #password = request.POST.get("password")
-
-        if not doesUserWithEmailExist(email):
-            return render(request, "scheduler_app/student_login.html", {"message": "No such user"})
-
-        user = UserClass(email)
-        request.session["user_id"] = user.getEmail()
-        request.session["user_type"] = user.getType()
-
-        # Staff cannot log in via the student portal
-        if user.getType() != "STUDENT":
-            return render(request, "scheduler_app/student_login.html", {"message": "Please use the staff login"})
-
-        #return redirect(DASHBOARD_ROUTES["STUDENT"])
-
-        return redirect("/set/password/")
-
 class SetPasswordView(View):
     def get(self, request):
         return render(request, "scheduler_app/set_password.html", {})
 
-    ##### I just pasted the original login view, needs to be updated
     def post(self, request):
-        #email = request.POST.get("email")
-        password = request.POST.get("password")
-
-        #user = UserClass(email)
-        #request.session["user_id"] = user.getEmail()
-        #request.session["user_type"] = user.getType()
-
+        user = getUser(request.session["user_id"])
         # Staff cannot log in via the student portal
-        #if user.getType() != "STUDENT":
-            #return render(request, "scheduler_app/student_login.html", {"message": "Please use the staff login"})
+        if user.getType() != "STUDENT":
+            pass
 
-        return redirect(DASHBOARD_ROUTES["STUDENT"])
-
-class StudentPasswordView(View):
-    def get(self, request):
-        return render(request, "scheduler_app/student_enter_password.html", {})
-
-    ##### I just pasted the original login view, needs to be updated
-    def post(self, request):
-        #email = request.POST.get("email")
         password = request.POST.get("password")
+        confirm_password = request.POST.get("confirm_password")
+        if password != confirm_password:
+            return render(request, "scheduler_app/set_password.html", {"message": "Passwords do not match"})
 
-        #user = UserClass(email)
-        #request.session["user_id"] = user.getEmail()
-        #request.session["user_type"] = user.getType()
-
-        # Staff cannot log in via the student portal
-        #if user.getType() != "STUDENT":
-            #return render(request, "scheduler_app/student_login.html", {"message": "Please use the staff login"})
+        user.setPassword(password)
+        request.session["user_id"] = user.getEmail()
+        request.session["user_type"] = user.getType()
 
         return redirect(DASHBOARD_ROUTES["STUDENT"])
 
@@ -345,7 +300,7 @@ class StudentDashboardView(View):
         user = request.session.get("user_id")
 
         if user is None or request.session.get("user_type") != "STUDENT":
-            return redirect("{% url 'student-login' %}")
+            return redirect("/")
 
         #sections = getSectionsByTA(user.getEmail())
 
