@@ -58,6 +58,8 @@ urlpatterns = [
     path("instructor/add-students/", AddStudentsView.as_view(), name="add-students"),
     path('instructor/reservations/', InstructorUpcomingReservationsView.as_view()),
     path('ta/reservations/', TAUpcomingReservationsView.as_view()),
+    path('student/reserve/', SelectCourseForReservationView.as_view()),
+    path('student/reserve/<str:department_name>/<int:course_code>/', AvailableOfficeHoursView.as_view()),
     #path('student/dashboard/', StudentDashboardView.as_view()),
     #path('student/reserve/', ReserveSlotView.as_view()),
     #path('student/reservations/', MyReservationsView.as_view()),
