@@ -906,3 +906,29 @@ body.dashboard-body {
 .card .back-arrow {
   border: 1px solid rgba(26, 20, 16, 0.15);
 }
+
+.dashboard-main textarea {
+  width: 100%;
+  padding: 12px 14px;
+  background: rgba(245,240,232,.06);
+  border: 1.5px solid rgba(255,255,255,.12);
+  border-radius: var(--radius);
+  font-family: var(--font-body);
+  font-size: .85rem;
+  color: rgba(255,255,255,.85);
+  outline: none;
+  resize: vertical;
+  transition: border-color var(--transition-base),
+              box-shadow var(--transition-base),
+              background var(--transition-base);
+}
+
+.dashboard-main textarea:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(181,65,10,.18);
+  background: rgba(245,240,232,.09);
+}
+
+.dashboard-main textarea::placeholder {
+  color: rgba(255,255,255,.3);
+}

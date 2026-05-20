@@ -8,7 +8,7 @@ from classes.CourseDatabase import getAllCourses
 from classes.CourseDatabase import getAllCourses, doesCourseExist, createCourse, deleteCourse
 from classes.Sections import SectionClass
 from classes.SectionsDatabase import createSection, deleteSection, assignInstructor, assignTA, getStudents, \
-    addStudentsFromText
+    addStudentsFromText, getSectionsByStudent
 from classes.UserDatabase import getUser, getUsersByType
 from classes.OfficeHoursDatabase import createOfficeHour, getOfficeHour, getApprovedOfficeHours, getPendingOfficeHoursForInstructor, rejectOfficeHour, approveOfficeHour
 #from classes.TimeSlot import TimeSlot
@@ -298,16 +298,28 @@ class TADashboardView(View):
 
 class StudentDashboardView(View):
     def get(self, request):
-        user = request.session.get("user_id")
+        user_email = request.session.get("user_id")
 
-        if user is None or request.session.get("user_type") != "STUDENT":
+        if user_email is None or request.session.get("user_type") != "STUDENT":
             return redirect("/")
 
-        #sections = getSectionsByTA(user.getEmail())
+        user = getUser(user_email)
+        if user is None:
+            return redirect("/")
+
+        sections = getSectionsByStudent(user_email)
+
+        seen = set() #makes sure dupe courses are not added
+        courses = []
+        for s in sections:
+            code = s.getCourse().getCourseCode()
+            if code not in seen: # if not in the database, add
+                seen.add(code)
+                courses.append(s.getCourse())
 
         context = {
             "user": user,
-            "courses": [],
+            "courses": courses,
         }
 
         return render(request, "scheduler_app/student_dashboard.html", context)
