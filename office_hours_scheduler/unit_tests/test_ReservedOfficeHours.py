@@ -9,13 +9,10 @@ from classes.Course import CourseClass
 
 
 class ReservedOfficeHoursTestSetup(unittest.TestCase):
-    """
-    Shared fixtures used across all test classes for ReservedOfficeHoursClass.
 
-    Builds: one instructor, one TA, one student, one COMPSCI 361 course with
-    one section, one Tuesday-2pm-3pm timeslot, and one reservation where the
-    student books the TA for tomorrow.
-    """
+    #Builds: one instructor, one TA, one student, one course with
+    #one section, one Tuesday-2pm-3pm timeslot, and one reservation where the
+    #student books the TA for tomorrow.
 
     def setUp(self):
         OfficeHourReservation.objects.all().delete()
@@ -59,7 +56,6 @@ class ReservedOfficeHoursTestSetup(unittest.TestCase):
             reservationDate=self.reservation_date,
         )
 
-
 class TestReservedOfficeHoursConstruction(ReservedOfficeHoursTestSetup):
 
     def test_construct_with_valid_id(self):
@@ -69,7 +65,6 @@ class TestReservedOfficeHoursConstruction(ReservedOfficeHoursTestSetup):
     def test_construct_with_invalid_id_raises(self):
         with self.assertRaises(ValueError):
             ReservedOfficeHoursClass(999999)
-
 
 class TestReservedOfficeHoursGetters(ReservedOfficeHoursTestSetup):
 
@@ -106,7 +101,6 @@ class TestReservedOfficeHoursGetters(ReservedOfficeHoursTestSetup):
     def test_getStartTime_combines_date_and_timeslot_start(self):
         expected = datetime.combine(self.reservation_date, time(14, 0))
         self.assertEqual(self.wrapper.getStartTime(), expected)
-
 
 class TestReservedOfficeHoursStr(ReservedOfficeHoursTestSetup):
 

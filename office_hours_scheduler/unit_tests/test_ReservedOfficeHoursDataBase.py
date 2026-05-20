@@ -4,21 +4,12 @@ from scheduler_app.models import (
     User, Course, Department, Timeslot, OfficeHour, OfficeHourReservation,
 )
 from classes.ReservedOfficeHours import ReservedOfficeHoursClass
-from classes.ReservedOfficeHoursDatabase import (
-    createReservation,
-    validateReservation,
-    getReservation,
-    getUpcomingReservationsForStudent,
-    getUpcomingReservationsForStaff,
-    getReservationsForOfficeHour,
-)
-
+from classes.ReservedOfficeHoursDatabase import (createReservation,validateReservation,getReservation,getUpcomingReservationsForStudent,getUpcomingReservationsForStaff,getReservationsForOfficeHour,)
 
 class ReservationsTestSetup(unittest.TestCase):
-    """
-    Shared fixtures: one student, one TA, one course, one Tuesday-2pm-3pm
-    office hour block. Individual tests create reservations inside that block.
-    """
+
+    # one student, one TA, one course, one Tuesday-2pm-3pm
+    #office hour block. Individual tests create reservations inside that block.
 
     def setUp(self):
         OfficeHourReservation.objects.all().delete()
@@ -66,10 +57,7 @@ class ReservationsTestSetup(unittest.TestCase):
         # A "now" reference well before next Tuesday so 24hr validation passes
         self.safe_now = datetime.combine(today, time(0, 0))
 
-
-# ---------------------------------------------------------------------------
 # createReservation
-# ---------------------------------------------------------------------------
 
 class TestCreateReservation(ReservationsTestSetup):
 
@@ -106,10 +94,7 @@ class TestCreateReservation(ReservationsTestSetup):
         with self.assertRaises(ValueError):
             createReservation("student@uwm.edu", 999999, self.slot_2_00)
 
-
-# ---------------------------------------------------------------------------
 # validateReservation
-# ---------------------------------------------------------------------------
 
 class TestValidateReservation(ReservationsTestSetup):
 
@@ -155,10 +140,59 @@ class TestValidateReservation(ReservationsTestSetup):
                 "student@uwm.edu", 999999, self.slot_2_00, self.safe_now,
             )
 
+def test_raises_when_same_staff_same_day_already_booked(self):
+    #A student can only book each staff member once per day.
+    # Book the TA at 14:00 on next Tuesday
+    createReservation("student@uwm.edu", self.office_hour.id, self.slot_2_00)
 
-# ---------------------------------------------------------------------------
+    # Try to book the same TA at 14:30 on the same Tuesday
+    with self.assertRaises(ValueError) as ctx:
+        validateReservation(
+            "student@uwm.edu", self.office_hour.id, self.slot_2_30, self.safe_now,
+        )
+    self.assertIn("already", str(ctx.exception).lower())
+
+
+def test_allows_same_staff_different_day(self):
+    #Same staff on a different day is fine.
+    createReservation("student@uwm.edu", self.office_hour.id, self.slot_2_00)
+
+    # Same TA, two weeks later (still Tuesday at 14:00)
+    from datetime import timedelta
+    far_future = self.slot_2_00 + timedelta(days=14)
+    result = validateReservation(
+        "student@uwm.edu", self.office_hour.id, far_future, self.safe_now,
+    )
+    self.assertIsNone(result)
+
+def test_allows_different_staff_same_day(self):
+    #Booking instructor and TA on the same day is allowed.
+    # Add an instructor OH on the same Tuesday afternoon
+    from scheduler_app.models import User as UserModel, OfficeHour, Timeslot
+    from datetime import time as time_type
+    instructor = UserModel.objects.create(
+        email="prof@uwm.edu", password="x", name="Dr Prof", user_type="INSTRUCTOR",
+    )
+    instructor_ts = Timeslot.objects.create(
+        start_time=time_type(16, 0), end_time=time_type(17, 0), tuesday=True,
+    )
+    instructor_oh = OfficeHour.objects.create(
+        staff=instructor, course=self.course,
+        timeslot=instructor_ts, approved=True,
+    )
+
+    # Book the TA at 14:00
+    createReservation("student@uwm.edu", self.office_hour.id, self.slot_2_00)
+
+    # Try to book the instructor at 16:00 the same Tuesday
+    from datetime import datetime as dt
+    instructor_slot = dt.combine(self.next_tuesday, time_type(16, 0))
+    result = validateReservation(
+        "student@uwm.edu", instructor_oh.id, instructor_slot, self.safe_now,
+    )
+    self.assertIsNone(result)
+
 # getReservation
-# ---------------------------------------------------------------------------
 
 class TestGetReservation(ReservationsTestSetup):
 
@@ -171,10 +205,7 @@ class TestGetReservation(ReservationsTestSetup):
     def test_returns_none_for_missing_id(self):
         self.assertIsNone(getReservation(999999))
 
-
-# ---------------------------------------------------------------------------
 # getUpcomingReservationsForStudent
-# ---------------------------------------------------------------------------
 
 class TestGetUpcomingReservationsForStudent(ReservationsTestSetup):
 
@@ -207,10 +238,7 @@ class TestGetUpcomingReservationsForStudent(ReservationsTestSetup):
         result = getUpcomingReservationsForStudent("student@uwm.edu")
         self.assertIsInstance(result[0], ReservedOfficeHoursClass)
 
-
-# ---------------------------------------------------------------------------
 # getUpcomingReservationsForStaff
-# ---------------------------------------------------------------------------
 
 class TestGetUpcomingReservationsForStaff(ReservationsTestSetup):
 
@@ -236,10 +264,7 @@ class TestGetUpcomingReservationsForStaff(ReservationsTestSetup):
         result = getUpcomingReservationsForStaff("ta@uwm.edu")
         self.assertEqual(result, [])
 
-
-# ---------------------------------------------------------------------------
 # getReservationsForOfficeHour
-# ---------------------------------------------------------------------------
 
 class TestGetReservationsForOfficeHour(ReservationsTestSetup):
 

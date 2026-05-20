@@ -13,10 +13,8 @@ class AvailableSlotsTestSetup(unittest.TestCase):
     """
     Sets up:
       - one TA, one student
-      - COMPSCI 361 course
+      - course
       - One approved OH: Tuesdays 2pm-3pm for CS361 hosted by the TA
-      - 'now' fixed at the start of a recent Monday so weekday math is
-        deterministic.
     """
 
     def setUp(self):
@@ -55,10 +53,7 @@ class AvailableSlotsTestSetup(unittest.TestCase):
         # Next Tuesday after `now`
         self.next_tuesday = self.monday + timedelta(days=1)
 
-
-# ---------------------------------------------------------------------------
 # Basic behavior
-# ---------------------------------------------------------------------------
 
 class TestGetAvailableSlotsForCourse(AvailableSlotsTestSetup):
 
@@ -120,30 +115,24 @@ class TestGetAvailableSlotsForCourse(AvailableSlotsTestSetup):
                 return
         self.fail("next Tuesday not in result")
 
-
-# ---------------------------------------------------------------------------
 # 24-hour rule
-# ---------------------------------------------------------------------------
 
 class TestAvailableSlots24HourRule(AvailableSlotsTestSetup):
 
     def test_excludes_slots_within_24hrs_of_now(self):
-        """If now is Monday 3pm and Tuesday 2pm is < 24hrs away, exclude it."""
+        # If now is Monday 3pm and Tuesday 2pm is < 24hrs away, exclude it.
         late_monday = datetime.combine(self.monday, time(15, 0))
         result = getAvailableSlotsForCourse("COMPSCI", 361, late_monday)
         dates = [d for d, _ in result]
         self.assertNotIn(self.next_tuesday, dates)
 
     def test_includes_slots_more_than_24hrs_out(self):
-        """Monday midnight -> Tuesday 2pm = 38 hours out, must be included."""
+        #Monday midnight -> Tuesday 2pm = 38 hours out, must be included.
         result = getAvailableSlotsForCourse("COMPSCI", 361, self.now)
         dates = [d for d, _ in result]
         self.assertIn(self.next_tuesday, dates)
 
-
-# ---------------------------------------------------------------------------
 # Reserved-slot exclusion
-# ---------------------------------------------------------------------------
 
 class TestAvailableSlotsExcludeReserved(AvailableSlotsTestSetup):
 
@@ -170,10 +159,7 @@ class TestAvailableSlotsExcludeReserved(AvailableSlotsTestSetup):
         dates = [d for d, _ in result]
         self.assertNotIn(self.next_tuesday, dates)
 
-
-# ---------------------------------------------------------------------------
 # Course filtering
-# ---------------------------------------------------------------------------
 
 class TestAvailableSlotsCourseFilter(AvailableSlotsTestSetup):
 
@@ -207,10 +193,7 @@ class TestAvailableSlotsCourseFilter(AvailableSlotsTestSetup):
         morning_starts = [s for s in all_starts if s.time() < time(12, 0)]
         self.assertEqual(morning_starts, [])
 
-
-# ---------------------------------------------------------------------------
 # Edge cases
-# ---------------------------------------------------------------------------
 
 class TestAvailableSlotsEdgeCases(AvailableSlotsTestSetup):
 
@@ -229,7 +212,7 @@ class TestAvailableSlotsEdgeCases(AvailableSlotsTestSetup):
         self.assertEqual(dates, sorted(dates))
 
     def test_days_ahead_parameter_limits_window(self):
-        """With days_ahead=3, a Tuesday 1 week out should not appear."""
+        #With days_ahead=3, a Tuesday 1 week out should not appear.
         result = getAvailableSlotsForCourse("COMPSCI", 361, self.now, days_ahead=3)
         # From Monday midnight, only Mon/Tue/Wed should be checked.
         # Tue is included (in range), but next next-Tuesday (8 days out) won't be.
@@ -239,7 +222,7 @@ class TestAvailableSlotsEdgeCases(AvailableSlotsTestSetup):
             self.assertLessEqual(days_out, 3)
 
 class TestAvailableSlotsMultipleStaff(AvailableSlotsTestSetup):
-    """When TA and instructor both host the same time, both appear."""
+    #When TA and instructor both host the same time, both appear.
 
     def test_two_staff_same_time_produce_two_slots(self):
         instructor = User.objects.create(

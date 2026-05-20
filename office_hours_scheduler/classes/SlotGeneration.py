@@ -1,8 +1,6 @@
 from datetime import datetime, timedelta
 
-
-def generate_slots(date, start_time, end_time, slot_minutes=15):
-    """
+"""
     Generate the start datetimes of fixed-length slots within a time block
     on a given date.
 
@@ -17,20 +15,18 @@ def generate_slots(date, start_time, end_time, slot_minutes=15):
       If the block ends before it starts, or has zero length, returns [].
       A slot is only included if it fits entirely within the block; partial
       trailing slots are dropped (e.g. a 40-min block at 15-min slots
-      yields 2 slots, not 3).
-
-    Pure function: no DB, no side effects, deterministic given inputs.
+      yields 2 slots, not 3)
     """
+
+def generate_slots(date, start_time, end_time, slot_minutes=15):
+
     if end_time <= start_time:
         return []
-
     slot = timedelta(minutes=slot_minutes)
     current = datetime.combine(date, start_time)
     block_end = datetime.combine(date, end_time)
-
     slots = []
     while current + slot <= block_end:
         slots.append(current)
         current += slot
-
     return slots

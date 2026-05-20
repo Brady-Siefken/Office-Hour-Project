@@ -10,10 +10,9 @@ class TestGenerateSlots(unittest.TestCase):
       - a start_time (time)
       - an end_time (time)
       - slot_minutes (int, default 15)
-
-    Returns a list of datetime objects, each one representing the start
-    of a slot. No DB access, no side effects, pure function.
-    """
+      """
+    #Returns a list of datetime objects, each one representing the start
+    #of a slot. No DB access, no side effects.
 
     def setUp(self):
         self.test_date = date(2026, 6, 2)  # an arbitrary Tuesday
@@ -50,14 +49,14 @@ class TestGenerateSlots(unittest.TestCase):
         self.assertEqual(len(result), 1)
 
     def test_last_slot_ends_at_block_end(self):
-        """The final slot's end (start + 15min) must not exceed block end."""
+        #The final slot's end (start + 15min) must not exceed block end.
         result = generate_slots(self.test_date, time(14, 0), time(15, 0))
         last_slot_end = datetime.combine(self.test_date, time(15, 0))
         self.assertLessEqual(result[-1], last_slot_end)
 
     def test_non_aligned_block_truncates_to_nearest_full_slot(self):
-        """A 2:00-2:40 block produces 2 slots (2:00, 2:15). 2:30 doesn't
-        fit because 2:30-2:45 would overflow 2:40."""
+        #A 2:00-2:40 block produces 2 slots (2:00, 2:15). 2:30 doesn't
+        #fit because 2:30-2:45 would overflow 2:40.
         result = generate_slots(self.test_date, time(14, 0), time(14, 40))
         self.assertEqual(len(result), 2)
         self.assertEqual(result[-1], datetime(2026, 6, 2, 14, 15))
@@ -71,7 +70,7 @@ class TestGenerateSlots(unittest.TestCase):
         self.assertEqual(result, [])
 
     def test_custom_slot_length(self):
-        """Passing slot_minutes=30 should give 30-min slots."""
+        #Passing slot_minutes=30 should give 30-min slots.
         result = generate_slots(self.test_date, time(14, 0), time(15, 0), slot_minutes=30)
         self.assertEqual(len(result), 2)
         self.assertEqual(result, [

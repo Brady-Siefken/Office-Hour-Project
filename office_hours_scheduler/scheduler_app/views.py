@@ -13,7 +13,8 @@ from classes.SectionsDatabase import createSection, deleteSection, assignInstruc
 from classes.SectionsDatabase import getSectionsByInstructor, getSectionsByTA, getSectionsByStudent
 from classes.UserDatabase import getUser, getUsersByType
 from classes.OfficeHoursDatabase import createOfficeHour, getOfficeHour, getApprovedOfficeHours, getPendingOfficeHoursForInstructor, rejectOfficeHour, approveOfficeHour
-from classes.ReservedOfficeHoursDatabase import (getAvailableSlotsForCourse,validateReservation,createReservation,)
+from classes.ReservedOfficeHoursDatabase import (getAvailableSlotsForCourse,validateReservation,createReservation,getUpcomingReservationsForStudent,)
+from classes.ReservedOfficeHoursDatabase import (getAvailableSlotsForCourse,validateReservation,createReservation,getUpcomingReservationsForStudent,getUpcomingReservationsForStaff,)
 
 DASHBOARD_ROUTES = {
     "INSTRUCTOR": "/instructor/dashboard/",
@@ -400,11 +401,18 @@ class ViewOfficeHoursView(View):
 class InstructorUpcomingReservationsView(View):
     def get(self, request):
         user = getUser(request.session.get("user_id"))
+
         if user is None or user.getType() != "INSTRUCTOR":
             return redirect("/")
+
+        reservations = getUpcomingReservationsForStaff(user.getEmail())
+        reservations.sort(key=lambda r: r.getStartTime())
+
         context = {
             "user": user,
+            "reservations": reservations,
         }
+
         return render(request, "scheduler_app/instructor_upcoming_reservations.html", context)
 
     def post(self, request):
@@ -414,11 +422,18 @@ class InstructorUpcomingReservationsView(View):
 class TAUpcomingReservationsView(View):
     def get(self, request):
         user = getUser(request.session.get("user_id"))
+
         if user is None or user.getType() != "TA":
             return redirect("/")
+
+        reservations = getUpcomingReservationsForStaff(user.getEmail())
+        reservations.sort(key=lambda r: r.getStartTime())
+
         context = {
             "user": user,
+            "reservations": reservations,
         }
+
         return render(request, "scheduler_app/ta_upcoming_reservations.html", context)
 
     def post(self, request):
@@ -517,6 +532,26 @@ class AvailableOfficeHoursView(View):
             f"Reserved {slot_start.strftime('%A, %B %d at %I:%M %p')}."
         )
         return redirect(f"/student/reserve/{department_name}/{course_code}/")
+
+class StudentReservationsView(View):
+    def get(self, request):
+        user = getUser(request.session.get("user_id"))
+
+        if user is None or user.getType() != "STUDENT":
+            return redirect("/")
+
+        reservations = getUpcomingReservationsForStudent(user.getEmail())
+        reservations.sort(key=lambda r: r.getStartTime())
+
+        context = {
+            "user": user,
+            "reservations": reservations,
+        }
+
+        return render(request, "scheduler_app/student_reservations.html", context)
+
+    def post(self, request):
+        return redirect("/student/reservations/")
 
 ########################################################################################################################
 

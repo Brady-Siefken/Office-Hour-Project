@@ -1,17 +1,11 @@
 from datetime import datetime, timedelta
-from scheduler_app.models import (
-    User, OfficeHour, OfficeHourReservation, Timeslot,
-)
+from scheduler_app.models import (User, OfficeHour, OfficeHourReservation, Timeslot,)
 from classes.ReservedOfficeHours import ReservedOfficeHoursClass
 from datetime import date as _date_type
 from classes.SlotGeneration import generate_slots
 
-
-# ---------------------------------------------------------------------------
 # Internal helpers
-# ---------------------------------------------------------------------------
 
-# Maps Python's weekday() (Monday=0) to the boolean field on Timeslot.
 _DAY_FIELDS = {
     0: "monday",
     1: "tuesday",
@@ -20,23 +14,17 @@ _DAY_FIELDS = {
     4: "friday",
 }
 
-
 def _slot_datetime(reservation):
-    """Combine a reservation's date and timeslot start into a datetime."""
     return datetime.combine(
         reservation.reservationDate, reservation.timeslot.start_time,
     )
 
-
-# ---------------------------------------------------------------------------
 # createReservation
-# ---------------------------------------------------------------------------
 
 def createReservation(student_email, office_hour_id, slot_start):
     """
     Create a 15-minute reservation for `student_email` inside `office_hour_id`
-    starting at `slot_start` (a datetime).
-
+    starting at `slot_start.
     Returns a ReservedOfficeHoursClass.
     Raises ValueError if the student or office hour doesn't exist.
     """
@@ -75,23 +63,13 @@ def createReservation(student_email, office_hour_id, slot_start):
 
     return ReservedOfficeHoursClass(reservation.id)
 
-
-# ---------------------------------------------------------------------------
 # validateReservation
-# ---------------------------------------------------------------------------
 
 def validateReservation(student_email, office_hour_id, slot_start, now):
-    """
-    Verify a reservation request is allowed. Returns None on success,
-    raises ValueError with a descriptive message on any failure.
 
-    Rules enforced:
-      - Student must exist
-      - Office hour must exist
-      - Slot must be in the future
-      - Slot must be at least 24 hours from `now`  (PBI #137)
-      - Slot must not already be taken in this office hour
-    """
+   # Verify a reservation request is allowed. Returns None on success,
+   # raises ValueError with a message on any failure.
+
     try:
         User.objects.get(email=student_email)
     except User.DoesNotExist:
@@ -118,31 +96,34 @@ def validateReservation(student_email, office_hour_id, slot_start, now):
     if existing.exists():
         raise ValueError("That slot is already taken")
 
+    # One reservation per staff per day per student.
+    oh = OfficeHour.objects.get(id=office_hour_id)
+    same_staff_same_day = OfficeHourReservation.objects.filter(
+        student__email=student_email,
+        staff=oh.staff,
+        reservationDate=slot_start.date(),
+    )
+    if same_staff_same_day.exists():
+        raise ValueError(f"You already have a reservation with {oh.staff.name} on that day")
+
     return None
 
-
-# ---------------------------------------------------------------------------
 # getReservation
-# ---------------------------------------------------------------------------
 
 def getReservation(reservation_id):
-    """Return the wrapper for a reservation, or None if not found."""
+    #Return the wrapper for a reservation, or None if not found.
     try:
         return ReservedOfficeHoursClass(reservation_id)
     except ValueError:
         return None
 
-
-# ---------------------------------------------------------------------------
 # Query helpers
-# ---------------------------------------------------------------------------
 
 def _upcoming_filter(queryset, now=None):
-    """Filter a queryset of OfficeHourReservation rows down to future ones."""
+    #Filter a queryset of OfficeHourReservation rows down to future ones.
     if now is None:
         now = datetime.now()
     return [r for r in queryset if _slot_datetime(r) > now]
-
 
 def getUpcomingReservationsForStudent(student_email):
     rows = OfficeHourReservation.objects.filter(student__email=student_email)
@@ -155,17 +136,12 @@ def getUpcomingReservationsForStaff(staff_email):
     upcoming = _upcoming_filter(rows)
     return [ReservedOfficeHoursClass(r.id) for r in upcoming]
 
-
 def getReservationsForOfficeHour(office_hour_id):
-    """
-    Returns reservations that fall inside this office hour block.
-    Used by #135 to know which 15-min slots are already taken.
 
-    A reservation "belongs" to an office hour if its staff + course match,
-    and its timeslot is a sub-slice of the office hour's timeslot.
-    Since we filter staff + course, false matches are essentially impossible
-    in this app's workflow.
-    """
+    #Returns reservations that fall inside this office hour block.
+    #A reservation "belongs" to an office hour if its staff + course match.
+    #Since we filter staff + course, false matches are essentially impossible
+
     try:
         oh = OfficeHour.objects.get(id=office_hour_id)
     except OfficeHour.DoesNotExist:
@@ -176,11 +152,8 @@ def getReservationsForOfficeHour(office_hour_id):
     )
     return [ReservedOfficeHoursClass(r.id) for r in rows]
 
-# ---------------------------------------------------------------------------
 # Available slots view (PBI #135)
-# ---------------------------------------------------------------------------
 
-# Map Python weekday() (Mon=0..Fri=4) to the matching Timeslot boolean field
 _WEEKDAY_FIELDS = {
     0: "monday",
     1: "tuesday",
@@ -188,7 +161,6 @@ _WEEKDAY_FIELDS = {
     3: "thursday",
     4: "friday",
 }
-
 
 def getAvailableSlotsForCourse(department_name, course_code, now, days_ahead=30):
     """
@@ -205,7 +177,7 @@ def getAvailableSlotsForCourse(department_name, course_code, now, days_ahead=30)
 
     Dates with no available slots are omitted.
     """
-    # Pull all approved OHs for this course up front; one query.
+    # Pull all approved OHs for this course up front
     approved_ohs = OfficeHour.objects.filter(
         approved=True,
         course__department__departmentName=department_name,
@@ -215,7 +187,7 @@ def getAvailableSlotsForCourse(department_name, course_code, now, days_ahead=30)
     if not approved_ohs.exists():
         return []
 
-    # Build a quick lookup: which OHs run on each weekday?
+    # Build a quick lookup
     ohs_by_weekday = {wd: [] for wd in _WEEKDAY_FIELDS}
     for oh in approved_ohs:
         for wd, field in _WEEKDAY_FIELDS.items():
@@ -251,7 +223,6 @@ def getAvailableSlotsForCourse(department_name, course_code, now, days_ahead=30)
             for slot in generate_slots(day, ts.start_time, ts.end_time):
                 if slot < cutoff:
                     continue
-                # Per-OH "taken" check: same staff at same datetime.
                 if (oh.staff_id, day, slot.time()) in taken:
                     continue
                 key = (oh.id, slot)

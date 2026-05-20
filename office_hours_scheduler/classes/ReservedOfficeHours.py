@@ -1,7 +1,6 @@
 from datetime import datetime
 from scheduler_app.models import OfficeHourReservation
 
-
 class ReservedOfficeHoursClass:
 
     def __init__(self, reservation_id):
@@ -10,7 +9,7 @@ class ReservedOfficeHoursClass:
         except OfficeHourReservation.DoesNotExist:
             raise ValueError("Reservation does not exist")
 
-    # Getters/Accessors
+    # Getters
 
     def getId(self):
         return self.reservation.id
