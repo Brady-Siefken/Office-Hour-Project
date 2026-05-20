@@ -11,6 +11,7 @@ from classes.SectionsDatabase import createSection, deleteSection, assignInstruc
     addStudentsFromText
 from classes.UserDatabase import getUser, getUsersByType
 from classes.OfficeHoursDatabase import createOfficeHour, getOfficeHour, getApprovedOfficeHours, getPendingOfficeHoursForInstructor, rejectOfficeHour, approveOfficeHour
+#from classes.TimeSlot import TimeSlot
 
 DASHBOARD_ROUTES = {
     "INSTRUCTOR": "/instructor/dashboard/",
@@ -591,3 +592,139 @@ class AddStudentsView(View):
             pass
 
         return redirect(f"/instructor/add-students/?course={course_code}&section={section_code}")
+
+
+
+from classes.SectionsDatabase import getCoursesByStudent
+from classes.ReservationDatabase import getAvailableSlots, isSlotTaken, createReservation
+from datetime import date, timedelta, datetime
+
+from classes.SectionsDatabase import getCoursesByStudent
+from classes.ReservationDatabase import getAvailableSlots, createReservation
+from datetime import date, timedelta, datetime
+
+from classes.SectionsDatabase import getCoursesByStudent
+from classes.ReservationDatabase import getAvailableSlots, createReservation
+from datetime import date, timedelta, datetime
+
+class MakeReservationView(View):
+    def get(self, request):
+        user = getUser(request.session.get("user_id"))
+
+        if user is None or user.getType() != "STUDENT":
+            return redirect("/")
+
+        courses = getCoursesByStudent(user.getEmail())
+
+        selected_course_code = request.GET.get("course", "")
+        if selected_course_code:
+            selected_course_code = int(selected_course_code)
+
+        selected_date = request.GET.get("date", "")
+        if selected_date:
+            selected_date = datetime.strptime(selected_date, "%Y-%m-%d").date()
+
+        selected_course = None
+        selected_department = None
+        office_hours = []
+        available_slots = []
+        calendar_days = []
+
+        if selected_course_code:
+            for c in courses:
+                if c.getCourseCode() == selected_course_code:
+                    selected_course = c
+                    selected_department = c.getCourseDepartment()
+                    break
+
+        if selected_course:
+            from scheduler_app.models import OfficeHour
+            oh_records = OfficeHour.objects.filter(
+                course__courseCode=selected_course_code,
+                course__department__departmentName=selected_department,
+                approved=True
+            )
+            office_hours = list(oh_records)
+
+            # build calendar aligned to weekday columns
+            today = date.today()
+            start_of_week = today - timedelta(days=today.weekday())
+            day_map = {0: 'monday', 1: 'tuesday', 2: 'wednesday', 3: 'thursday', 4: 'friday', 5: 'saturday', 6: 'sunday'}
+
+            for i in range(35):
+                day = start_of_week + timedelta(days=i)
+                past = day <= today
+                out_of_range = day > today + timedelta(days=30)
+
+                if past or out_of_range:
+                    calendar_days.append({'date': day, 'has_office_hour': False, 'past': True})
+                    continue
+
+                day_name = day_map[day.weekday()]
+                has_office_hour = any(getattr(oh.timeslot, day_name, False) for oh in office_hours)
+
+                calendar_days.append({
+                    'date': day,
+                    'has_office_hour': has_office_hour,
+                    'past': False,
+                })
+
+        if selected_date and selected_course and office_hours:
+            for oh in office_hours:
+                staff_email = oh.staff.email
+                slots = getAvailableSlots(
+                    staff_email,
+                    selected_department,
+                    selected_course_code,
+                    selected_date
+                )
+                for slot in slots:
+                    available_slots.append({
+                        'slot_number': slot['slot_number'],
+                        'start_time': slot['start_time'],
+                        'end_time': slot['end_time'],
+                        'staff_email': staff_email,
+                        'staff_name': oh.staff.name,
+                    })
+
+        context = {
+            "user": user,
+            "courses": courses,
+            "selected_course_code": selected_course_code,
+            "selected_course": selected_course,
+            "selected_department": selected_department,
+            "selected_date": selected_date,
+            "calendar_days": calendar_days,
+            "available_slots": available_slots,
+            "error": request.GET.get("error", ""),
+        }
+
+        return render(request, "scheduler_app/make_reservation.html", context)
+
+    def post(self, request):
+        user = getUser(request.session.get("user_id"))
+
+        if user is None or user.getType() != "STUDENT":
+            return redirect("/")
+
+        department_name = request.POST.get("department_name")
+        course_code = int(request.POST.get("course_code"))
+        staff_email = request.POST.get("staff_email")
+        slot_number = int(request.POST.get("slot_number"))
+        selected_date = datetime.strptime(request.POST.get("date"), "%Y-%m-%d").date()
+
+        try:
+            createReservation(
+                user.getEmail(),
+                staff_email,
+                department_name,
+                course_code,
+                selected_date,
+                slot_number
+            )
+        except ValueError as e:
+            return redirect(
+                f"/student/reserve/?course={course_code}&date={selected_date}&error={str(e)}"
+            )
+
+        return redirect("/student/dashboard/")

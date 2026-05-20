@@ -1,0 +1,150 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Reserve Office Hours</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}"/>
+    <style>
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 8px;
+            margin: 16px 0;
+        }
+        .calendar-day {
+            padding: 10px;
+            text-align: center;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            background: var(--surface);
+            border: 1px solid var(--border);
+        }
+        .calendar-day.available {
+            background: var(--accent);
+            color: white;
+            cursor: pointer;
+            text-decoration: none;
+            display: block;
+        }
+        .calendar-day.available:hover {
+            opacity: 0.85;
+        }
+        .calendar-day.greyed {
+            opacity: 0.35;
+            cursor: not-allowed;
+        }
+        .calendar-day.selected {
+            outline: 3px solid white;
+        }
+        .slot-option {
+            padding: 10px 16px;
+            border-radius: 6px;
+            border: 1px solid var(--border);
+            margin-bottom: 8px;
+            background: var(--surface);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+    </style>
+</head>
+<body class="dashboard-body">
+
+<nav class="nav">
+    <div class="nav-brand">OfficeHours</div>
+    <ul class="nav-links">
+        <li><a href="/student/dashboard/">Dashboard</a></li>
+        <li><a href="/logout/" class="nav-logout">Logout</a></li>
+    </ul>
+</nav>
+
+<main class="dashboard-main">
+
+    <a href="/student/dashboard/" class="back-link">&larr; Back to Dashboard</a>
+
+    <header class="dashboard-header">
+        <h1>Reserve Office Hours</h1>
+    </header>
+
+    {% if error %}
+        <p class="error-banner">{{ error }}</p>
+    {% endif %}
+
+    <!-- Course selector -->
+    <section class="table-section" style="margin-bottom: 48px;">
+        <h2 class="section-title">Select Course</h2>
+        <form method="get" class="form-row">
+            <select name="course" onchange="this.form.submit()">
+                <option value="">-- select a course --</option>
+                {% for course in courses %}
+                    <option value="{{ course.getCourseCode }}"
+                        {% if selected_course_code == course.getCourseCode %}selected{% endif %}>
+                        {{ course.getCourseDepartment }} {{ course.getCourseCode }} — {{ course.getCourseName }}
+                    </option>
+                {% endfor %}
+            </select>
+        </form>
+    </section>
+
+    {% if selected_course %}
+
+        <!-- Calendar -->
+        <section class="table-section" style="margin-bottom: 48px;">
+            <h2 class="section-title">Select Date</h2>
+            <div class="calendar-grid">
+                <div class="calendar-day"><strong>Mon</strong></div>
+                <div class="calendar-day"><strong>Tue</strong></div>
+                <div class="calendar-day"><strong>Wed</strong></div>
+                <div class="calendar-day"><strong>Thu</strong></div>
+                <div class="calendar-day"><strong>Fri</strong></div>
+                <div class="calendar-day"><strong>Sat</strong></div>
+                <div class="calendar-day"><strong>Sun</strong></div>
+
+                {% for day in calendar_days %}
+                    {% if day.past %}
+                        <div class="calendar-day greyed">{{ day.date|date:"M d" }}</div>
+                    {% elif day.has_office_hour %}
+                        <a href="?course={{ selected_course_code }}&date={{ day.date|date:'Y-m-d' }}"
+                           class="calendar-day available {% if selected_date == day.date %}selected{% endif %}">
+                            {{ day.date|date:"M d" }}
+                        </a>
+                    {% else %}
+                        <div class="calendar-day greyed">{{ day.date|date:"M d" }}</div>
+                    {% endif %}
+                {% endfor %}
+            </div>
+        </section>
+
+        {% if selected_date %}
+            <section class="table-section">
+                <h2 class="section-title">Available Slots for {{ selected_date|date:"F j, Y" }}</h2>
+
+                {% if available_slots %}
+                    {% for slot in available_slots %}
+                        <div class="slot-option">
+                            <form method="post" class="inline-form">
+                                {% csrf_token %}
+                                <input type="hidden" name="department_name" value="{{ selected_department }}">
+                                <input type="hidden" name="course_code" value="{{ selected_course_code }}">
+                                <input type="hidden" name="staff_email" value="{{ slot.staff_email }}">
+                                <input type="hidden" name="slot_number" value="{{ slot.slot_number }}">
+                                <input type="hidden" name="date" value="{{ selected_date|date:'Y-m-d' }}">
+                                <span>{{ slot.staff_name }} — {{ slot.start_time }} to {{ slot.end_time }}</span>
+                                <button type="submit" class="btn-mini">Reserve</button>
+                            </form>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <p class="empty-state">No available slots for this date.</p>
+                {% endif %}
+            </section>
+        {% endif %}
+
+    {% endif %}
+
+</main>
+
+</body>
+</html>

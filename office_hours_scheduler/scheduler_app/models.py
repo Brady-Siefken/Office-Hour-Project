@@ -158,7 +158,33 @@ class OfficeHour(models.Model):
 
         approved = models.BooleanField(default=False) # field needed to implement proposed office hour approval
 
+class Reservation(models.Model):
+    STATUS_CHOICES = [
+        ("PENDING", "PENDING"),
+        ("SUCCESSFUL", "SUCCESSFUL"),
+        ("TARDY", "TARDY"),
+    ]
 
+    student = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='reservations'
+    )
+
+    office_hour = models.ForeignKey(
+        OfficeHour,
+        on_delete=models.CASCADE,
+        related_name='reservations'
+    )
+
+    date = models.DateField()
+
+    chunk_start_time = models.TimeField()
+
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default="PENDING")
+
+    class Meta:
+        unique_together = ('office_hour', 'date', 'chunk_start_time')
 
 
 
