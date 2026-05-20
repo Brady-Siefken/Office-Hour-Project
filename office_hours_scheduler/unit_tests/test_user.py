@@ -1,6 +1,7 @@
 import unittest
 from scheduler_app.models import User
 from classes.Users import UserClass
+from classes.constants import PLACEHOLDER_PASSWORD
 
 
 class TestUserClass(unittest.TestCase):
@@ -13,6 +14,13 @@ class TestUserClass(unittest.TestCase):
             password="pass",
             name="Test User",
             user_type="INSTRUCTOR"
+        )
+
+        self.student = User.objects.create(
+            email="student@test.com",
+            password=PLACEHOLDER_PASSWORD,
+            name="Student User",
+            user_type="STUDENT"
         )
 
     # ----------------------------
@@ -30,7 +38,7 @@ class TestUserClass(unittest.TestCase):
     def test_constructor_does_not_create_new_user(self):
         with self.assertRaises(ValueError):
             UserClass("missing@test.com")
-        self.assertEqual(User.objects.count(), 1)
+        self.assertEqual(User.objects.count(), 2)
 
     # ----------------------------
     # Getter tests
@@ -51,6 +59,14 @@ class TestUserClass(unittest.TestCase):
     def test_get_type(self):
         user = UserClass("test@test.com")
         self.assertEqual(user.getType(), "INSTRUCTOR")
+
+    def test_has_placeholder_password_true(self):
+        user = UserClass("student@test.com")
+        self.assertTrue(user.hasPlaceholderPassword())
+
+    def test_has_placeholder_password_false(self):
+        user = UserClass("test@test.com")
+        self.assertFalse(user.hasPlaceholderPassword())
 
     # ----------------------------
     # setName tests
@@ -81,6 +97,10 @@ class TestUserClass(unittest.TestCase):
         user.setPassword("newpass")
         user2 = UserClass("test@test.com")
         self.assertEqual(user2.getPassword(), "newpass")
+
+    def test_set_password_empty(self):
+        user = UserClass("test@test.com")
+        self.assertRaises(ValueError, user.setPassword, "")
 
     # ----------------------------
     # setEmail tests
