@@ -385,6 +385,34 @@ class ViewOfficeHoursView(View):
         }
         return render(request, "scheduler_app/view_office_hours.html", context)
 
+
+class InstructorUpcomingReservationsView(View):
+    def get(self, request):
+        user = getUser(request.session.get("user_id"))
+        if user is None or user.getType() != "INSTRUCTOR":
+            return redirect("/")
+        context = {
+            "user": user,
+        }
+        return render(request, "scheduler_app/instructor_upcoming_reservations.html", context)
+
+    def post(self, request):
+        return redirect("/instructor/reservations/")
+
+
+class TAUpcomingReservationsView(View):
+    def get(self, request):
+        user = getUser(request.session.get("user_id"))
+        if user is None or user.getType() != "TA":
+            return redirect("/")
+        context = {
+            "user": user,
+        }
+        return render(request, "scheduler_app/ta_upcoming_reservations.html", context)
+
+    def post(self, request):
+        return redirect("/ta/reservations/")
+
 ########################################################################################################################
 
 # class TADashboardView(View):
