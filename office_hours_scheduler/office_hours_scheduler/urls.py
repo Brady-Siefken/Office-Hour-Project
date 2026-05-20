@@ -37,7 +37,7 @@ from django.urls import path
 from scheduler_app.views import *
 
 urlpatterns = [
-     path('admin/', admin.site.urls),
+    # path('admin/', admin.site.urls),
     path('', Home.as_view(), name='login'),
     path('set/password/', SetPasswordView.as_view(), name='set_password'),
     path('logout/', logout_view, name='logout'),
@@ -56,8 +56,7 @@ urlpatterns = [
     path('staff/office-hours/propose/', ProposeOfficeHoursView.as_view()),
     path('office-hours/', ViewOfficeHoursView.as_view()),
     path("instructor/add-students/", AddStudentsView.as_view(), name="add-students"),
-    path('instructor/reservations/', InstructorUpcomingReservationsView.as_view()),
-    path('ta/reservations/', TAUpcomingReservationsView.as_view()),
+    path("student/reserve/", MakeReservationView.as_view(), name="make-reservation"),
     #path('student/dashboard/', StudentDashboardView.as_view()),
     #path('student/reserve/', ReserveSlotView.as_view()),
     #path('student/reservations/', MyReservationsView.as_view()),
