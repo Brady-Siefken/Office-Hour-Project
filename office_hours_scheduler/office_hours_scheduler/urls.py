@@ -58,6 +58,7 @@ urlpatterns = [
     path("instructor/add-students/", AddStudentsView.as_view(), name="add-students"),
     path('instructor/reservations/', InstructorUpcomingReservationsView.as_view()),
     path('ta/reservations/', TAUpcomingReservationsView.as_view()),
+    path("student/reserve/", MakeReservationView.as_view(), name="make-reservation"),
     #path('student/dashboard/', StudentDashboardView.as_view()),
     #path('student/reserve/', ReserveSlotView.as_view()),
     #path('student/reservations/', MyReservationsView.as_view()),
