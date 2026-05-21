@@ -13,8 +13,9 @@ from classes.SectionsDatabase import createSection, deleteSection, assignInstruc
 from classes.SectionsDatabase import getSectionsByInstructor, getSectionsByTA, getSectionsByStudent
 from classes.UserDatabase import getUser, getUsersByType
 from classes.OfficeHoursDatabase import createOfficeHour, getOfficeHour, getApprovedOfficeHours, getPendingOfficeHoursForInstructor, rejectOfficeHour, approveOfficeHour
-from classes.ReservedOfficeHoursDatabase import (getAvailableSlotsForCourse,validateReservation,createReservation,getUpcomingReservationsForStudent,)
-from classes.ReservedOfficeHoursDatabase import (getAvailableSlotsForCourse,validateReservation,createReservation,getUpcomingReservationsForStudent,getUpcomingReservationsForStaff,)
+from classes.ReservedOfficeHoursDatabase import (getAvailableSlotsForCourse, validateReservation, createReservation,
+                                                 getUpcomingReservationsForStudent, getPastReservationsForStaff, )
+from classes.ReservedOfficeHoursDatabase import (getAvailableSlotsForCourse,validateReservation,createReservation,getUpcomingReservationsForStudent,getUpcomingReservationsForStaff,markReservationStatus)
 
 DASHBOARD_ROUTES = {
     "INSTRUCTOR": "/instructor/dashboard/",
@@ -761,7 +762,41 @@ class AddStudentsView(View):
 
         return redirect(f"/instructor/add-students/?course={course_code}&section={section_code}")
 
+class TardyNoShowView(View):
+    def get(self, request):
+        user = getUser(request.session.get("user_id"))
 
+        if user is None or user.getType() not in ("TA", "INSTRUCTOR"):
+            return redirect("/")
+
+        past_reservations = getPastReservationsForStaff(user.getEmail())
+
+        context = {
+            "user": user,
+            "past_reservations": past_reservations,
+            "success_msg": request.session.pop("mark_success", None),
+        }
+
+        return render(request, "scheduler_app/tardy_no_show.html", context)
+
+
+class MarkReservationStatusView(View):
+    def post(self, request):
+        user = getUser(request.session.get("user_id"))
+
+        if user is None or user.getType() not in ("TA", "INSTRUCTOR"):
+            return redirect("/")
+
+        reservation_id = request.POST.get("reservation_id")
+        status = request.POST.get("status")
+
+        try:
+            markReservationStatus(int(reservation_id), user.getEmail(), status)
+            request.session["mark_success"] = "Meeting status updated."
+        except (ValueError, TypeError):
+            pass
+
+        return redirect("/staff/tardy-report/")
 
 from classes.SectionsDatabase import getCoursesByStudent
 #from classes.ReservationDatabase import getAvailableSlots, isSlotTaken, createReservation
@@ -774,7 +809,7 @@ from datetime import date, timedelta, datetime
 from classes.SectionsDatabase import getCoursesByStudent
 #from classes.ReservationDatabase import getAvailableSlots, createReservation
 from datetime import date, timedelta, datetime
-
+"""
 class MakeReservationView(View):
     def get(self, request):
         user = getUser(request.session.get("user_id"))
@@ -896,3 +931,4 @@ class MakeReservationView(View):
             )
 
         return redirect("/student/dashboard/")
+"""

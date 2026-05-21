@@ -1,5 +1,5 @@
 from datetime import datetime, timedelta
-from scheduler_app.models import (User, OfficeHour, OfficeHourReservation, Timeslot,)
+from scheduler_app.models import (User, OfficeHour, OfficeHourReservation, Timeslot,Reservation)
 from classes.ReservedOfficeHours import ReservedOfficeHoursClass
 from datetime import date as _date_type
 from classes.SlotGeneration import generate_slots
@@ -241,3 +241,24 @@ def getAvailableSlotsForCourse(department_name, course_code, now, days_ahead=30)
             results.append((day, day_slots))
 
     return results
+
+def markReservationStatus(reservation_id, staff_email, status):
+    valid = {"SUCCESSFUL", "TARDY", "NO_SHOW"}
+    if status not in valid:
+        raise ValueError(f"Invalid status: {status}")
+    try:
+        r = Reservation.objects.get(id=reservation_id, office_hour__staff__email=staff_email)
+    except Reservation.DoesNotExist:
+        raise ValueError("Reservation not found or unauthorized")
+    r.status = status
+    r.save()
+
+
+def getPastReservationsForStaff(staff_email):
+    today = datetime.now()
+    records = Reservation.objects.filter(
+        office_hour__staff__email=staff_email,
+        date__lte=today.date()
+    )
+    # wrap in your ReservationClass if you have one, or return raw querysets
+    return list(records)

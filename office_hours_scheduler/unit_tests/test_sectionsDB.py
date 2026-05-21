@@ -1,4 +1,6 @@
 import unittest
+
+from classes.constants import PLACEHOLDER_PASSWORD
 from scheduler_app.models import Course, Department, Section, User
 from classes.Sections import SectionClass
 # from classes.SectionsDatabase import (
@@ -480,7 +482,7 @@ class TestSectionDatabase(unittest.TestCase):
     def test_add_students_from_text_new_user_password_is_email(self):
         addStudentsFromText("EE", 101, 1, "newstudent@test.com, New Student")
         user = User.objects.get(email="newstudent@test.com")
-        self.assertEqual(user.password, "newstudent@test.com")
+        self.assertEqual(user.password, PLACEHOLDER_PASSWORD)
 
     def test_add_students_from_text_existing_student_is_added(self):
         student = User.objects.create(
