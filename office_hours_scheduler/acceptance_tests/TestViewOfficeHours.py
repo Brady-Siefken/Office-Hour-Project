@@ -1,124 +1,73 @@
-from django.test import TestCase
-from classes.TimeSlot import TimeSlot
-from classes import UserDatabase, CourseDatabase, SectionsDatabase, OfficeHoursDatabase
+from datetime import date, datetime, time, timedelta
+from django.test import TestCase, Client
+from scheduler_app.models import (User, Department, Course, Section, Timeslot, OfficeHour,)
 
+class TestStudentViewAvailableHours(TestCase):
 
-class TestStudentViewOfficeHours(TestCase):
     def setUp(self):
-        # Given: Two TAs, two courses, and approved office hours in the system
-        UserDatabase.createUser(
-            email="rock@uwm.edu",
-            password="password123",
-            name="Rock",
-            user_type="TA"
+        self.client = Client()
+
+        self.department = Department.objects.create(departmentName="COMPSCI")
+        self.course = Course.objects.create(
+            department=self.department, courseCode=361, courseName="Intro SE",
         )
-        UserDatabase.createUser(
-            email="boyland@uwm.edu",
-            password="password123",
-            name="Boyland",
-            user_type="TA"
+        self.student = User.objects.create(
+            email="student@uwm.edu", password="stupass",
+            name="Stu Dent", user_type="STUDENT",
         )
-
-        CourseDatabase.createCourse("CS", 361, "Software Engineering")
-        CourseDatabase.createCourse("CS", 351, "Data Structures")
-
-        SectionsDatabase.createSection(
-            department_name="CS",
-            course_code=361,
-            section_code=401,
-            ta_email="rock@uwm.edu",
-            section_type="LECTURE"
+        self.ta = User.objects.create(
+            email="ta@uwm.edu", password="tapass",
+            name="Test TA", user_type="TA",
         )
-        SectionsDatabase.createSection(
-            department_name="CS",
-            course_code=351,
-            section_code=401,
-            ta_email="boyland@uwm.edu",
-            section_type="LECTURE"
+        self.instructor = User.objects.create(
+            email="prof@uwm.edu", password="profpass",
+            name="Dr Prof", user_type="INSTRUCTOR",
         )
+        self.section = Section.objects.create(
+            course=self.course, sectionCode=101,
+            instructor=self.instructor, ta=self.ta,
+        )
+        self.section.students.add(self.student)
 
-        tuesday_1200 = TimeSlot.DAY_BITS["Tuesday"] | (720 << TimeSlot.MINUTES_SHIFT) | (60 << TimeSlot.LENGTH_SHIFT)
-        tuesday_1215 = TimeSlot.DAY_BITS["Tuesday"] | (735 << TimeSlot.MINUTES_SHIFT) | (60 << TimeSlot.LENGTH_SHIFT)
-        friday_0930  = TimeSlot.DAY_BITS["Friday"]  | (570 << TimeSlot.MINUTES_SHIFT) | (60 << TimeSlot.LENGTH_SHIFT)
-
-        self.oh1_id = OfficeHoursDatabase.createOfficeHour("rock@uwm.edu",    361, tuesday_1200, approved=True)
-        self.oh2_id = OfficeHoursDatabase.createOfficeHour("rock@uwm.edu",    361, tuesday_1215, approved=True)
-        self.oh3_id = OfficeHoursDatabase.createOfficeHour("boyland@uwm.edu", 351, friday_0930,  approved=True)
-
-    def test_student_sees_approved_office_hours_for_a_specific_course(self):
-        # When: The student filters approved office hours by course 361
-        sessions = OfficeHoursDatabase.getApprovedOfficeHours(course_filter=361)
-
-        # Then: Exactly 2 sessions are returned
-        self.assertEqual(
-            len(sessions), 2,
-            "Student should see exactly 2 approved office hour sessions for CS 361"
+        self.timeslot = Timeslot.objects.create(
+            start_time=time(14, 0), end_time=time(15, 0), tuesday=True,
+        )
+        OfficeHour.objects.create(
+            staff=self.ta, course=self.course,
+            timeslot=self.timeslot, approved=True,
         )
 
-        # And: Every returned session belongs to CS 361
-        for session in sessions:
-            self.assertEqual(
-                session.getCourse().getCourseCode(), 361,
-                "All returned sessions should belong to CS 361"
-            )
+        session = self.client.session
+        session["user_id"] = self.student.email
+        session["user_type"] = "STUDENT"
+        session.save()
 
-    def test_student_sees_approved_office_hours_for_a_specific_ta(self):
-        # When: The student filters approved office hours by TA
-        sessions = OfficeHoursDatabase.getApprovedOfficeHours(staff_filter="rock@uwm.edu")
+    def test_course_picker_shows_enrolled_course(self):
+        response = self.client.get("/student/reserve/")
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "COMPSCI")
+        self.assertContains(response, "361")
 
-        self.assertEqual(
-            len(sessions), 2,
-            "Student should see exactly 2 approved office hour sessions for Rock"
+    def test_available_hours_page_loads(self):
+        response = self.client.get("/student/reserve/COMPSCI/361/")
+        self.assertEqual(response.status_code, 200)
+
+    def test_unenrolled_student_redirected(self):
+        other = User.objects.create(
+            email="other@uwm.edu", password="x",
+            name="Other", user_type="STUDENT",
         )
+        session = self.client.session
+        session["user_id"] = other.email
+        session["user_type"] = "STUDENT"
+        session.save()
+        response = self.client.get("/student/reserve/COMPSCI/361/")
+        self.assertRedirects(response, "/student/reserve/")
 
-        for session in sessions:
-            self.assertEqual(
-                session.getStaff().getEmail(), "rock@uwm.edu",
-                "All returned sessions should belong to Rock"
-            )
-
-    def test_student_sees_all_approved_office_hours_with_no_filter(self):
-        # When: The student retrieves all approved office hours
-        sessions = OfficeHoursDatabase.getApprovedOfficeHours()
-
-        # Then: All 3 sessions are returned
-        self.assertEqual(
-            len(sessions), 3,
-            "Student should see all 3 approved office hour sessions"
-        )
-
-    def test_student_sees_no_results_for_a_course_with_no_office_hours(self):
-        # When: The student filters by a course with no office hours
-        sessions = OfficeHoursDatabase.getApprovedOfficeHours(course_filter=101)
-
-        # Then: No sessions are returned
-        self.assertEqual(
-            sessions, [],
-            "Student should see no office hour sessions for a course with none scheduled"
-        )
-
-    def test_student_sees_office_hours_on_a_specific_day(self):
-        # When: The student retrieves all approved sessions and filters by Tuesday
-        all_sessions = OfficeHoursDatabase.getApprovedOfficeHours()
-        tuesday_sessions = [s for s in all_sessions if TimeSlot(s.getTimeslot()).getTuesday()]
-
-        self.assertEqual(
-            len(tuesday_sessions), 2,
-            "Student should see exactly 2 approved office hour sessions on Tuesday"
-        )
-
-        for session in tuesday_sessions:
-            self.assertTrue(
-                TimeSlot(session.getTimeslot()).getTuesday(),
-                "All returned sessions should be on Tuesday"
-            )
-
-    def test_student_sees_no_results_on_a_day_with_no_office_hours(self):
-        # When: The student filters all approved sessions by Sunday
-        all_sessions = OfficeHoursDatabase.getApprovedOfficeHours()
-        sunday_sessions = [s for s in all_sessions if TimeSlot(s.getTimeslot()).getSunday()]
-
-        self.assertEqual(
-            sunday_sessions, [],
-            "Student should see no approved office hour sessions on Sunday"
-        )
+    def test_non_student_blocked(self):
+        session = self.client.session
+        session["user_id"] = self.ta.email
+        session["user_type"] = "TA"
+        session.save()
+        response = self.client.get("/student/reserve/")
+        self.assertRedirects(response, "/")
