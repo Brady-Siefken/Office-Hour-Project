@@ -40,7 +40,6 @@
             <select name="user_type">
                 <option value="INSTRUCTOR">Instructor</option>
                 <option value="TA">TA</option>
-                <option value="STUDENT">Student</option>
             </select>
             <button type="submit" class="btn-mini">Create</button>
         </form>
@@ -74,7 +73,6 @@
                                             <option value="">-- no change --</option>
                                             <option value="INSTRUCTOR">Instructor</option>
                                             <option value="TA">TA</option>
-                                            <option value="STUDENT">Student</option>
                                         </select>
                                         <button type="submit" class="btn-mini">Edit</button>
                                     </form>
@@ -95,7 +93,7 @@
         {% endif %}
     </section>
 
-    <section class="table-section" style="margin-bottom: 48px;">
+    <section class="table-section">
         <h2 class="section-title">TAs</h2>
         {% if ta_list %}
             <div class="table-wrap">
@@ -123,7 +121,6 @@
                                             <option value="">-- no change --</option>
                                             <option value="INSTRUCTOR">Instructor</option>
                                             <option value="TA">TA</option>
-                                            <option value="STUDENT">Student</option>
                                         </select>
                                         <button type="submit" class="btn-mini">Edit</button>
                                     </form>
@@ -141,55 +138,6 @@
             </div>
         {% else %}
             <p class="empty-state">No TAs.</p>
-        {% endif %}
-    </section>
-
-    <section class="table-section">
-        <h2 class="section-title">Students</h2>
-        {% if student_list %}
-            <div class="table-wrap">
-                <table class="data-table">
-                    <thead>
-                        <tr>
-                            <th>Name</th>
-                            <th>Email</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for student in student_list %}
-                            <tr>
-                                <td>{{ student.getName }}</td>
-                                <td>{{ student.getEmail }}</td>
-                                <td>
-                                    <form method="post" class="inline-form">
-                                        {% csrf_token %}
-                                        <input type="hidden" name="action" value="edit">
-                                        <input type="hidden" name="email" value="{{ student.getEmail }}">
-                                        <input type="text" name="name" placeholder="New name">
-                                        <input type="password" name="password" placeholder="New password">
-                                        <select name="user_type">
-                                            <option value="">-- no change --</option>
-                                            <option value="INSTRUCTOR">Instructor</option>
-                                            <option value="TA">TA</option>
-                                            <option value="STUDENT">Student</option>
-                                        </select>
-                                        <button type="submit" class="btn-mini">Edit</button>
-                                    </form>
-                                    <form method="post" class="inline-form">
-                                        {% csrf_token %}
-                                        <input type="hidden" name="action" value="delete">
-                                        <input type="hidden" name="email" value="{{ student.getEmail }}">
-                                        <button type="submit" class="btn-mini btn-danger">Delete</button>
-                                    </form>
-                                </td>
-                            </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-        {% else %}
-            <p class="empty-state">No students.</p>
         {% endif %}
     </section>
 
