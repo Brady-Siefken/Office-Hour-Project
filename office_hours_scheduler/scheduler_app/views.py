@@ -764,15 +764,15 @@ class AddStudentsView(View):
 
 
 from classes.SectionsDatabase import getCoursesByStudent
-from classes.ReservationDatabase import getAvailableSlots, isSlotTaken, createReservation
+#from classes.ReservationDatabase import getAvailableSlots, isSlotTaken, createReservation
 from datetime import date, timedelta, datetime
 
 from classes.SectionsDatabase import getCoursesByStudent
-from classes.ReservationDatabase import getAvailableSlots, createReservation
+#from classes.ReservationDatabase import getAvailableSlots, createReservation
 from datetime import date, timedelta, datetime
 
 from classes.SectionsDatabase import getCoursesByStudent
-from classes.ReservationDatabase import getAvailableSlots, createReservation
+#from classes.ReservationDatabase import getAvailableSlots, createReservation
 from datetime import date, timedelta, datetime
 
 class MakeReservationView(View):

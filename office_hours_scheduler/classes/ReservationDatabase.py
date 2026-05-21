@@ -2,7 +2,7 @@ from datetime import datetime, timedelta
 from scheduler_app.models import Reservation, OfficeHour, User
 from classes.Reservation import ReservationClass
 
-
+"""
 def _getOfficeHourRecord(staff_email, department_name, course_code):
     try:
         return OfficeHour.objects.get(
@@ -144,3 +144,4 @@ def createReservation(student_email, staff_email, department_name, course_code, 
     )
 
     return ReservationClass(reservation.id)
+"""

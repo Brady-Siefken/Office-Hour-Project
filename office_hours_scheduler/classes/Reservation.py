@@ -1,5 +1,5 @@
 from scheduler_app.models import Reservation
-
+"""
 class ReservationClass:
 
     def __init__(self, reservation_id):
@@ -60,3 +60,4 @@ class ReservationClass:
             f"{self.reservation.date} {self.reservation.chunk_start_time} "
             f"({self.reservation.status})"
         )
+"""
