@@ -1,40 +1,92 @@
-import unittest
+from datetime import date, datetime, time, timedelta
+from django.test import TestCase, Client
+from scheduler_app.models import (User, Department, Course, Section, Timeslot,OfficeHour, OfficeHourReservation,)
 
-class TestReserveOfficeHours(unittest.TestCase):
+class TestStudentReserveOfficeHours(TestCase):
 
     def setUp(self):
-        self.error_msg = ""
-        self.lecture_list = [{"lecture": "CS361", "ta": "Rock"},
-                             {"lecture": "CS351", "ta": "Boyland"}]
-        self.available_course_office_hours = [
-                {"lecture": "CS361", "ta": "Rock", "start_time": "12:00", "day_of_week":  "Tuesday", "office_hours_id": "1"},
-                {"lecture": "CS361", "ta": "Rock", "start_time": "12: 15", "day_of_week":  "Tuesday", "office_hours_id": "2"},
-                {"lecture": "CS351", "ta": "Boyland", "start_time": "9: 30","day_of_week":  "Wednesday", "office_hours_id": "3"},
-                {"lecture": "CS351", "ta": "Boyland", "start_time": "9: 30", "day_of_week": "Friday", "office_hours_id": "4"}]
+        self.client = Client()
 
-    def test_valid_reservation(self):
-        for meeting in self.available_course_office_hours:
-            self.reserve(meeting)
+        self.department = Department.objects.create(departmentName="COMPSCI")
+        self.course = Course.objects.create(
+            department=self.department, courseCode=361, courseName="Intro SE",
+        )
+        self.student = User.objects.create(
+            email="student@uwm.edu", password="stupass",
+            name="Stu Dent", user_type="STUDENT",
+        )
+        self.ta = User.objects.create(
+            email="ta@uwm.edu", password="tapass",
+            name="Test TA", user_type="TA",
+        )
+        self.instructor = User.objects.create(
+            email="prof@uwm.edu", password="profpass",
+            name="Dr Prof", user_type="INSTRUCTOR",
+        )
+        self.section = Section.objects.create(
+            course=self.course, sectionCode=101,
+            instructor=self.instructor, ta=self.ta,
+        )
+        self.section.students.add(self.student)
 
-            self.assertEqual(self.error_msg, "") # no error message
-            #checks that meetings are no longer available
-            self.assertEqual(len(self.available_course_office_hours), 0)
+        self.timeslot = Timeslot.objects.create(
+            start_time=time(14, 0), end_time=time(15, 0), tuesday=True,
+        )
+        self.office_hour = OfficeHour.objects.create(
+            staff=self.ta, course=self.course,
+            timeslot=self.timeslot, approved=True,
+        )
 
-    def test_invalid_reservation(self):
+        today = date.today()
+        days_until_tuesday = (1 - today.weekday()) % 7
+        if days_until_tuesday == 0:
+            days_until_tuesday = 7
+        self.next_tuesday = today + timedelta(days=days_until_tuesday)
+        self.slot_2_00 = datetime.combine(self.next_tuesday, time(14, 0))
 
-        #assume it's Monday, add a time for a previous date
-        self.available_course_office_hours.append(
-            {"lecture": "CS361", "ta": "Rock", "start_time": "12: 00", "day_of_week":  "Sunday", "office_hours_id": 5})
+        session = self.client.session
+        session["user_id"] = self.student.email
+        session["user_type"] = "STUDENT"
+        session.save()
 
-        self.reserve(office_hours_id=5)
-        self.assertEqual(self.error_msg, "Time slot invalid, please select new time")
+    def test_valid_reservation_creates_row(self):
+        self.client.post(
+            "/student/reserve/COMPSCI/361/",
+            {
+                "slot_start": self.slot_2_00.strftime("%Y-%m-%d %H:%M"),
+                "office_hour_id": str(self.office_hour.id),
+            },
+        )
+        self.assertEqual(OfficeHourReservation.objects.count(), 1)
 
-    def test_valid_after_invalid_reservation_(self):
-        # assume it's Monday, add a time for a previous date
-        self.available_course_office_hours.append(
-            {"lecture": "CS361", "ta": "Rock", "start_time": "12: 00", "day_of_week": "Sunday", "office_hours_id": 5})
+    def test_same_staff_same_day_rejected(self):
+        self.client.post(
+            "/student/reserve/COMPSCI/361/",
+            {
+                "slot_start": self.slot_2_00.strftime("%Y-%m-%d %H:%M"),
+                "office_hour_id": str(self.office_hour.id),
+            },
+        )
+        slot_2_30 = datetime.combine(self.next_tuesday, time(14, 30))
+        self.client.post(
+            "/student/reserve/COMPSCI/361/",
+            {
+                "slot_start": slot_2_30.strftime("%Y-%m-%d %H:%M"),
+                "office_hour_id": str(self.office_hour.id),
+            },
+        )
+        self.assertEqual(OfficeHourReservation.objects.count(), 1)
 
-        self.reserve(office_hours_id=5)
-        self.assertEqual(self.error_msg, "Time slot invalid, please select new time")
-        self.reserve(office_hours_id=4)
-        self.assertEqual(self.error_msg, "") # reserves a time after the error
+    def test_non_student_blocked(self):
+        session = self.client.session
+        session["user_id"] = self.ta.email
+        session["user_type"] = "TA"
+        session.save()
+        self.client.post(
+            "/student/reserve/COMPSCI/361/",
+            {
+                "slot_start": self.slot_2_00.strftime("%Y-%m-%d %H:%M"),
+                "office_hour_id": str(self.office_hour.id),
+            },
+        )
+        self.assertEqual(OfficeHourReservation.objects.count(), 0)
