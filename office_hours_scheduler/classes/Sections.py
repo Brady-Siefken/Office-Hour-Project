@@ -1,5 +1,5 @@
 from scheduler_app.models import Section
-from classes.constants import SECTION_TYPES
+from classes.constants import SECTION_TYPES, PLACEHOLDER_PASSWORD
 
 
 class SectionClass:
@@ -109,7 +109,7 @@ class SectionClass:
                 email=email,
                 defaults={
                     'name': name,
-                    'password': email,
+                    'password': PLACEHOLDER_PASSWORD,
                     'user_type': 'STUDENT'
                 }
             )

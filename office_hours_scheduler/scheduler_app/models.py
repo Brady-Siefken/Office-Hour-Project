@@ -74,6 +74,8 @@ class Lecture(models.Model):
     TAOfficeHours = models.ForeignKey(Timeslot, on_delete=models.SET_NULL, null=True, related_name='lecture_ta_hours')
     TAOfficeHoursApproved = models.BooleanField(default=False)
 
+    def __str__(self):
+        return self.CourseName
 
 
 
@@ -82,10 +84,16 @@ class Lecture(models.Model):
 class Department(models.Model):
     departmentName = models.CharField(max_length=20)
 
+    def __str__(self):
+        return self.departmentName
+
 class Course(models.Model):
     department = models.ForeignKey(Department, on_delete=models.SET_NULL, null=True, related_name='courses')
     courseCode = models.IntegerField(validators=[MinValueValidator(1), MaxValueValidator(999)])
     courseName = models.CharField(max_length=20)
+
+    def __str__(self):
+        return f"{self.department.departmentName} {self.courseCode} — {self.courseName}"
 
 
 
@@ -95,6 +103,9 @@ class User(models.Model):
     password = models.CharField(max_length=128)
     name = models.CharField(max_length=50)
     user_type = models.CharField(max_length=20, choices=USER_TYPE_CHOICES)
+
+    def __str__(self):
+        return f"{self.name} ({self.email})"
 
 from classes.constants import SECTION_TYPES
 
@@ -108,6 +119,9 @@ class Section(models.Model):
     course = models.ForeignKey(Course, on_delete=models.SET_NULL, null=True, related_name='sections')
     timeslot = models.ForeignKey(Timeslot, on_delete=models.SET_NULL, null=True, blank=True, related_name='sections')
     section_type = models.CharField(max_length=20, choices=SECTION_TYPE_CHOICES, default="LECTURE")
+
+    def __str__(self):
+        return f"{self.course} Section {self.sectionCode} ({self.section_type})"
 
 class OfficeHourReservation(models.Model):
     student = models.ForeignKey(
@@ -137,6 +151,9 @@ class OfficeHourReservation(models.Model):
     reservationDate = models.DateField()
     reservedAt = models.DateTimeField(auto_now_add=True)
 
+    def __str__(self):
+        return f"{self.student.name} with {self.staff.name} on {self.reservationDate}"
+
 class OfficeHour(models.Model):
         staff = models.ForeignKey(
             User,
@@ -158,11 +175,15 @@ class OfficeHour(models.Model):
 
         approved = models.BooleanField(default=False) # field needed to implement proposed office hour approval
 
+        def __str__(self):
+            return f"{self.staff.name} — {self.course} ({'Approved' if self.approved else 'Pending'})"
+
 class Reservation(models.Model):
     STATUS_CHOICES = [
         ("PENDING", "PENDING"),
         ("SUCCESSFUL", "SUCCESSFUL"),
         ("TARDY", "TARDY"),
+        ("NO_SHOW", "NO_SHOW"),
     ]
 
     student = models.ForeignKey(
@@ -186,6 +207,6 @@ class Reservation(models.Model):
     class Meta:
         unique_together = ('office_hour', 'date', 'chunk_start_time')
 
-
-
+    def __str__(self):
+        return f"{self.student.name} — {self.office_hour} on {self.date} at {self.chunk_start_time} ({self.status})"
 
