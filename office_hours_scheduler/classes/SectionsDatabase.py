@@ -165,3 +165,14 @@ def getStudents(department_name, course_code, section_code):
         raise ValueError("Section does not exist")
     return section.getStudents()
 
+def getCoursesByStudent(student_email):
+    from classes.Course import CourseClass
+    sections = Section.objects.filter(students__email=student_email)
+    seen = set()
+    courses = []
+    for s in sections:
+        code = s.course.courseCode
+        if code not in seen:
+            seen.add(code)
+            courses.append(CourseClass(s.course.department.departmentName, s.course.courseCode))
+    return courses
