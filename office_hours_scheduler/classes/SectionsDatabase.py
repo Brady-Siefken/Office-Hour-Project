@@ -79,8 +79,14 @@ def getSectionsByTA(ta_email):
     ]
 
 def getSectionsByStudent(student_email):
-    sections = Section.objects.filter(students__email=student_email)
-    return [SectionClass(s.course.department.departmentName, s.course.courseCode, s.sectionCode) for s in sections]
+    return [
+        SectionClass(
+            s.course.department.departmentName,
+            s.course.courseCode,
+            s.sectionCode
+        )
+        for s in Section.objects.filter(students__email=student_email, course__isnull=False)
+    ]
 
 def assignInstructor(department_name, course_code, section_code, instructor_email):
     section = getSection(department_name, course_code, section_code)

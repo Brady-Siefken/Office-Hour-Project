@@ -907,28 +907,108 @@ body.dashboard-body {
   border: 1px solid rgba(26, 20, 16, 0.15);
 }
 
-.dashboard-main textarea {
+/* ============================================================
+   AVAILABLE OFFICE HOURS — SLOT PICKER
+   ============================================================ */
+
+.day-block {
+  margin-bottom: 36px;
+}
+
+.day-heading {
+  font-family: var(--font-display);
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--cream);
+  margin: 0 0 16px 0;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--border);
+}
+
+.slot-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 12px;
+}
+
+.slot-form {
+  margin: 0;
+}
+
+.slot-button {
   width: 100%;
-  padding: 12px 14px;
-  background: rgba(245,240,232,.06);
-  border: 1.5px solid rgba(255,255,255,.12);
-  border-radius: var(--radius);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+
+  padding: 14px 16px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border);
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--cream);
+
+  cursor: pointer;
+  text-align: left;
   font-family: var(--font-body);
-  font-size: .85rem;
-  color: rgba(255,255,255,.85);
-  outline: none;
-  resize: vertical;
-  transition: border-color var(--transition-base),
-              box-shadow var(--transition-base),
-              background var(--transition-base);
+
+  transition: all var(--transition-fast);
 }
 
-.dashboard-main textarea:focus {
+.slot-button:hover {
+  background: rgba(255, 255, 255, 0.08);
   border-color: var(--accent);
-  box-shadow: 0 0 0 3px rgba(181,65,10,.18);
-  background: rgba(245,240,232,.09);
+  transform: translateY(-2px);
 }
 
-.dashboard-main textarea::placeholder {
-  color: rgba(255,255,255,.3);
+.slot-button:active {
+  transform: translateY(0);
+}
+
+.slot-time {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--cream);
+}
+
+.slot-staff {
+  font-size: 12px;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Color-code by staff type */
+.slot-button.slot-ta {
+  border-left: 3px solid var(--accent);
+}
+
+.slot-button.slot-instructor {
+  border-left: 3px solid var(--gold);
+}
+
+@media (max-width: 600px) {
+  .slot-grid {
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  }
+}
+
+.alert {
+  padding: 12px 16px;
+  border-radius: var(--radius-md);
+  margin-bottom: 20px;
+  font-family: var(--font-body);
+  font-size: 14px;
+}
+
+.alert-error {
+  background: rgba(220, 80, 80, 0.12);
+  border-left: 3px solid rgb(220, 80, 80);
+  color: rgb(255, 200, 200);
+}
+
+.alert-success {
+  background: rgba(80, 180, 120, 0.12);
+  border-left: 3px solid rgb(80, 180, 120);
+  color: rgb(200, 240, 215);
 }

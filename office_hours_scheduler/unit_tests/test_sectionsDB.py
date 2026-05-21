@@ -22,6 +22,7 @@ from classes.SectionsDatabase import (
     getSectionsByType,
     getSectionsByInstructor,
     getSectionsByTA,
+    getSectionsByStudent,
     assignInstructor,
     assignTA,
     createSection,
@@ -216,6 +217,35 @@ class TestSectionDatabase(unittest.TestCase):
         )
         result = getSectionsByTA("ta@test.com")
         self.assertEqual(len(result), 0)
+
+        # ----------------------------
+        # getSectionsByStudent tests
+        # ----------------------------
+
+        def test_get_sections_by_student_returns_correct_sections(self):
+            student = User.objects.create(
+                email="student@test.com",
+                password="pass",
+                name="Stu Dent",
+                user_type="STUDENT"
+            )
+            self.section.students.add(student)
+            result = getSectionsByStudent("student@test.com")
+            self.assertEqual(len(result), 1)
+
+        def test_get_sections_by_student_returns_empty_for_missing_student(self):
+            result = getSectionsByStudent("missing@test.com")
+            self.assertEqual(len(result), 0)
+
+        def test_get_sections_by_student_returns_empty_when_not_enrolled(self):
+            User.objects.create(
+                email="student@test.com",
+                password="pass",
+                name="Stu Dent",
+                user_type="STUDENT"
+            )
+            result = getSectionsByStudent("student@test.com")
+            self.assertEqual(len(result), 0)
 
     # ----------------------------
     # assignInstructor tests

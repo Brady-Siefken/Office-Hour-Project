@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Student Dashboard — OfficeHours</title>
+    <title>Reserve Office Hours — Select Course</title>
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
     <link rel="stylesheet" href="{% static 'css/styles.css' %}"/>
 </head>
@@ -12,7 +12,7 @@
 <nav class="nav">
     <div class="nav-brand">OfficeHours</div>
     <ul class="nav-links">
-        <li><a href="/student/reserve/">Reserve Office Hours</a></li>
+        <li><a href="/student/dashboard/">Back to Dashboard</a></li>
         <li><a href="/student/reservations/">My Reservations</a></li>
         <li><a href="/logout/" class="nav-logout">Logout</a></li>
     </ul>
@@ -21,12 +21,12 @@
 <main class="dashboard-main">
 
     <header class="dashboard-header">
-        <h1>My Dashboard</h1>
+        <h1>Reserve Office Hours</h1>
         <p class="welcome-text">Welcome, <strong>{{ user.getName }}</strong></p>
     </header>
 
     <section class="table-section">
-        <h2 class="section-title">My Courses</h2>
+        <h2 class="section-title">Select a Course</h2>
 
         {% if courses %}
             <div class="table-wrap">
@@ -36,6 +36,7 @@
                             <th>Department</th>
                             <th>Course Code</th>
                             <th>Course Name</th>
+                            <th></th>
                         </tr>
                     </thead>
                     <tbody>
@@ -44,6 +45,9 @@
                                 <td>{{ course.getCourseDepartment }}</td>
                                 <td>{{ course.getCourseCode }}</td>
                                 <td>{{ course.getCourseName }}</td>
+                                <td>
+                                    <a href="/student/reserve/{{ course.getCourseDepartment }}/{{ course.getCourseCode }}/">View Available Slots</a>
+                                </td>
                             </tr>
                         {% endfor %}
                     </tbody>

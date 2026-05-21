@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Student Dashboard — OfficeHours</title>
+    <title>My Reservations</title>
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
     <link rel="stylesheet" href="{% static 'css/styles.css' %}"/>
 </head>
@@ -12,8 +12,8 @@
 <nav class="nav">
     <div class="nav-brand">OfficeHours</div>
     <ul class="nav-links">
+        <li><a href="/student/dashboard/">Back to Dashboard</a></li>
         <li><a href="/student/reserve/">Reserve Office Hours</a></li>
-        <li><a href="/student/reservations/">My Reservations</a></li>
         <li><a href="/logout/" class="nav-logout">Logout</a></li>
     </ul>
 </nav>
@@ -21,36 +21,38 @@
 <main class="dashboard-main">
 
     <header class="dashboard-header">
-        <h1>My Dashboard</h1>
+        <h1>My Reservations</h1>
         <p class="welcome-text">Welcome, <strong>{{ user.getName }}</strong></p>
     </header>
 
     <section class="table-section">
-        <h2 class="section-title">My Courses</h2>
+        <h2 class="section-title">Upcoming Reservations</h2>
 
-        {% if courses %}
+        {% if reservations %}
             <div class="table-wrap">
                 <table class="data-table">
                     <thead>
                         <tr>
-                            <th>Department</th>
-                            <th>Course Code</th>
-                            <th>Course Name</th>
+                            <th>Date</th>
+                            <th>Time</th>
+                            <th>Course</th>
+                            <th>With</th>
                         </tr>
                     </thead>
                     <tbody>
-                        {% for course in courses %}
+                        {% for r in reservations %}
                             <tr>
-                                <td>{{ course.getCourseDepartment }}</td>
-                                <td>{{ course.getCourseCode }}</td>
-                                <td>{{ course.getCourseName }}</td>
+                                <td>{{ r.getReservationDate|date:"l, F j, Y" }}</td>
+                                <td>{{ r.getStartTime|date:"g:i A" }} – {{ r.getTimeslot.end_time|time:"g:i A" }}</td>
+                                <td>{{ r.getCourse.getCourseDepartment }} {{ r.getCourse.getCourseCode }}</td>
+                                <td>{{ r.getStaff.getType|title }}: {{ r.getStaff.getName }}</td>
                             </tr>
                         {% endfor %}
                     </tbody>
                 </table>
             </div>
         {% else %}
-            <p class="empty-state">You are not enrolled in any courses yet.</p>
+            <p class="empty-state">No upcoming reservations. <a href="/student/reserve/">Reserve a slot</a>.</p>
         {% endif %}
 
     </section>

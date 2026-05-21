@@ -26,7 +26,34 @@
 
     <section class="table-section">
         <h2 class="section-title">My Upcoming Reservations</h2>
-        <p class="empty-state">No upcoming reservations.</p>
+
+        {% if reservations %}
+            <div class="table-wrap">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Time</th>
+                            <th>Course</th>
+                            <th>Student</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for r in reservations %}
+                            <tr>
+                                <td>{{ r.getReservationDate|date:"l, F j, Y" }}</td>
+                                <td>{{ r.getStartTime|date:"g:i A" }} – {{ r.getTimeslot.end_time|time:"g:i A" }}</td>
+                                <td>{{ r.getCourse.getCourseDepartment }} {{ r.getCourse.getCourseCode }}</td>
+                                <td>{{ r.getStudent.getName }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <p class="empty-state">No upcoming reservations.</p>
+        {% endif %}
+
     </section>
 
 </main>

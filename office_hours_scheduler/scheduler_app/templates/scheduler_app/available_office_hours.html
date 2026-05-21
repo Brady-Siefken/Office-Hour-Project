@@ -1,0 +1,68 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Available Office Hours — {{ department_name }} {{ course_code }}</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}"/>
+</head>
+<body class="dashboard-body">
+
+<nav class="nav">
+    <div class="nav-brand">OfficeHours</div>
+    <ul class="nav-links">
+        <li><a href="/student/reserve/">Back to Courses</a></li>
+        <li><a href="/student/dashboard/">Dashboard</a></li>
+        <li><a href="/student/reservations/">My Reservations</a></li>
+        <li><a href="/logout/" class="nav-logout">Logout</a></li>
+    </ul>
+</nav>
+
+<main class="dashboard-main">
+
+    <header class="dashboard-header">
+        <h1>Available Office Hours</h1>
+        <p class="welcome-text">{{ department_name }} {{ course_code }}</p>
+    </header>
+
+    <section class="table-section">
+
+        {% if error_msg %}
+            <div class="alert alert-error">{{ error_msg }}</div>
+        {% endif %}
+        {% if success_msg %}
+            <div class="alert alert-success">{{ success_msg }}</div>
+        {% endif %}
+
+        <h2 class="section-title">Pick a 15-Minute Slot</h2>
+
+        {% if available %}
+            {% for day, slots in available %}
+                <div class="day-block">
+                    <h3 class="day-heading">{{ day|date:"l, F j, Y" }}</h3>
+                    <div class="slot-grid">
+                        {% for slot in slots %}
+                            <form method="post" action="" class="slot-form">
+                                {% csrf_token %}
+                                <input type="hidden" name="slot_start" value="{{ slot.start|date:'Y-m-d H:i' }}"/>
+                                <input type="hidden" name="office_hour_id" value="{{ slot.office_hour_id }}"/>
+                                <button type="submit" class="slot-button slot-{{ slot.staff_type|lower }}">
+                                    <span class="slot-time">{{ slot.start|date:"g:i A" }}</span>
+                                    <span class="slot-staff">{{ slot.staff_type|title }}: {{ slot.staff_name }}</span>
+                                </button>
+                            </form>
+                        {% endfor %}
+                    </div>
+                </div>
+            {% endfor %}
+        {% else %}
+            <p class="empty-state">No available slots in the next 30 days. Check back later.</p>
+        {% endif %}
+
+    </section>
+
+</main>
+
+</body>
+</html>

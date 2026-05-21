@@ -1,5 +1,6 @@
 from django.contrib.auth import logout
 from django.views import View
+from datetime import datetime
 from django.shortcuts import render, redirect
 from classes.Users import UserClass
 from classes.UserDatabase import doesUserWithEmailExist, validatePassword, getUser, countByType, deleteUser, createUser, \
@@ -8,10 +9,12 @@ from classes.CourseDatabase import getAllCourses
 from classes.CourseDatabase import getAllCourses, doesCourseExist, createCourse, deleteCourse
 from classes.Sections import SectionClass
 from classes.SectionsDatabase import createSection, deleteSection, assignInstructor, assignTA, getStudents, \
-    addStudentsFromText, getSectionsByStudent
+    addStudentsFromText
+from classes.SectionsDatabase import getSectionsByInstructor, getSectionsByTA, getSectionsByStudent
 from classes.UserDatabase import getUser, getUsersByType
 from classes.OfficeHoursDatabase import createOfficeHour, getOfficeHour, getApprovedOfficeHours, getPendingOfficeHoursForInstructor, rejectOfficeHour, approveOfficeHour
-#from classes.TimeSlot import TimeSlot
+from classes.ReservedOfficeHoursDatabase import (getAvailableSlotsForCourse,validateReservation,createReservation,getUpcomingReservationsForStudent,)
+from classes.ReservedOfficeHoursDatabase import (getAvailableSlotsForCourse,validateReservation,createReservation,getUpcomingReservationsForStudent,getUpcomingReservationsForStaff,)
 
 DASHBOARD_ROUTES = {
     "INSTRUCTOR": "/instructor/dashboard/",
@@ -298,28 +301,25 @@ class TADashboardView(View):
 
 class StudentDashboardView(View):
     def get(self, request):
-        user_email = request.session.get("user_id")
+        user = getUser(request.session.get("user_id"))
 
-        if user_email is None or request.session.get("user_type") != "STUDENT":
+        if user is None or user.getType() != "STUDENT":
             return redirect("/")
 
-        user = getUser(user_email)
-        if user is None:
-            return redirect("/")
+        sections = getSectionsByStudent(user.getEmail())
 
-        sections = getSectionsByStudent(user_email)
-
-        seen = set() #makes sure dupe courses are not added
-        courses = []
+        seen_codes = set()
+        unique_courses = []
         for s in sections:
-            code = s.getCourse().getCourseCode()
-            if code not in seen: # if not in the database, add
-                seen.add(code)
-                courses.append(s.getCourse())
+            course = s.getCourse()
+            code = course.getCourseCode()
+            if code not in seen_codes:
+                seen_codes.add(code)
+                unique_courses.append(course)
 
         context = {
             "user": user,
-            "courses": courses,
+            "courses": unique_courses,
         }
 
         return render(request, "scheduler_app/student_dashboard.html", context)
@@ -401,11 +401,18 @@ class ViewOfficeHoursView(View):
 class InstructorUpcomingReservationsView(View):
     def get(self, request):
         user = getUser(request.session.get("user_id"))
+
         if user is None or user.getType() != "INSTRUCTOR":
             return redirect("/")
+
+        reservations = getUpcomingReservationsForStaff(user.getEmail())
+        reservations.sort(key=lambda r: r.getStartTime())
+
         context = {
             "user": user,
+            "reservations": reservations,
         }
+
         return render(request, "scheduler_app/instructor_upcoming_reservations.html", context)
 
     def post(self, request):
@@ -415,15 +422,136 @@ class InstructorUpcomingReservationsView(View):
 class TAUpcomingReservationsView(View):
     def get(self, request):
         user = getUser(request.session.get("user_id"))
+
         if user is None or user.getType() != "TA":
             return redirect("/")
+
+        reservations = getUpcomingReservationsForStaff(user.getEmail())
+        reservations.sort(key=lambda r: r.getStartTime())
+
         context = {
             "user": user,
+            "reservations": reservations,
         }
+
         return render(request, "scheduler_app/ta_upcoming_reservations.html", context)
 
     def post(self, request):
         return redirect("/ta/reservations/")
+
+class SelectCourseForReservationView(View):
+    def get(self, request):
+        user = getUser(request.session.get("user_id"))
+
+        if user is None or user.getType() != "STUDENT":
+            return redirect("/")
+
+        sections = getSectionsByStudent(user.getEmail())
+
+        seen_codes = set()
+        unique_courses = []
+        for s in sections:
+            course = s.getCourse()
+            code = course.getCourseCode()
+            if code not in seen_codes:
+                seen_codes.add(code)
+                unique_courses.append(course)
+
+        context = {
+            "user": user,
+            "courses": unique_courses,
+        }
+
+        return render(request, "scheduler_app/select_course_for_reservation.html", context)
+
+    def post(self, request):
+        return redirect("/student/reserve/")
+
+class AvailableOfficeHoursView(View):
+    def get(self, request, department_name, course_code):
+        user = getUser(request.session.get("user_id"))
+
+        if user is None or user.getType() != "STUDENT":
+            return redirect("/")
+
+        # Verify the student is actually enrolled in this course
+        enrolled = getSectionsByStudent(user.getEmail())
+        is_enrolled = any(
+            s.getCourse().getCourseDepartment() == department_name
+            and s.getCourse().getCourseCode() == int(course_code)
+            for s in enrolled
+        )
+        if not is_enrolled:
+            return redirect("/student/reserve/")
+
+        available = getAvailableSlotsForCourse(
+            department_name, int(course_code), datetime.now(),
+        )
+
+        context = {
+            "user": user,
+            "department_name": department_name,
+            "course_code": course_code,
+            "available": available,
+            "error_msg": request.session.pop("reserve_error", None),
+            "success_msg": request.session.pop("reserve_success", None),
+        }
+
+        return render(request, "scheduler_app/available_office_hours.html", context)
+
+    def post(self, request, department_name, course_code):
+        user = getUser(request.session.get("user_id"))
+
+        if user is None or user.getType() != "STUDENT":
+            return redirect("/")
+
+        slot_start_raw = request.POST.get("slot_start")
+        office_hour_id_raw = request.POST.get("office_hour_id")
+
+        if not slot_start_raw or not office_hour_id_raw:
+            request.session["reserve_error"] = "Missing slot information. Please try again."
+            return redirect(f"/student/reserve/{department_name}/{course_code}/")
+
+        try:
+            slot_start = datetime.strptime(slot_start_raw, "%Y-%m-%d %H:%M")
+            office_hour_id = int(office_hour_id_raw)
+        except (ValueError, TypeError):
+            request.session["reserve_error"] = "Invalid slot data. Please try again."
+            return redirect(f"/student/reserve/{department_name}/{course_code}/")
+
+        try:
+            validateReservation(
+                user.getEmail(), office_hour_id, slot_start, datetime.now(),
+            )
+            createReservation(user.getEmail(), office_hour_id, slot_start)
+        except ValueError as e:
+            request.session["reserve_error"] = str(e)
+            return redirect(f"/student/reserve/{department_name}/{course_code}/")
+
+        request.session["reserve_success"] = (
+            f"Reserved {slot_start.strftime('%A, %B %d at %I:%M %p')}."
+        )
+        return redirect(f"/student/reserve/{department_name}/{course_code}/")
+
+class StudentReservationsView(View):
+    def get(self, request):
+        user = getUser(request.session.get("user_id"))
+
+        if user is None or user.getType() != "STUDENT":
+            return redirect("/")
+
+        reservations = getUpcomingReservationsForStudent(user.getEmail())
+        reservations.sort(key=lambda r: r.getStartTime())
+
+        context = {
+            "user": user,
+            "reservations": reservations,
+        }
+
+        return render(request, "scheduler_app/student_reservations.html", context)
+
+    def post(self, request):
+        return redirect("/student/reservations/")
 
 ########################################################################################################################
 
