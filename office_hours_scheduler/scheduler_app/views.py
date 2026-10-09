@@ -1,22 +1,16 @@
-from django.contrib.auth import logout
-from django.views import View
-from datetime import datetime
-from django.shortcuts import render, redirect
+from classes.CourseDatabase import *
+from classes.OfficeHoursDatabase import *
+from classes.ReservedOfficeHoursDatabase import *
+from classes.SectionsDatabase import *
+from classes.UserDatabase import *
 from classes.Users import UserClass
-from classes.UserDatabase import doesUserWithEmailExist, validatePassword, getUser, countByType, deleteUser, createUser, \
-    getUsersByType
-from classes.CourseDatabase import getAllCourses
-from classes.CourseDatabase import getAllCourses, doesCourseExist, createCourse, deleteCourse
-from classes.Sections import SectionClass
-from classes.SectionsDatabase import createSection, deleteSection, assignInstructor, assignTA, getStudents, \
-    addStudentsFromText
-from classes.SectionsDatabase import getSectionsByInstructor, getSectionsByTA, getSectionsByStudent
-from classes.UserDatabase import getUser, getUsersByType
-from classes.OfficeHoursDatabase import createOfficeHour, getOfficeHour, getApprovedOfficeHours, getPendingOfficeHoursForInstructor, rejectOfficeHour, approveOfficeHour
-from classes.ReservedOfficeHoursDatabase import (getAvailableSlotsForCourse, validateReservation, createReservation,
-                                                 getUpcomingReservationsForStudent, getPastReservationsForStaff, )
-from classes.ReservedOfficeHoursDatabase import (getAvailableSlotsForCourse,validateReservation,createReservation,getUpcomingReservationsForStudent,getUpcomingReservationsForStaff,markReservationStatus)
 
+# Imported last so nothing from the star imports can shadow them
+from datetime import datetime
+
+from django.contrib.auth import logout
+from django.shortcuts import redirect, render
+from django.views import View
 DASHBOARD_ROUTES = {
     "INSTRUCTOR": "/instructor/dashboard/",
     "TA": "/ta/dashboard/",
